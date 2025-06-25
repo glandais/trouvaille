@@ -40,4 +40,7 @@ public class UserService {
         }
     }
 
+    public UserEntity getUser(String username) {
+        return userRepository.find("username", username).singleResultOptional().orElse(null);
+    }
 }

@@ -1,7 +1,11 @@
 package io.github.glandais.trouvaille.service;
 
 import io.github.glandais.trouvaille.entity.AnnonceEntity;
+import io.github.glandais.trouvaille.entity.AnnonceEntityNature;
+import io.github.glandais.trouvaille.entity.AnnonceEntityType;
 import io.github.glandais.trouvaille.openapi.beans.AnnonceCreate;
+import io.github.glandais.trouvaille.openapi.beans.AnnonceNature;
+import io.github.glandais.trouvaille.openapi.beans.AnnonceType;
 import io.github.glandais.trouvaille.openapi.beans.AnnonceUpdate;
 import org.bson.types.ObjectId;
 import org.mapstruct.Mapper;
@@ -23,4 +27,7 @@ public abstract class AnnonceMapper {
     @Mapping(source = "photosIds", target = "photos")
     public abstract void updateAnnonceEntity(@MappingTarget AnnonceEntity annonceEntity, AnnonceUpdate data);
 
+    public abstract AnnonceEntityType mapAnnonceType(AnnonceType type);
+
+    public abstract AnnonceEntityNature mapAnnonceNature(AnnonceNature nature);
 }

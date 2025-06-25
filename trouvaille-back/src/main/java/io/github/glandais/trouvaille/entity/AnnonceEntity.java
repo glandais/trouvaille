@@ -36,6 +36,7 @@ public class AnnonceEntity {
 
     public CoordinatesEntity coordinates;
 
+    @Builder.Default
     public List<ObjectId> photos = new ArrayList<>();
 
     public Date dateCreation;
