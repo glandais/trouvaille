@@ -1,8 +1,7 @@
 package io.github.glandais.trouvaille.entity;
 
 import io.quarkus.mongodb.panache.common.MongoEntity;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.bson.types.ObjectId;
 
 import java.util.ArrayList;
@@ -12,6 +11,9 @@ import java.util.List;
 @MongoEntity(collection = "Annonce")
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class AnnonceEntity {
 
     public ObjectId id;

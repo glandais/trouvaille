@@ -20,7 +20,7 @@ public class AnnonceService {
 
     final AnnonceEntityMapper annonceEntityMapper;
 
-    final SecurityService securityService;
+    final UserService userService;
 
     public Annonces listAnnonces(AnnonceType type, AnnonceNature nature, BigInteger page, BigInteger limit, String search, String userPseudo, BigDecimal prixMin, BigDecimal prixMax, Double latitude, Double longitude, BigDecimal distanceMax, String sortBy, String sortOrder) {
         return new Annonces();
@@ -50,8 +50,8 @@ public class AnnonceService {
 
     private void checkAnnonceOwnership(AnnonceEntity annonceEntity) {
         checkAnnonceExists(annonceEntity);
-        String currentUserId = securityService.getCurrentUserId();
-        if (!annonceEntity.utilisateur.toString().equals(currentUserId)) {
+        ObjectId currentUserId = userService.getCurrentUser().getId();
+        if (!annonceEntity.utilisateur.equals(currentUserId)) {
             throw new ForbiddenException("You can only modify your own annonces");
         }
     }
