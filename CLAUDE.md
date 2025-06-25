@@ -15,12 +15,33 @@ Développement d'une plateforme web privée de petites annonces permettant aux u
 ## Architecture Technique
 
 ### Stack Technologique
-- **Frontend** : Vue 3 + Vite
+- **Frontend** : Vue 3 + Vite + TypeScript
 - **State Management** : Pinia
 - **Styling** : Tailwind CSS
-- **Backend** : Quarkus
+- **Backend** : Quarkus (Java 21)
 - **Base de données** : MongoDB
-- **Authentification** : JWT
+- **Authentification** : JWT + OAuth2
+
+### Code Architecture
+
+#### Backend (trouvaille-back/)
+- **Framework**: Quarkus with Panache MongoDB
+- **API**: REST with Jackson serialization
+- **Database**: MongoDB with Panache entities
+- **Mapping**: MapStruct for entity-to-DTO conversion
+- **Code Generation**: OpenAPI server interfaces from contract.yaml
+- **Key Packages**:
+  - `entity/`: MongoDB entities (AnnonceEntity, UserEntity, PhotoEntity, etc.)
+  - `repository/`: Panache repositories for data access
+  - `service/`: Business logic and mapping services
+  - `resource/`: REST endpoint implementations (ApiResourceImpl)
+
+#### Frontend (trouvaille-front/)
+- **Framework**: Vue 3 with Composition API
+- **Build**: Vite with TypeScript
+- **Routing**: Vue Router 4
+- **State**: Pinia stores
+- **Code Generation**: TypeScript client from contract.yaml (to be implemented)
 
 ### Authentification
 
@@ -29,21 +50,10 @@ OAuth endpoints :
 - Token URI https://chat.n-peloton.fr/oauth/access_token
 - User info URI https://chat.n-peloton.fr/api/v4/users/me
 
-### Frontend
-
-Sous dossier trouvaille-front
-
-Standard Vue 3 / Vite / Pinia / Tailwind CSS
-
-Génération du client Typescript depuis le fichier contract.yaml à la racine de trouvaille-front
-
-### Backend
-
-Sous dossier trouvaille-back
-
-Standard Quarkus (Panache MongoDB, Quarkus REST, MapStruct)
-
-Génération de l'interface à implémentation avec quarkus-openapi-generator-server
+### Contract-First Development
+- **API Contract**: Defined in `contract.yaml` (OpenAPI 3.0.3)
+- **Backend**: Generates server interfaces via quarkus-openapi-generator-server
+- **Frontend**: Should generate TypeScript client (currently using contract.yaml copy)
 
 
 ## Fonctionnalités Principales
@@ -153,16 +163,50 @@ DELETE /api/v1/photos/{photoId}            # Suppression photo
 ### Recherche
 - Index full-text en base de données
 
-## Commands
+## Development Commands
 
-### Build back
+### Backend (Quarkus) - trouvaille-back/
 ```bash
-cd trouvaille-back
-mvn clean package
+# Build
+cd trouvaille-back && mvn clean package
+
+# Development mode (hot reload)
+cd trouvaille-back && mvn quarkus:dev
+
+# Run tests
+cd trouvaille-back && mvn test
+
+# Run integration tests
+cd trouvaille-back && mvn verify
+
+# Generate OpenAPI implementation from contract.yaml
+cd trouvaille-back && mvn quarkus:generate-code
 ```
 
-### Build front
+### Frontend (Vue 3) - trouvaille-front/
 ```bash
-cd trouvaille-front
-npm run build
+# Install dependencies
+cd trouvaille-front && npm install
+
+# Development server
+cd trouvaille-front && npm run dev
+
+# Build for production
+cd trouvaille-front && npm run build
+
+# Type checking
+cd trouvaille-front && npm run type-check
+
+# Lint and fix
+cd trouvaille-front && npm run lint
+
+# Format code
+cd trouvaille-front && npm run format
+
+# Preview production build
+cd trouvaille-front && npm run preview
 ```
+
+### Code Generation
+- **Backend**: OpenAPI server interface generation via quarkus-openapi-generator-server from contract.yaml
+- **Frontend**: TypeScript client generation from contract.yaml (needs setup)
