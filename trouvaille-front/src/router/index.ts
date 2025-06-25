@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
+import OAuthCallbackView from '../views/OAuthCallbackView.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -35,7 +36,7 @@ const router = createRouter({
     {
       path: '/oauth/callback',
       name: 'oauth-callback',
-      component: () => import('../views/OAuthCallbackView.vue')
+      component: OAuthCallbackView
     },
     {
       path: '/:pathMatch(.*)*',
@@ -47,14 +48,30 @@ const router = createRouter({
 
 // Navigation guard for protected routes
 router.beforeEach((to, from, next) => {
+  console.log('Router beforeEach:', {
+    to: to.fullPath,
+    from: from.fullPath,
+    name: to.name
+  })
+  
   const authStore = useAuthStore()
   
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
+    console.log('Redirecting to login for protected route')
     authStore.login()
     return
   }
   
   next()
+})
+
+// Add debug for route changes
+router.afterEach((to, from) => {
+  console.log('Router afterEach:', {
+    to: to.fullPath,
+    from: from.fullPath,
+    name: to.name
+  })
 })
 
 export default router

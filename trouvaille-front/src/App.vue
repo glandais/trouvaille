@@ -1,7 +1,10 @@
 <template>
   <div id="app">
+    <!-- Always show router-view for OAuth callback -->
+    <router-view v-if="$route.name === 'oauth-callback'" />
+    
     <!-- Show loading while authenticating -->
-    <div v-if="authStore.isAuthenticating" class="min-h-screen flex items-center justify-center">
+    <div v-else-if="authStore.isAuthenticating" class="min-h-screen flex items-center justify-center">
       <div class="text-center">
         <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
         <p class="text-gray-600">Authentification en cours...</p>
@@ -15,7 +18,7 @@
           <h1 class="text-3xl font-bold text-gray-900 mb-2">Trouvaille</h1>
           <p class="text-gray-600 mb-8">Plateforme de petites annonces privée</p>
           <button 
-            @click="authStore.login()" 
+            @click="() => authStore.login()" 
             class="btn-primary w-full py-3 text-lg"
           >
             Se connecter

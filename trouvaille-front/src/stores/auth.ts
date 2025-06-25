@@ -14,26 +14,31 @@ export const useAuthStore = defineStore('auth', () => {
 
   const isAuthenticated = computed(() => !!accessToken.value)
 
-  // OAuth2 configuration from CLAUDE.md
   const OAUTH_CONFIG = {
-    authorizeUri: 'https://chat.n-peloton.fr/oauth/authorize',
-    tokenUri: 'https://chat.n-peloton.fr/oauth/access_token',
-    userInfoUri: 'https://chat.n-peloton.fr/api/v4/users/me',
-    clientId: 'trouvaille',
+    authorizeUri: import.meta.env.VITE_OAUTH_AUTHORIZE_URI || 'https://chat.n-peloton.fr/oauth/authorize',
+    tokenUri: import.meta.env.VITE_OAUTH_TOKEN_URI || 'https://chat.n-peloton.fr/oauth/access_token',
+    userInfoUri: import.meta.env.VITE_OAUTH_USER_INFO_URI || 'https://chat.n-peloton.fr/api/v4/users/me',
+    clientId: import.meta.env.VITE_OAUTH_CLIENT_ID || 'trouvaille',
     redirectUri: window.location.origin + '/oauth/callback',
     scope: 'read'
   }
 
-  const login = () => {
+  const login = async () => {
     const state = generateRandomState()
+    const codeVerifier = generateCodeVerifier()
+    const codeChallenge = await generateCodeChallenge(codeVerifier)
+    
     localStorage.setItem('oauth_state', state)
+    localStorage.setItem('oauth_code_verifier', codeVerifier)
     
     const params = new URLSearchParams({
       response_type: 'code',
       client_id: OAUTH_CONFIG.clientId,
       redirect_uri: OAUTH_CONFIG.redirectUri,
       scope: OAUTH_CONFIG.scope,
-      state
+      state,
+      code_challenge: codeChallenge,
+      code_challenge_method: 'S256'
     })
 
     window.location.href = `${OAUTH_CONFIG.authorizeUri}?${params.toString()}`
@@ -41,17 +46,25 @@ export const useAuthStore = defineStore('auth', () => {
 
   const handleOAuthCallback = async (code: string, state: string): Promise<boolean> => {
     const storedState = localStorage.getItem('oauth_state')
+    const codeVerifier = localStorage.getItem('oauth_code_verifier')
+    
     if (state !== storedState) {
       console.error('OAuth state mismatch')
       return false
     }
 
+    if (!codeVerifier) {
+      console.error('OAuth code verifier not found')
+      return false
+    }
+
     localStorage.removeItem('oauth_state')
+    localStorage.removeItem('oauth_code_verifier')
 
     try {
       isAuthenticating.value = true
 
-      // Exchange code for access token
+      // Exchange code for access token using PKCE
       const tokenResponse = await fetch(OAUTH_CONFIG.tokenUri, {
         method: 'POST',
         headers: {
@@ -62,7 +75,8 @@ export const useAuthStore = defineStore('auth', () => {
           grant_type: 'authorization_code',
           client_id: OAUTH_CONFIG.clientId,
           redirect_uri: OAUTH_CONFIG.redirectUri,
-          code
+          code,
+          code_verifier: codeVerifier
         })
       })
 
@@ -128,6 +142,26 @@ export const useAuthStore = defineStore('auth', () => {
 
   const generateRandomState = (): string => {
     return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
+  }
+
+  const generateCodeVerifier = (): string => {
+    const array = new Uint8Array(32)
+    crypto.getRandomValues(array)
+    return base64URLEncode(array)
+  }
+
+  const generateCodeChallenge = async (verifier: string): Promise<string> => {
+    const encoder = new TextEncoder()
+    const data = encoder.encode(verifier)
+    const digest = await crypto.subtle.digest('SHA-256', data)
+    return base64URLEncode(new Uint8Array(digest))
+  }
+
+  const base64URLEncode = (array: Uint8Array): string => {
+    return btoa(String.fromCharCode(...array))
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=/g, '')
   }
 
   return {
