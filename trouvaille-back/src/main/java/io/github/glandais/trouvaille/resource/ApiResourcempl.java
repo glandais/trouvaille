@@ -4,6 +4,7 @@ import io.github.glandais.trouvaille.openapi.ApiResource;
 import io.github.glandais.trouvaille.openapi.beans.*;
 import io.github.glandais.trouvaille.service.AnnonceService;
 import io.github.glandais.trouvaille.service.PhotoService;
+import io.quarkus.security.Authenticated;
 import lombok.RequiredArgsConstructor;
 
 import java.io.InputStream;
@@ -11,6 +12,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 
 @RequiredArgsConstructor
+@Authenticated
 public class ApiResourcempl implements ApiResource {
 
     final AnnonceService annonceService;

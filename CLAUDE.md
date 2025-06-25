@@ -43,12 +43,21 @@ Développement d'une plateforme web privée de petites annonces permettant aux u
 - **State**: Pinia stores
 - **Code Generation**: TypeScript client from contract.yaml (to be implemented)
 
-### Authentification
+### Authentification et Sécurité
 
 OAuth endpoints :
 - Authorize URI https://chat.n-peloton.fr/oauth/authorize
 - Token URI https://chat.n-peloton.fr/oauth/access_token
 - User info URI https://chat.n-peloton.fr/api/v4/users/me
+
+#### Configuration OIDC Backend
+- **Extension**: `quarkus-oidc` pour la vérification des tokens JWT
+- **Configuration**: `application.properties` avec auth-server-url pointant sur https://chat.n-peloton.fr
+- **Sécurité des endpoints**:
+  - `@PermitAll`: Endpoints publics (liste et consultation des annonces)
+  - `@Authenticated`: Endpoints nécessitant une authentification (création, modification, suppression)
+- **Service de sécurité**: `SecurityService` pour accéder aux informations de l'utilisateur authentifié
+- **Contrôles d'accès**: Vérification de propriété pour la modification/suppression des annonces
 
 ### Contract-First Development
 - **API Contract**: Defined in `contract.yaml` (OpenAPI 3.0.3)
