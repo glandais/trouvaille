@@ -1,0 +1,61 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <changeSet id="1" author="glandais">
+        <ext:createCollection collectionName="Annonce"/>
+        <ext:createCollection collectionName="Photo"/>
+        <ext:createCollection collectionName="User"/>
+
+        <ext:createIndex collectionName="Annonce">
+            <ext:keys>{utilisateur: 1}</ext:keys>
+            <ext:options>{name: "utilisateurIdx"}</ext:options>
+        </ext:createIndex>
+        <ext:createIndex collectionName="Annonce">
+            <ext:keys>{statut: 1}</ext:keys>
+            <ext:options>{name: "statutIdx"}</ext:options>
+        </ext:createIndex>
+        <ext:createIndex collectionName="Annonce">
+            <ext:keys>{type: 1}</ext:keys>
+            <ext:options>{name: "typeIdx"}</ext:options>
+        </ext:createIndex>
+        <ext:createIndex collectionName="Annonce">
+            <ext:keys>{nature: 1}</ext:keys>
+            <ext:options>{name: "natureIdx"}</ext:options>
+        </ext:createIndex>
+        <ext:createIndex collectionName="Annonce">
+            <ext:keys>{prix: 1}</ext:keys>
+            <ext:options>{name: "prixIdx"}</ext:options>
+        </ext:createIndex>
+        <ext:createIndex collectionName="Annonce">
+            <ext:keys>{periodeLocation: 1}</ext:keys>
+            <ext:options>{name: "periodeLocationIdx"}</ext:options>
+        </ext:createIndex>
+        <ext:createIndex collectionName="Annonce">
+            <ext:keys>{photos: 1}</ext:keys>
+            <ext:options>{name: "photosIdx"}</ext:options>
+        </ext:createIndex>
+        <ext:createIndex collectionName="Annonce">
+            <ext:keys>{dateCreation: 1}</ext:keys>
+            <ext:options>{name: "dateCreationIdx"}</ext:options>
+        </ext:createIndex>
+        <ext:createIndex collectionName="Annonce">
+            <ext:keys>{coordinates: 1, type: "2dsphere"}</ext:keys>
+            <ext:options>{name: "coordinatesIdx"}</ext:options>
+        </ext:createIndex>
+
+        <ext:createIndex collectionName="User">
+            <ext:keys>{username: 1}</ext:keys>
+            <ext:options>{name: "usernameIdx"}</ext:options>
+        </ext:createIndex>
+        <ext:createIndex collectionName="Photo">
+            <ext:keys>{utilisateur: 1}</ext:keys>
+            <ext:options>{name: "usernameIdx"}</ext:options>
+        </ext:createIndex>
+    </changeSet>
+
+</databaseChangeLog>
