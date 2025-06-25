@@ -48,7 +48,7 @@ paths:
           description: Recherche textuelle dans titre et description
           schema:
             type: string
-        - name: user_pseudo
+        - name: user_id
           in: query
           description: Recherche par utilisateur
           schema:
@@ -268,6 +268,34 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
+  /api/v1/auth/token:
+    post:
+      summary: Échanger le code OAuth pour un token
+      operationId: exchangeOAuthToken
+      tags:
+        - Authentification
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OAuthTokenRequest'
+      responses:
+        '200':
+          description: Token échangé avec succès
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OAuthTokenResponse'
+        '400':
+          description: Requête invalide
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+
 components:
   schemas:
     Utilisateur:
@@ -275,14 +303,13 @@ components:
       properties:
         id:
           type: string
-        pseudo:
+        username:
           type: string
-          minLength: 3
-          maxLength: 30
-          example: "jean_dupont"
+        nickname:
+          type: string
       required:
         - id
-        - pseudo
+        - externalId
 
     AnnonceType:
       type: string
@@ -435,6 +462,8 @@ components:
         - $ref: '#/components/schemas/AnnonceBase'
         - type: object
           properties:
+            id:
+              type: string
             distance:
               type: number
               format: decimal
@@ -483,6 +512,32 @@ components:
       required:
         - code
         - message
+
+    OAuthTokenRequest:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Code d'autorisation OAuth
+        state:
+          type: string
+          description: Paramètre state OAuth
+        redirectUri:
+          type: string
+          description: URI de redirection
+      required:
+        - code
+        - state
+        - redirectUri
+
+    OAuthTokenResponse:
+      type: object
+      properties:
+        access_token:
+          type: string
+          description: Token d'accès JWT
+      required:
+        - access_token
 
   securitySchemes:
     BearerAuth:

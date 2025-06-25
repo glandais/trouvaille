@@ -1,6 +1,6 @@
 import axios from 'axios'
 import type { AxiosInstance } from 'axios'
-import { Configuration, AnnoncesApi, PhotosApi } from '../api'
+import { Configuration, AnnoncesApi, PhotosApi, AuthentificationApi } from '../api'
 import { useAuthStore } from '../stores/auth'
 
 // Create axios instance with base configuration
@@ -43,5 +43,6 @@ const apiConfiguration = new Configuration({
 // Export API instances
 export const annoncesApi = new AnnoncesApi(apiConfiguration, undefined, axiosInstance)
 export const photosApi = new PhotosApi(apiConfiguration, undefined, axiosInstance)
+export const authentificationApi = new AuthentificationApi(apiConfiguration, undefined, axiosInstance)
 
 export { axiosInstance }

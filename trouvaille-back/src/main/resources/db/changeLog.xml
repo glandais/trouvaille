@@ -44,7 +44,7 @@
             <ext:options>{name: "dateCreationIdx"}</ext:options>
         </ext:createIndex>
         <ext:createIndex collectionName="Annonce">
-            <ext:keys>{coordinates: 1, type: "2dsphere"}</ext:keys>
+            <ext:keys>{coordinates: "2dsphere"}</ext:keys>
             <ext:options>{name: "coordinatesIdx"}</ext:options>
         </ext:createIndex>
 

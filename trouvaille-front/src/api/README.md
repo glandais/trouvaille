@@ -56,6 +56,7 @@ Class | Method | HTTP request | Description
 *AnnoncesApi* | [**getAnnonce**](docs/AnnoncesApi.md#getannonce) | **GET** /api/v1/annonces/{id} | Récupérer une annonce par son ID
 *AnnoncesApi* | [**listAnnonces**](docs/AnnoncesApi.md#listannonces) | **GET** /api/v1/annonces | Récupérer toutes les annonces
 *AnnoncesApi* | [**putAnnonce**](docs/AnnoncesApi.md#putannonce) | **PUT** /api/v1/annonces/{id} | Mettre à jour une annonce
+*AuthentificationApi* | [**exchangeOAuthToken**](docs/AuthentificationApi.md#exchangeoauthtoken) | **POST** /api/v1/auth/token | Échanger le code OAuth pour un token
 *PhotosApi* | [**createPhoto**](docs/PhotosApi.md#createphoto) | **POST** /api/v1/annonces/photos | Ajouter une photo
 *PhotosApi* | [**deletePhoto**](docs/PhotosApi.md#deletephoto) | **DELETE** /api/v1/annonces/photos/{photoId} | Supprimer une photo
 
@@ -74,6 +75,8 @@ Class | Method | HTTP request | Description
  - [Coordinates](docs/Coordinates.md)
  - [ErrorDetailsInner](docs/ErrorDetailsInner.md)
  - [ModelError](docs/ModelError.md)
+ - [OAuthTokenRequest](docs/OAuthTokenRequest.md)
+ - [OAuthTokenResponse](docs/OAuthTokenResponse.md)
  - [Pagination](docs/Pagination.md)
  - [PeriodeLocation](docs/PeriodeLocation.md)
  - [Utilisateur](docs/Utilisateur.md)

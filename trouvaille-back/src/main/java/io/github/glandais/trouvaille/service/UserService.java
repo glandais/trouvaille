@@ -2,15 +2,18 @@ package io.github.glandais.trouvaille.service;
 
 import io.github.glandais.trouvaille.entity.UserEntity;
 import io.github.glandais.trouvaille.repository.UserRepository;
-import io.quarkus.oidc.runtime.OidcJwtCallerPrincipal;
 import io.quarkus.security.identity.SecurityIdentity;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
+import java.util.Map;
 import java.util.Optional;
 
+@Slf4j
 @ApplicationScoped
 @RequiredArgsConstructor
 public class UserService {
@@ -19,20 +22,23 @@ public class UserService {
 
     final SecurityIdentity securityIdentity;
 
-    final JsonWebToken jwt;
-
-    private String getUserName() {
-        if (securityIdentity.getPrincipal() instanceof OidcJwtCallerPrincipal oidcPrincipal) {
-            return oidcPrincipal.getClaim("preferred_username");
-        }
-        return jwt.getClaim("preferred_username");
-    }
+    final JsonWebToken jsonWebToken;
 
     public UserEntity getCurrentUser() {
-        String username = getUserName();
+
+        log.info("Getting current user info from JWT");
+
+        if (securityIdentity.isAnonymous()) {
+            throw new IllegalStateException("User is not authenticated");
+        }
+
+        String sub = getAttribute("sub");
+        String username = getAttribute("username");
+        String nickname = getAttribute("nickname");
+
         Optional<UserEntity> userOptional = userRepository.find("username", username).singleResultOptional();
         if (userOptional.isEmpty()) {
-            UserEntity userEntity = new UserEntity(new ObjectId(), username);
+            UserEntity userEntity = new UserEntity(new ObjectId(), sub, username, nickname);
             userRepository.persist(userEntity);
             return userEntity;
         } else {
@@ -40,7 +46,16 @@ public class UserService {
         }
     }
 
+    private String getAttribute(String attribute) {
+        String username = jsonWebToken.getClaim(attribute);
+        if (username == null) {
+            throw new IllegalStateException(attribute + " not found in token");
+        }
+        return username;
+    }
+
     public UserEntity getUser(String username) {
         return userRepository.find("username", username).singleResultOptional().orElse(null);
     }
+
 }

@@ -18,20 +18,12 @@ const router = useRouter()
 const authStore = useAuthStore()
 const debugInfo = ref('')
 
-// Immediate execution to debug
-console.log('OAuthCallbackView component mounted')
-console.log('Current route:', route.fullPath)
-console.log('Query params:', route.query)
 
 onMounted(async () => {
-  console.log('onMounted called in OAuthCallbackView')
   debugInfo.value = 'Processing OAuth callback...'
   
   const code = route.query.code as string
   const state = route.query.state as string
-
-  console.log('Code:', code)
-  console.log('State:', state)
 
   if (code && state) {
     debugInfo.value = 'Exchanging code for token...'
@@ -51,7 +43,6 @@ onMounted(async () => {
 
 // Alternative: immediate execution without onMounted
 const handleOAuthCallback = async () => {
-  console.log('Immediate OAuth handling')
   const code = route.query.code as string
   const state = route.query.state as string
 

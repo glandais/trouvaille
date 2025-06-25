@@ -1,23 +1,19 @@
-# Utilisateur
+# OAuthTokenResponse
 
 
 ## Properties
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**id** | **string** |  | [default to undefined]
-**username** | **string** |  | [optional] [default to undefined]
-**nickname** | **string** |  | [optional] [default to undefined]
+**access_token** | **string** | Token d\&#39;accès JWT | [default to undefined]
 
 ## Example
 
 ```typescript
-import { Utilisateur } from '@trouvaille/api';
+import { OAuthTokenResponse } from '@trouvaille/api';
 
-const instance: Utilisateur = {
-    id,
-    username,
-    nickname,
+const instance: OAuthTokenResponse = {
+    access_token,
 };
 ```
 

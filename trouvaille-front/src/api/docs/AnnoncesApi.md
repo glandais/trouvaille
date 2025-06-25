@@ -187,7 +187,7 @@ let nature: AnnonceNature; //Nature de l\'annonce (optional) (default to undefin
 let page: number; //Numéro de page (optional) (default to 1)
 let limit: number; //Nombre d\'éléments par page (optional) (default to 20)
 let search: string; //Recherche textuelle dans titre et description (optional) (default to undefined)
-let userPseudo: string; //Recherche par utilisateur (optional) (default to undefined)
+let userId: string; //Recherche par utilisateur (optional) (default to undefined)
 let prixMin: number; //Prix minimum (optional) (default to undefined)
 let prixMax: number; //Prix maximum (optional) (default to undefined)
 let latitude: number; //Latitude pour le tri par distance (optional) (default to undefined)
@@ -203,7 +203,7 @@ const { status, data } = await apiInstance.listAnnonces(
     page,
     limit,
     search,
-    userPseudo,
+    userId,
     prixMin,
     prixMax,
     latitude,
@@ -224,7 +224,7 @@ const { status, data } = await apiInstance.listAnnonces(
 | **page** | [**number**] | Numéro de page | (optional) defaults to 1|
 | **limit** | [**number**] | Nombre d\&#39;éléments par page | (optional) defaults to 20|
 | **search** | [**string**] | Recherche textuelle dans titre et description | (optional) defaults to undefined|
-| **userPseudo** | [**string**] | Recherche par utilisateur | (optional) defaults to undefined|
+| **userId** | [**string**] | Recherche par utilisateur | (optional) defaults to undefined|
 | **prixMin** | [**number**] | Prix minimum | (optional) defaults to undefined|
 | **prixMax** | [**number**] | Prix maximum | (optional) defaults to undefined|
 | **latitude** | [**number**] | Latitude pour le tri par distance | (optional) defaults to undefined|

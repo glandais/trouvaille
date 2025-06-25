@@ -1,10 +1,22 @@
 <template>
   <AppLayout>
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Loading State -->
+    <div v-if="loading" class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div class="animate-pulse">
+        <div class="h-8 bg-gray-200 rounded w-1/4 mb-8"></div>
+        <div class="space-y-8">
+          <div class="h-32 bg-gray-200 rounded"></div>
+          <div class="h-32 bg-gray-200 rounded"></div>
+          <div class="h-32 bg-gray-200 rounded"></div>
+        </div>
+      </div>
+    </div>
+
+    <div v-else class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <!-- Header -->
       <div class="mb-8">
-        <h1 class="text-3xl font-bold text-gray-900">Créer une annonce</h1>
-        <p class="mt-2 text-gray-600">Remplissez les informations ci-dessous pour publier votre annonce</p>
+        <h1 class="text-3xl font-bold text-gray-900">{{ isEditMode ? 'Modifier l\'annonce' : 'Créer une annonce' }}</h1>
+        <p class="mt-2 text-gray-600">{{ isEditMode ? 'Modifiez les informations de votre annonce' : 'Remplissez les informations ci-dessous pour publier votre annonce' }}</p>
       </div>
 
       <!-- Form -->
@@ -303,7 +315,7 @@
 
         <!-- Actions -->
         <div class="flex justify-end space-x-4 pt-6 border-t border-gray-200">
-          <router-link to="/annonces" class="btn-secondary">
+          <router-link :to="isEditMode ? `/annonces/${props.id}` : '/annonces'" class="btn-secondary">
             Annuler
           </router-link>
           <button
@@ -311,7 +323,7 @@
             :disabled="submitting"
             class="btn-primary"
           >
-            {{ submitting ? 'Publication...' : 'Publier l\'annonce' }}
+            {{ submitting ? (isEditMode ? 'Modification...' : 'Publication...') : (isEditMode ? 'Modifier l\'annonce' : 'Publier l\'annonce') }}
           </button>
         </div>
       </form>
@@ -320,11 +332,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, reactive, computed, onMounted } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import { useDebounceFn } from '@vueuse/core'
 import { annoncesApi, photosApi } from '../services/api'
-import { AnnonceCreate, AnnonceType, AnnonceNature, PeriodeLocation, Coordinates } from '../api'
+import { AnnonceCreate, AnnonceType, AnnonceNature, PeriodeLocation, Coordinates, Annonce } from '../api'
 import AppLayout from '../components/AppLayout.vue'
 import {
   PhotoIcon,
@@ -334,7 +346,13 @@ import {
   TrashIcon
 } from '@heroicons/vue/24/outline'
 
+interface Props {
+  id?: string
+}
+
+const props = defineProps<Props>()
 const router = useRouter()
+const route = useRoute()
 
 const form = reactive<AnnonceCreate>({
   type: undefined,
@@ -353,6 +371,10 @@ const uploadedPhotos = ref<Array<{ id: string, url: string }>>([])
 const uploadingPhotos = ref<Array<{ name: string, progress: number }>>([])
 const addressSearch = ref('')
 const gettingLocation = ref(false)
+const loading = ref(false)
+
+const isEditMode = computed(() => !!props.id)
+const existingAnnonce = ref<Annonce>()
 
 const validateForm = () => {
   errors.value = {}
@@ -517,8 +539,47 @@ const getCurrentLocation = () => {
 
 const debouncedAddressSearch = useDebounceFn(() => {
   // In a full implementation, this would call a geocoding API
-  console.log('Searching address:', addressSearch.value)
 }, 500)
+
+const loadExistingAnnonce = async () => {
+  if (!props.id) return
+  
+  loading.value = true
+  try {
+    const response = await annoncesApi.getAnnonce(props.id)
+    existingAnnonce.value = response.data
+    
+    // Populate form with existing data
+    form.type = response.data.type
+    form.nature = response.data.nature
+    form.titre = response.data.titre || ''
+    form.description = response.data.description || ''
+    form.prix = response.data.prix
+    form.periodeLocation = response.data.periodeLocation
+    form.coordinates = response.data.coordinates
+    
+    // Load existing photos
+    if (response.data.photos && response.data.photos.length > 0) {
+      form.photosIds = [...response.data.photos]
+      uploadedPhotos.value = response.data.photos.map(photoId => ({
+        id: photoId,
+        url: getPhotoUrl(photoId)
+      }))
+    }
+    
+  } catch (error) {
+    console.error('Failed to load annonce:', error)
+    alert('Erreur lors du chargement de l\'annonce')
+    router.push('/annonces')
+  } finally {
+    loading.value = false
+  }
+}
+
+const getPhotoUrl = (photoId: string) => {
+  const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'
+  return `${baseUrl}/api/v1/photos/${photoId}`
+}
 
 const handleSubmit = async () => {
   if (!validateForm()) return
@@ -526,13 +587,27 @@ const handleSubmit = async () => {
   submitting.value = true
 
   try {
-    const response = await annoncesApi.createAnnonce(form)
+    let response
+    if (isEditMode.value && props.id) {
+      // Update existing annonce
+      response = await annoncesApi.putAnnonce(props.id, form)
+    } else {
+      // Create new annonce
+      response = await annoncesApi.createAnnonce(form)
+    }
+    
     router.push(`/annonces/${response.data.id}`)
   } catch (error) {
-    console.error('Failed to create annonce:', error)
-    alert('Erreur lors de la création de l\'annonce')
+    console.error('Failed to save annonce:', error)
+    alert(`Erreur lors de la ${isEditMode.value ? 'modification' : 'création'} de l'annonce`)
   } finally {
     submitting.value = false
   }
 }
+
+onMounted(() => {
+  if (isEditMode.value) {
+    loadExistingAnnonce()
+  }
+})
 </script>

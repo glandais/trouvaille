@@ -3,8 +3,10 @@ package io.github.glandais.trouvaille.resource;
 import io.github.glandais.trouvaille.openapi.ApiResource;
 import io.github.glandais.trouvaille.openapi.beans.*;
 import io.github.glandais.trouvaille.service.AnnonceService;
+import io.github.glandais.trouvaille.service.AuthService;
 import io.github.glandais.trouvaille.service.PhotoService;
 import io.quarkus.security.Authenticated;
+import jakarta.annotation.security.PermitAll;
 import lombok.RequiredArgsConstructor;
 
 import java.io.InputStream;
@@ -16,8 +18,8 @@ import java.math.BigInteger;
 public class ApiResourcempl implements ApiResource {
 
     final AnnonceService annonceService;
-
     final PhotoService photoService;
+    final AuthService authService;
 
     @Override
     public Annonces listAnnonces(AnnonceType type, AnnonceStatut statut, AnnonceNature nature, BigInteger page, BigInteger limit, String search, String userPseudo, BigDecimal prixMin, BigDecimal prixMax, Double latitude, Double longitude, BigDecimal distanceMax, String sortBy, String sortOrder) {
@@ -53,4 +55,11 @@ public class ApiResourcempl implements ApiResource {
     public void deletePhoto(String photoId) {
         photoService.deletePhoto(photoId);
     }
+
+    @Override
+    @PermitAll
+    public OAuthTokenResponse exchangeOAuthToken(OAuthTokenRequest data) {
+        return authService.exchangeOAuthToken(data);
+    }
+
 }

@@ -1,29 +1,45 @@
 
 package io.github.glandais.trouvaille.entity;
 
+import org.bson.codecs.pojo.annotations.BsonIgnore;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class CoordinatesEntity {
 
     public static final int LONGITUDE = 0;
     public static final int LATITUDE = 1;
 
-    public String type = "Point";
+    public String type;
 
-    public double[] coordinates = new double[]{0.0, 0.0};
+    public List<Double> coordinates;
 
+    public CoordinatesEntity() {
+        this.type = "Point";
+        this.coordinates = new ArrayList<>(2);
+        this.coordinates.add(0.0);
+        this.coordinates.add(0.0);
+    }
+
+    @BsonIgnore
     public double getLongitude() {
-        return coordinates[LONGITUDE];
+        return coordinates.get(LONGITUDE);
     }
 
+    @BsonIgnore
     public void setLongitude(double longitude) {
-        coordinates[LONGITUDE] = longitude;
+        coordinates.set(LONGITUDE, longitude);
     }
 
+    @BsonIgnore
     public double getLatitude() {
-        return coordinates[LATITUDE];
+        return coordinates.get(LATITUDE);
     }
 
+    @BsonIgnore
     public void setLatitude(double latitude) {
-        coordinates[LATITUDE] = latitude;
+        coordinates.set(LATITUDE, latitude);
     }
 
 }

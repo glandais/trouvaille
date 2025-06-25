@@ -15,6 +15,10 @@ public class UserEntity {
 
     public ObjectId id;
 
+    public String externalId;
+
     public String username;
+
+    public String nickname;
 
 }

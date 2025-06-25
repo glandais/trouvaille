@@ -267,6 +267,12 @@ export interface AnnonceList {
      */
     'coordinates': Coordinates;
     /**
+     * 
+     * @type {string}
+     * @memberof AnnonceList
+     */
+    'id'?: string;
+    /**
      * Distance en kilomètres (présent uniquement si tri par distance)
      * @type {number}
      * @memberof AnnonceList
@@ -460,6 +466,44 @@ export interface ModelError {
 /**
  * 
  * @export
+ * @interface OAuthTokenRequest
+ */
+export interface OAuthTokenRequest {
+    /**
+     * Code d\'autorisation OAuth
+     * @type {string}
+     * @memberof OAuthTokenRequest
+     */
+    'code': string;
+    /**
+     * Paramètre state OAuth
+     * @type {string}
+     * @memberof OAuthTokenRequest
+     */
+    'state': string;
+    /**
+     * URI de redirection
+     * @type {string}
+     * @memberof OAuthTokenRequest
+     */
+    'redirectUri': string;
+}
+/**
+ * 
+ * @export
+ * @interface OAuthTokenResponse
+ */
+export interface OAuthTokenResponse {
+    /**
+     * Token d\'accès JWT
+     * @type {string}
+     * @memberof OAuthTokenResponse
+     */
+    'access_token': string;
+}
+/**
+ * 
+ * @export
  * @interface Pagination
  */
 export interface Pagination {
@@ -518,7 +562,13 @@ export interface Utilisateur {
      * @type {string}
      * @memberof Utilisateur
      */
-    'pseudo': string;
+    'username'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Utilisateur
+     */
+    'nickname'?: string;
 }
 
 /**
@@ -652,7 +702,7 @@ export const AnnoncesApiAxiosParamCreator = function (configuration?: Configurat
          * @param {number} [page] Numéro de page
          * @param {number} [limit] Nombre d\&#39;éléments par page
          * @param {string} [search] Recherche textuelle dans titre et description
-         * @param {string} [userPseudo] Recherche par utilisateur
+         * @param {string} [userId] Recherche par utilisateur
          * @param {number} [prixMin] Prix minimum
          * @param {number} [prixMax] Prix maximum
          * @param {number} [latitude] Latitude pour le tri par distance
@@ -663,7 +713,7 @@ export const AnnoncesApiAxiosParamCreator = function (configuration?: Configurat
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        listAnnonces: async (type?: AnnonceType, statut?: AnnonceStatut, nature?: AnnonceNature, page?: number, limit?: number, search?: string, userPseudo?: string, prixMin?: number, prixMax?: number, latitude?: number, longitude?: number, distanceMax?: number, sortBy?: ListAnnoncesSortByEnum, sortOrder?: ListAnnoncesSortOrderEnum, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        listAnnonces: async (type?: AnnonceType, statut?: AnnonceStatut, nature?: AnnonceNature, page?: number, limit?: number, search?: string, userId?: string, prixMin?: number, prixMax?: number, latitude?: number, longitude?: number, distanceMax?: number, sortBy?: ListAnnoncesSortByEnum, sortOrder?: ListAnnoncesSortOrderEnum, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/v1/annonces`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -704,8 +754,8 @@ export const AnnoncesApiAxiosParamCreator = function (configuration?: Configurat
                 localVarQueryParameter['search'] = search;
             }
 
-            if (userPseudo !== undefined) {
-                localVarQueryParameter['user_pseudo'] = userPseudo;
+            if (userId !== undefined) {
+                localVarQueryParameter['user_id'] = userId;
             }
 
             if (prixMin !== undefined) {
@@ -849,7 +899,7 @@ export const AnnoncesApiFp = function(configuration?: Configuration) {
          * @param {number} [page] Numéro de page
          * @param {number} [limit] Nombre d\&#39;éléments par page
          * @param {string} [search] Recherche textuelle dans titre et description
-         * @param {string} [userPseudo] Recherche par utilisateur
+         * @param {string} [userId] Recherche par utilisateur
          * @param {number} [prixMin] Prix minimum
          * @param {number} [prixMax] Prix maximum
          * @param {number} [latitude] Latitude pour le tri par distance
@@ -860,8 +910,8 @@ export const AnnoncesApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async listAnnonces(type?: AnnonceType, statut?: AnnonceStatut, nature?: AnnonceNature, page?: number, limit?: number, search?: string, userPseudo?: string, prixMin?: number, prixMax?: number, latitude?: number, longitude?: number, distanceMax?: number, sortBy?: ListAnnoncesSortByEnum, sortOrder?: ListAnnoncesSortOrderEnum, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Annonces>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.listAnnonces(type, statut, nature, page, limit, search, userPseudo, prixMin, prixMax, latitude, longitude, distanceMax, sortBy, sortOrder, options);
+        async listAnnonces(type?: AnnonceType, statut?: AnnonceStatut, nature?: AnnonceNature, page?: number, limit?: number, search?: string, userId?: string, prixMin?: number, prixMax?: number, latitude?: number, longitude?: number, distanceMax?: number, sortBy?: ListAnnoncesSortByEnum, sortOrder?: ListAnnoncesSortOrderEnum, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Annonces>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.listAnnonces(type, statut, nature, page, limit, search, userId, prixMin, prixMax, latitude, longitude, distanceMax, sortBy, sortOrder, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['AnnoncesApi.listAnnonces']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -929,7 +979,7 @@ export const AnnoncesApiFactory = function (configuration?: Configuration, baseP
          * @param {number} [page] Numéro de page
          * @param {number} [limit] Nombre d\&#39;éléments par page
          * @param {string} [search] Recherche textuelle dans titre et description
-         * @param {string} [userPseudo] Recherche par utilisateur
+         * @param {string} [userId] Recherche par utilisateur
          * @param {number} [prixMin] Prix minimum
          * @param {number} [prixMax] Prix maximum
          * @param {number} [latitude] Latitude pour le tri par distance
@@ -940,8 +990,8 @@ export const AnnoncesApiFactory = function (configuration?: Configuration, baseP
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        listAnnonces(type?: AnnonceType, statut?: AnnonceStatut, nature?: AnnonceNature, page?: number, limit?: number, search?: string, userPseudo?: string, prixMin?: number, prixMax?: number, latitude?: number, longitude?: number, distanceMax?: number, sortBy?: ListAnnoncesSortByEnum, sortOrder?: ListAnnoncesSortOrderEnum, options?: RawAxiosRequestConfig): AxiosPromise<Annonces> {
-            return localVarFp.listAnnonces(type, statut, nature, page, limit, search, userPseudo, prixMin, prixMax, latitude, longitude, distanceMax, sortBy, sortOrder, options).then((request) => request(axios, basePath));
+        listAnnonces(type?: AnnonceType, statut?: AnnonceStatut, nature?: AnnonceNature, page?: number, limit?: number, search?: string, userId?: string, prixMin?: number, prixMax?: number, latitude?: number, longitude?: number, distanceMax?: number, sortBy?: ListAnnoncesSortByEnum, sortOrder?: ListAnnoncesSortOrderEnum, options?: RawAxiosRequestConfig): AxiosPromise<Annonces> {
+            return localVarFp.listAnnonces(type, statut, nature, page, limit, search, userId, prixMin, prixMax, latitude, longitude, distanceMax, sortBy, sortOrder, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -1009,7 +1059,7 @@ export class AnnoncesApi extends BaseAPI {
      * @param {number} [page] Numéro de page
      * @param {number} [limit] Nombre d\&#39;éléments par page
      * @param {string} [search] Recherche textuelle dans titre et description
-     * @param {string} [userPseudo] Recherche par utilisateur
+     * @param {string} [userId] Recherche par utilisateur
      * @param {number} [prixMin] Prix minimum
      * @param {number} [prixMax] Prix maximum
      * @param {number} [latitude] Latitude pour le tri par distance
@@ -1021,8 +1071,8 @@ export class AnnoncesApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof AnnoncesApi
      */
-    public listAnnonces(type?: AnnonceType, statut?: AnnonceStatut, nature?: AnnonceNature, page?: number, limit?: number, search?: string, userPseudo?: string, prixMin?: number, prixMax?: number, latitude?: number, longitude?: number, distanceMax?: number, sortBy?: ListAnnoncesSortByEnum, sortOrder?: ListAnnoncesSortOrderEnum, options?: RawAxiosRequestConfig) {
-        return AnnoncesApiFp(this.configuration).listAnnonces(type, statut, nature, page, limit, search, userPseudo, prixMin, prixMax, latitude, longitude, distanceMax, sortBy, sortOrder, options).then((request) => request(this.axios, this.basePath));
+    public listAnnonces(type?: AnnonceType, statut?: AnnonceStatut, nature?: AnnonceNature, page?: number, limit?: number, search?: string, userId?: string, prixMin?: number, prixMax?: number, latitude?: number, longitude?: number, distanceMax?: number, sortBy?: ListAnnoncesSortByEnum, sortOrder?: ListAnnoncesSortOrderEnum, options?: RawAxiosRequestConfig) {
+        return AnnoncesApiFp(this.configuration).listAnnonces(type, statut, nature, page, limit, search, userId, prixMin, prixMax, latitude, longitude, distanceMax, sortBy, sortOrder, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -1058,6 +1108,116 @@ export enum ListAnnoncesSortOrderEnum {
     Asc = 'asc',
     Desc = 'desc'
 }
+
+
+/**
+ * AuthentificationApi - axios parameter creator
+ * @export
+ */
+export const AuthentificationApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * 
+         * @summary Échanger le code OAuth pour un token
+         * @param {OAuthTokenRequest} oAuthTokenRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        exchangeOAuthToken: async (oAuthTokenRequest: OAuthTokenRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'oAuthTokenRequest' is not null or undefined
+            assertParamExists('exchangeOAuthToken', 'oAuthTokenRequest', oAuthTokenRequest)
+            const localVarPath = `/api/v1/auth/token`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(oAuthTokenRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * AuthentificationApi - functional programming interface
+ * @export
+ */
+export const AuthentificationApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = AuthentificationApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * 
+         * @summary Échanger le code OAuth pour un token
+         * @param {OAuthTokenRequest} oAuthTokenRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async exchangeOAuthToken(oAuthTokenRequest: OAuthTokenRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<OAuthTokenResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.exchangeOAuthToken(oAuthTokenRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['AuthentificationApi.exchangeOAuthToken']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+    }
+};
+
+/**
+ * AuthentificationApi - factory interface
+ * @export
+ */
+export const AuthentificationApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = AuthentificationApiFp(configuration)
+    return {
+        /**
+         * 
+         * @summary Échanger le code OAuth pour un token
+         * @param {OAuthTokenRequest} oAuthTokenRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        exchangeOAuthToken(oAuthTokenRequest: OAuthTokenRequest, options?: RawAxiosRequestConfig): AxiosPromise<OAuthTokenResponse> {
+            return localVarFp.exchangeOAuthToken(oAuthTokenRequest, options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * AuthentificationApi - object-oriented interface
+ * @export
+ * @class AuthentificationApi
+ * @extends {BaseAPI}
+ */
+export class AuthentificationApi extends BaseAPI {
+    /**
+     * 
+     * @summary Échanger le code OAuth pour un token
+     * @param {OAuthTokenRequest} oAuthTokenRequest 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof AuthentificationApi
+     */
+    public exchangeOAuthToken(oAuthTokenRequest: OAuthTokenRequest, options?: RawAxiosRequestConfig) {
+        return AuthentificationApiFp(this.configuration).exchangeOAuthToken(oAuthTokenRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
 
 
 /**

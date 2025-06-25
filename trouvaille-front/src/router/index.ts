@@ -28,6 +28,13 @@ const router = createRouter({
       props: true
     },
     {
+      path: '/annonces/:id/edit',
+      name: 'edit-annonce',
+      component: () => import('../views/CreateAnnonceView.vue'),
+      props: true,
+      meta: { requiresAuth: true }
+    },
+    {
       path: '/my-annonces',
       name: 'my-annonces',
       component: () => import('../views/MyAnnoncesView.vue'),
@@ -48,16 +55,9 @@ const router = createRouter({
 
 // Navigation guard for protected routes
 router.beforeEach((to, from, next) => {
-  console.log('Router beforeEach:', {
-    to: to.fullPath,
-    from: from.fullPath,
-    name: to.name
-  })
-  
   const authStore = useAuthStore()
   
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
-    console.log('Redirecting to login for protected route')
     authStore.login()
     return
   }
@@ -65,13 +65,5 @@ router.beforeEach((to, from, next) => {
   next()
 })
 
-// Add debug for route changes
-router.afterEach((to, from) => {
-  console.log('Router afterEach:', {
-    to: to.fullPath,
-    from: from.fullPath,
-    name: to.name
-  })
-})
 
 export default router

@@ -18,7 +18,7 @@
           <h1 class="text-3xl font-bold text-gray-900 mb-2">Trouvaille</h1>
           <p class="text-gray-600 mb-8">Plateforme de petites annonces privée</p>
           <button 
-            @click="() => authStore.login()" 
+            @click="authStore.login" 
             class="btn-primary w-full py-3 text-lg"
           >
             Se connecter

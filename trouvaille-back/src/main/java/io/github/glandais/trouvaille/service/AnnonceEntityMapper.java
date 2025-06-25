@@ -31,7 +31,6 @@ public abstract class AnnonceEntityMapper {
         return mapUserEntity(userEntity);
     }
 
-    @Mapping(target = "pseudo", source = "username")
     protected abstract Utilisateur mapUserEntity(UserEntity userEntity);
 
     @Named("mapDistance")
