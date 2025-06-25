@@ -18,6 +18,11 @@ paths:
           description: Type d'annonce
           schema:
             $ref: '#/components/schemas/AnnonceType'
+        - name: statut
+          in: query
+          description: Statut de l'annonce
+          schema:
+            $ref: '#/components/schemas/AnnonceStatut'
         - name: nature
           in: query
           description: Nature de l'annonce

@@ -34,7 +34,7 @@ public class AnnonceService {
     // PUBLIC API METHODS
     // ===============================
 
-    public Annonces listAnnonces(AnnonceType type, AnnonceNature nature, BigInteger page, BigInteger limit, String search, String userPseudo, BigDecimal prixMin, BigDecimal prixMax, Double latitude, Double longitude, BigDecimal distanceMax, String sortBy, String sortOrder) {
+    public Annonces listAnnonces(AnnonceType type, AnnonceStatut statut, AnnonceNature nature, BigInteger page, BigInteger limit, String search, String userPseudo, BigDecimal prixMin, BigDecimal prixMax, Double latitude, Double longitude, BigDecimal distanceMax, String sortBy, String sortOrder) {
         // Pagination parameters
         int pageNumber = page != null ? page.intValue() - 1 : 0; // Convert to 0-based
         int pageSize = limit != null ? limit.intValue() : 20;
@@ -47,11 +47,11 @@ public class AnnonceService {
         boolean hasGeoQuery = latitude != null && longitude != null;
 
         if (hasGeoQuery) {
-            return executeGeoSpatialQuery(type, nature, search, userPseudo, prixMin, prixMax,
+            return executeGeoSpatialQuery(type, statut, nature, search, userPseudo, prixMin, prixMax,
                     latitude, longitude, distanceMax, sortBy, sortOrder,
                     pageNumber, pageSize);
         } else {
-            return executeRegularQuery(type, nature, search, userPseudo, prixMin, prixMax,
+            return executeRegularQuery(type, statut, nature, search, userPseudo, prixMin, prixMax,
                     sortBy, sortOrder, pageNumber, pageSize);
         }
     }
@@ -92,7 +92,7 @@ public class AnnonceService {
     // QUERY EXECUTION METHODS
     // ===============================
 
-    private Annonces executeGeoSpatialQuery(AnnonceType type, AnnonceNature nature, String search,
+    private Annonces executeGeoSpatialQuery(AnnonceType type, AnnonceStatut statut, AnnonceNature nature, String search,
                                             String userPseudo, BigDecimal prixMin, BigDecimal prixMax,
                                             Double latitude, Double longitude, BigDecimal distanceMax,
                                             String sortBy, String sortOrder, int pageNumber, int pageSize) {
@@ -115,7 +115,7 @@ public class AnnonceService {
         pipeline.add(new Document("$geoNear", geoNearOptions));
 
         // Add match stage for other filters
-        Document matchStage = buildMatchStage(type, nature, search, userPseudo, prixMin, prixMax);
+        Document matchStage = buildMatchStage(type, statut, nature, search, userPseudo, prixMin, prixMax);
         if (!matchStage.isEmpty()) {
             pipeline.add(Aggregates.match(matchStage));
         }
@@ -172,7 +172,7 @@ public class AnnonceService {
         return result;
     }
 
-    private Annonces executeRegularQuery(AnnonceType type, AnnonceNature nature, String search,
+    private Annonces executeRegularQuery(AnnonceType type, AnnonceStatut statut, AnnonceNature nature, String search,
                                          String userPseudo, BigDecimal prixMin, BigDecimal prixMax,
                                          String sortBy, String sortOrder, int pageNumber, int pageSize) {
 
@@ -180,9 +180,8 @@ public class AnnonceService {
         StringBuilder queryBuilder = new StringBuilder();
         List<Object> parameters = new ArrayList<>();
 
-        // Only show active annonces
-        queryBuilder.append("statut = ?").append(parameters.size() + 1);
-        parameters.add(AnnonceEntityStatut.active);
+        // Apply status filtering logic
+        applyStatusFilter(queryBuilder, parameters, statut, userPseudo);
 
         // Filter by type
         if (type != null) {
@@ -299,12 +298,12 @@ public class AnnonceService {
         return Sort.by(field, direction);
     }
 
-    private Document buildMatchStage(AnnonceType type, AnnonceNature nature, String search,
+    private Document buildMatchStage(AnnonceType type, AnnonceStatut statut, AnnonceNature nature, String search,
                                      String userPseudo, BigDecimal prixMin, BigDecimal prixMax) {
         Document matchStage = new Document();
 
-        // Only show active annonces
-        matchStage.append("statut", AnnonceEntityStatut.active.toString());
+        // Apply status filtering logic
+        applyStatusFilterToMatchStage(matchStage, statut, userPseudo);
 
         // Filter by type
         if (type != null) {
@@ -368,6 +367,55 @@ public class AnnonceService {
 
         sortStage.append(sortField, direction);
         return sortStage;
+    }
+
+    private void applyStatusFilter(StringBuilder queryBuilder, List<Object> parameters, AnnonceStatut statut, String userPseudo) {
+        if (userPseudo == null || userPseudo.trim().isEmpty()) {
+            // No user specified - only show active annonces
+            queryBuilder.append("statut = ?").append(parameters.size() + 1);
+            parameters.add(AnnonceEntityStatut.active);
+        } else {
+            // User specified - check if it's the current user
+            UserEntity currentUser = userService.getCurrentUser();
+            UserEntity targetUser = userService.getUser(userPseudo);
+            
+            if (targetUser != null && currentUser.getId().equals(targetUser.getId())) {
+                // Current user viewing their own annonces
+                if (statut != null) {
+                    // Apply specific status filter
+                    queryBuilder.append("statut = ?").append(parameters.size() + 1);
+                    parameters.add(annonceMapper.mapAnnonceStatut(statut));
+                }
+                // If no status specified, show all statuses (no filter)
+            } else {
+                // Different user - only show active annonces
+                queryBuilder.append("statut = ?").append(parameters.size() + 1);
+                parameters.add(AnnonceEntityStatut.active);
+            }
+        }
+    }
+
+    private void applyStatusFilterToMatchStage(Document matchStage, AnnonceStatut statut, String userPseudo) {
+        if (userPseudo == null || userPseudo.trim().isEmpty()) {
+            // No user specified - only show active annonces
+            matchStage.append("statut", AnnonceEntityStatut.active.toString());
+        } else {
+            // User specified - check if it's the current user
+            UserEntity currentUser = userService.getCurrentUser();
+            UserEntity targetUser = userService.getUser(userPseudo);
+            
+            if (targetUser != null && currentUser.getId().equals(targetUser.getId())) {
+                // Current user viewing their own annonces
+                if (statut != null) {
+                    // Apply specific status filter
+                    matchStage.append("statut", annonceMapper.mapAnnonceStatut(statut).toString());
+                }
+                // If no status specified, show all statuses (no filter)
+            } else {
+                // Different user - only show active annonces
+                matchStage.append("statut", AnnonceEntityStatut.active.toString());
+            }
+        }
     }
 
     // ===============================

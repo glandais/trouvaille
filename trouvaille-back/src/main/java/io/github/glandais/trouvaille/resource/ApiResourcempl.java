@@ -20,8 +20,8 @@ public class ApiResourcempl implements ApiResource {
     final PhotoService photoService;
 
     @Override
-    public Annonces listAnnonces(AnnonceType type, AnnonceNature nature, BigInteger page, BigInteger limit, String search, String userPseudo, BigDecimal prixMin, BigDecimal prixMax, Double latitude, Double longitude, BigDecimal distanceMax, String sortBy, String sortOrder) {
-        return annonceService.listAnnonces(type, nature, page, limit, search, userPseudo, prixMin, prixMax, latitude, longitude, distanceMax, sortBy, sortOrder);
+    public Annonces listAnnonces(AnnonceType type, AnnonceStatut statut, AnnonceNature nature, BigInteger page, BigInteger limit, String search, String userPseudo, BigDecimal prixMin, BigDecimal prixMax, Double latitude, Double longitude, BigDecimal distanceMax, String sortBy, String sortOrder) {
+        return annonceService.listAnnonces(type, statut, nature, page, limit, search, userPseudo, prixMin, prixMax, latitude, longitude, distanceMax, sortBy, sortOrder);
     }
 
     @Override
