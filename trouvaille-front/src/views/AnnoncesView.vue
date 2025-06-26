@@ -4,11 +4,7 @@
       <!-- Header -->
       <div class="flex justify-between items-center mb-8">
         <h1 class="text-3xl font-bold text-gray-900">Annonces</h1>
-        <router-link 
-          v-if="authStore.isAuthenticated" 
-          to="/annonces/create" 
-          class="btn-primary"
-        >
+        <router-link v-if="authStore.isAuthenticated" to="/annonces/create" class="btn-primary">
           <PlusIcon class="h-4 w-4 mr-2" />
           Créer une annonce
         </router-link>
@@ -34,14 +30,12 @@
 
           <!-- Type -->
           <div>
-            <label for="type" class="block text-sm font-medium text-gray-700 mb-1">
-              Type
-            </label>
+            <label for="type" class="block text-sm font-medium text-gray-700 mb-1"> Type </label>
             <select
               id="type"
               v-model="filters.type"
               class="form-input"
-              @change="fetchAnnonces"
+              @change="() => fetchAnnonces()"
             >
               <option value="">Tous</option>
               <option :value="AnnonceType.Vente">Vente</option>
@@ -58,7 +52,7 @@
               id="nature"
               v-model="filters.nature"
               class="form-input"
-              @change="fetchAnnonces"
+              @change="() => fetchAnnonces()"
             >
               <option value="">Toutes</option>
               <option :value="AnnonceNature.Offre">Offre</option>
@@ -71,12 +65,7 @@
             <label for="sort" class="block text-sm font-medium text-gray-700 mb-1">
               Trier par
             </label>
-            <select
-              id="sort"
-              v-model="sortOption"
-              class="form-input"
-              @change="handleSortChange"
-            >
+            <select id="sort" v-model="sortOption" class="form-input" @change="handleSortChange">
               <option value="date_creation_desc">Plus récent</option>
               <option value="date_creation_asc">Plus ancien</option>
               <option value="prix_asc">Prix croissant</option>
@@ -204,18 +193,15 @@
       <div v-else>
         <!-- Results count -->
         <div class="flex justify-between items-center mb-6">
-          <p class="text-gray-600">
-            {{ pagination?.totalElements || 0 }} annonce(s) trouvée(s)
-          </p>
+          <p class="text-gray-600">{{ pagination?.total_elements || 0 }} annonce(s) trouvée(s)</p>
         </div>
 
         <!-- Annonces Grid -->
-        <div v-if="annonces.length > 0" class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          <AnnonceCard
-            v-for="annonce in annonces"
-            :key="annonce.id"
-            :annonce="annonce"
-          />
+        <div
+          v-if="annonces.length > 0"
+          class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
+        >
+          <AnnonceCard v-for="annonce in annonces" :key="annonce.id" :annonce="annonce" />
         </div>
 
         <!-- Empty State -->
@@ -225,19 +211,17 @@
           </div>
           <h3 class="text-lg font-medium text-gray-900 mb-2">Aucune annonce trouvée</h3>
           <p class="text-gray-600 mb-6">Essayez de modifier vos critères de recherche</p>
-          <button @click="clearAllFilters" class="btn-primary">
-            Effacer les filtres
-          </button>
+          <button @click="clearAllFilters" class="btn-primary">Effacer les filtres</button>
         </div>
 
         <!-- Pagination -->
-        <div v-if="pagination && pagination.totalPages > 1" class="mt-12">
+        <div v-if="pagination && pagination.total_pages > 1" class="mt-12">
           <nav class="flex justify-center">
             <div class="flex space-x-2">
               <!-- Previous -->
               <button
-                :disabled="pagination.pageCourante <= 1"
-                @click="changePage(pagination.pageCourante - 1)"
+                :disabled="pagination.page_courante <= 1"
+                @click="changePage(pagination.page_courante - 1)"
                 class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Précédent
@@ -249,19 +233,19 @@
                 :key="page"
                 :class="[
                   'px-3 py-2 text-sm font-medium rounded-md',
-                  page === pagination.pageCourante
+                  page === pagination.page_courante
                     ? 'bg-blue-600 text-white'
-                    : 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-50'
+                    : 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-50',
                 ]"
-                @click="changePage(page)"
+                @click="changePage(typeof page === 'number' ? page : 1)"
               >
                 {{ page }}
               </button>
 
               <!-- Next -->
               <button
-                :disabled="pagination.pageCourante >= pagination.totalPages"
-                @click="changePage(pagination.pageCourante + 1)"
+                :disabled="pagination.page_courante >= pagination.total_pages"
+                @click="changePage(pagination.page_courante + 1)"
                 class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Suivant
@@ -276,17 +260,23 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { useDebounceFn } from '@vueuse/core'
 import { useAuthStore } from '../stores/auth'
 import { annoncesApi } from '../services/api'
-import { AnnonceList, AnnonceType, AnnonceNature, Pagination } from '../api'
+import {
+  AnnonceList,
+  AnnonceType,
+  AnnonceNature,
+  Pagination,
+  ListAnnoncesSortByEnum,
+  ListAnnoncesSortOrderEnum,
+} from '../api'
 import AppLayout from '../components/AppLayout.vue'
 import AnnonceCard from '../components/AnnonceCard.vue'
 import { PlusIcon, XMarkIcon, MagnifyingGlassIcon } from '@heroicons/vue/24/outline'
 
 const route = useRoute()
-const router = useRouter()
 const authStore = useAuthStore()
 
 const annonces = ref<AnnonceList[]>([])
@@ -303,12 +293,18 @@ const filters = ref({
   prixMax: '',
   distanceMax: '',
   latitude: null as number | null,
-  longitude: null as number | null
+  longitude: null as number | null,
 })
 
 const hasActiveFilters = computed(() => {
-  return filters.value.search || filters.value.type || filters.value.nature || 
-         filters.value.prixMin || filters.value.prixMax || filters.value.distanceMax
+  return (
+    filters.value.search ||
+    filters.value.type ||
+    filters.value.nature ||
+    filters.value.prixMin ||
+    filters.value.prixMax ||
+    filters.value.distanceMax
+  )
 })
 
 const fetchAnnonces = async (page = 1) => {
@@ -316,14 +312,14 @@ const fetchAnnonces = async (page = 1) => {
   try {
     const [sortBy, sortOrder] = sortOption.value.split('_')
     const realSortBy = sortBy === 'date' ? `${sortBy}_creation` : sortBy
-    
-    const typeParam = filters.value.type || undefined
+
+    const typeParam = (filters.value.type as AnnonceType | undefined) || undefined
     const natureParam = filters.value.nature || undefined
-    
+
     const response = await annoncesApi.listAnnonces(
       typeParam,
       undefined, // statut
-      natureParam,
+      natureParam as AnnonceNature | undefined,
       page,
       12, // limit
       filters.value.search || undefined,
@@ -333,8 +329,8 @@ const fetchAnnonces = async (page = 1) => {
       filters.value.latitude || undefined,
       filters.value.longitude || undefined,
       filters.value.distanceMax ? parseFloat(filters.value.distanceMax) : undefined,
-      realSortBy,
-      sortOrder === 'desc' ? 'desc' : 'asc'
+      realSortBy as ListAnnoncesSortByEnum,
+      sortOrder === 'desc' ? ListAnnoncesSortOrderEnum.Desc : ListAnnoncesSortOrderEnum.Asc,
     )
 
     annonces.value = response.data.data || []
@@ -359,8 +355,8 @@ const changePage = (page: number) => {
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
-const clearFilter = (filterKey: string) => {
-  (filters.value as any)[filterKey] = ''
+const clearFilter = (filterKey: keyof typeof filters.value) => {
+  ;(filters.value[filterKey] as string) = ''
   fetchAnnonces()
 }
 
@@ -373,7 +369,7 @@ const clearAllFilters = () => {
     prixMax: '',
     distanceMax: '',
     latitude: null,
-    longitude: null
+    longitude: null,
   }
   locationSearch.value = ''
   sortOption.value = 'date_creation_desc'
@@ -381,60 +377,44 @@ const clearAllFilters = () => {
 }
 
 const getTypeLabel = (type: string) => {
-  const labels = { vente: 'Vente', location: 'Location' }
-  return (labels as any)[type] || type
+  const labels: Record<string, string> = { vente: 'Vente', location: 'Location' }
+  return labels[type] || type
 }
 
 const getNatureLabel = (nature: string) => {
-  const labels = { offre: 'Offre', demande: 'Demande' }
-  return (labels as any)[nature] || nature
+  const labels: Record<string, string> = { offre: 'Offre', demande: 'Demande' }
+  return labels[nature] || nature
 }
 
 const getVisiblePages = () => {
   if (!pagination.value) return []
-  
-  const current = pagination.value.pageCourante
-  const total = pagination.value.totalPages
+
+  const current = pagination.value.page_courante
+  const total = pagination.value.total_pages
   const delta = 2
-  
+
   const range = []
   const rangeWithDots = []
-  
+
   for (let i = Math.max(2, current - delta); i <= Math.min(total - 1, current + delta); i++) {
     range.push(i)
   }
-  
+
   if (current - delta > 2) {
     rangeWithDots.push(1, '...')
   } else {
     rangeWithDots.push(1)
   }
-  
+
   rangeWithDots.push(...range)
-  
+
   if (current + delta < total - 1) {
     rangeWithDots.push('...', total)
   } else if (total > 1) {
     rangeWithDots.push(total)
   }
-  
-  return rangeWithDots.filter((page, index, arr) => arr.indexOf(page) === index)
-}
 
-// Geolocation handling
-const requestLocation = () => {
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        filters.value.latitude = position.coords.latitude
-        filters.value.longitude = position.coords.longitude
-        fetchAnnonces()
-      },
-      (error) => {
-        console.error('Geolocation error:', error)
-      }
-    )
-  }
+  return rangeWithDots.filter((page, index, arr) => arr.indexOf(page) === index)
 }
 
 onMounted(() => {
@@ -443,14 +423,17 @@ onMounted(() => {
   if (query.search) filters.value.search = query.search as string
   if (query.type) filters.value.type = query.type as string
   if (query.nature) filters.value.nature = query.nature as string
-  
+
   fetchAnnonces()
 })
 
 // Watch for route changes
-watch(() => route.query, (newQuery) => {
-  if (route.name === 'annonces') {
-    fetchAnnonces()
-  }
-})
+watch(
+  () => route.query,
+  () => {
+    if (route.name === 'annonces') {
+      fetchAnnonces()
+    }
+  },
+)
 </script>

@@ -1,12 +1,7 @@
 <template>
   <div class="markdown-editor">
     <div class="editor-container">
-      <Editor
-        v-model="content"
-        :plugins="plugins"
-        :locale="locale"
-        @change="handleChange"
-      />
+      <Editor v-model="content" :plugins="plugins" :locale="locale" @change="handleChange" />
     </div>
   </div>
 </template>
@@ -31,30 +26,27 @@ interface Emits {
 
 const props = withDefaults(defineProps<Props>(), {
   placeholder: 'Écrivez votre description en markdown...',
-  maxLength: 2000
+  maxLength: 2000,
 })
 
 const emit = defineEmits<Emits>()
 
 const content = ref(props.modelValue)
 
-const plugins = [
-  gfm(),
-  highlight()
-]
+const plugins = [gfm(), highlight()]
 
 const locale = {
   write: 'Écrire',
   preview: 'Aperçu',
   writeOnly: 'Écriture seule',
   previewOnly: 'Aperçu seul',
-  exitWriteOnly: 'Quitter l\'écriture seule',
-  exitPreviewOnly: 'Quitter l\'aperçu seul',
+  exitWriteOnly: "Quitter l'écriture seule",
+  exitPreviewOnly: "Quitter l'aperçu seul",
   exportPdf: 'Exporter en PDF',
   fullscreen: 'Plein écran',
   exitFullscreen: 'Quitter le plein écran',
   cheatsheet: 'Aide-mémoire',
-  closeCheatsheet: 'Fermer l\'aide-mémoire'
+  closeCheatsheet: "Fermer l'aide-mémoire",
 }
 
 const handleChange = (value: string) => {
@@ -65,11 +57,14 @@ const handleChange = (value: string) => {
   emit('update:modelValue', value)
 }
 
-watch(() => props.modelValue, (newValue) => {
-  if (newValue !== content.value) {
-    content.value = newValue
-  }
-})
+watch(
+  () => props.modelValue,
+  (newValue) => {
+    if (newValue !== content.value) {
+      content.value = newValue
+    }
+  },
+)
 </script>
 
 <style scoped>
@@ -106,15 +101,15 @@ watch(() => props.modelValue, (newValue) => {
   .editor-container :deep(.bytemd-toolbar) {
     @apply bg-gray-800 border-gray-700;
   }
-  
+
   .editor-container :deep(.bytemd-editor) {
     @apply bg-gray-900 text-white;
   }
-  
+
   .editor-container :deep(.bytemd-preview) {
     @apply bg-gray-800 text-gray-100;
   }
-  
+
   .editor-container :deep(.bytemd-split) {
     @apply border-gray-700;
   }

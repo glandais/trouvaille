@@ -10,67 +10,61 @@ import io.github.glandais.trouvaille.openapi.beans.OAuthTokenResponse;
 import io.smallrye.jwt.build.Jwt;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import lombok.extern.slf4j.Slf4j;
-import org.eclipse.microprofile.rest.client.inject.RestClient;
-
 import java.time.Duration;
 import java.util.Set;
+import lombok.extern.slf4j.Slf4j;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 @ApplicationScoped
 @Slf4j
 public class AuthService {
 
-    @Inject
-    UserService userService;
+  @Inject UserService userService;
 
-    @Inject
-    OAuthConfig oauthConfig;
+  @Inject OAuthConfig oauthConfig;
 
-    @Inject
-    @RestClient
-    OAuth2Client mattermostClient;
+  @Inject @RestClient OAuth2Client mattermostClient;
 
-    public OAuthTokenResponse exchangeOAuthToken(OAuthTokenRequest request) {
-        log.info("Exchanging OAuth code for token");
+  public OAuthTokenResponse exchangeOAuthToken(OAuthTokenRequest request) {
+    log.info("Exchanging OAuth code for token");
 
-        try {
-            // Exchange code for access token
-            TokenResponse tokenResponse = mattermostClient.exchangeToken(
-                    "authorization_code",
-                    oauthConfig.clientId(),
-                    oauthConfig.clientSecret(),
-                    request.getRedirectUri(),
-                    request.getCode()
-            );
+    try {
+      // Exchange code for access token
+      TokenResponse tokenResponse =
+          mattermostClient.exchangeToken(
+              "authorization_code",
+              oauthConfig.clientId(),
+              oauthConfig.clientSecret(),
+              request.getRedirectUri(),
+              request.getCode());
 
-            // Get user info
-            User user = mattermostClient.getCurrentUser(
-                    "Bearer " + tokenResponse.getAccessToken()
-            );
+      // Get user info
+      User user = mattermostClient.getCurrentUser("Bearer " + tokenResponse.getAccessToken());
 
-            UserEntity userEntity = userService.getUserEntity(user.getId(), user.getUsername(), user.getNickname());
+      UserEntity userEntity =
+          userService.getUserEntity(user.getId(), user.getUsername(), user.getNickname());
 
-            // Create JWT token for our application
-            String jwtToken = Jwt.issuer("trouvaille")
-                    .upn(user.getUsername())
-                    .groups(Set.of("user"))
-                    .claim("sub", userEntity.getId())
-                    .claim("externalId", userEntity.getExternalId())
-                    .claim("username", userEntity.getUsername())
-                    .claim("nickname", userEntity.getNickname())
-                    .expiresIn(Duration.ofHours(24))
-                    .sign();
+      // Create JWT token for our application
+      String jwtToken =
+          Jwt.issuer("trouvaille")
+              .upn(user.getUsername())
+              .groups(Set.of("user"))
+              .claim("sub", userEntity.getId())
+              .claim("externalId", userEntity.getExternalId())
+              .claim("username", userEntity.getUsername())
+              .claim("nickname", userEntity.getNickname())
+              .expiresIn(Duration.ofHours(24))
+              .sign();
 
-            OAuthTokenResponse response = new OAuthTokenResponse();
-            response.setAccessToken(jwtToken);
+      OAuthTokenResponse response = new OAuthTokenResponse();
+      response.setAccessToken(jwtToken);
 
-            log.info("OAuth token exchange successful for user: {}", user.getUsername());
-            return response;
+      log.info("OAuth token exchange successful for user: {}", user.getUsername());
+      return response;
 
-        } catch (Exception e) {
-            log.error("Failed to exchange OAuth token", e);
-            throw new RuntimeException("OAuth token exchange failed", e);
-        }
+    } catch (Exception e) {
+      log.error("Failed to exchange OAuth token", e);
+      throw new RuntimeException("OAuth token exchange failed", e);
     }
-
+  }
 }

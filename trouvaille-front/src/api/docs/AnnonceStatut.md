@@ -1,12 +1,11 @@
 # AnnonceStatut
 
-
 ## Enum
 
-* `Active` (value: `'active'`)
+- `Active` (value: `'active'`)
 
-* `Suspendue` (value: `'suspendue'`)
+- `Suspendue` (value: `'suspendue'`)
 
-* `Vendue` (value: `'vendue'`)
+- `Vendue` (value: `'vendue'`)
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

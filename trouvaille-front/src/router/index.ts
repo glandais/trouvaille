@@ -8,62 +8,61 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: () => import('../views/HomeView.vue')
+      component: () => import('../views/HomeView.vue'),
     },
     {
       path: '/annonces',
       name: 'annonces',
-      component: () => import('../views/AnnoncesView.vue')
+      component: () => import('../views/AnnoncesView.vue'),
     },
     {
       path: '/annonces/create',
       name: 'create-annonce',
       component: () => import('../views/CreateAnnonceView.vue'),
-      meta: { requiresAuth: true }
+      meta: { requiresAuth: true },
     },
     {
       path: '/annonces/:id',
       name: 'annonce-detail',
       component: () => import('../views/AnnonceDetailView.vue'),
-      props: true
+      props: true,
     },
     {
       path: '/annonces/:id/edit',
       name: 'edit-annonce',
       component: () => import('../views/CreateAnnonceView.vue'),
       props: true,
-      meta: { requiresAuth: true }
+      meta: { requiresAuth: true },
     },
     {
       path: '/my-annonces',
       name: 'my-annonces',
       component: () => import('../views/MyAnnoncesView.vue'),
-      meta: { requiresAuth: true }
+      meta: { requiresAuth: true },
     },
     {
       path: '/oauth/callback',
       name: 'oauth-callback',
-      component: OAuthCallbackView
+      component: OAuthCallbackView,
     },
     {
       path: '/:pathMatch(.*)*',
       name: 'not-found',
-      component: () => import('../views/NotFoundView.vue')
-    }
-  ]
+      component: () => import('../views/NotFoundView.vue'),
+    },
+  ],
 })
 
 // Navigation guard for protected routes
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore()
-  
+
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
     authStore.login()
     return
   }
-  
+
   next()
 })
-
 
 export default router

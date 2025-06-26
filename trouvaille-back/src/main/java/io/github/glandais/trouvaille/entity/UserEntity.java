@@ -1,6 +1,5 @@
 package io.github.glandais.trouvaille.entity;
 
-import io.quarkus.arc.All;
 import io.quarkus.mongodb.panache.common.MongoEntity;
 import lombok.*;
 import org.bson.types.ObjectId;
@@ -13,12 +12,11 @@ import org.bson.types.ObjectId;
 @Builder
 public class UserEntity {
 
-    public ObjectId id;
+  public ObjectId id;
 
-    public String externalId;
+  public String externalId;
 
-    public String username;
+  public String username;
 
-    public String nickname;
-
+  public String nickname;
 }

@@ -6,7 +6,7 @@ import { useAuthStore } from '../stores/auth'
 // Create axios instance with base configuration
 const axiosInstance: AxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080',
-  timeout: 10000
+  timeout: 10000,
 })
 
 // Request interceptor to add Bearer token
@@ -20,7 +20,7 @@ axiosInstance.interceptors.request.use(
   },
   (error) => {
     return Promise.reject(error)
-  }
+  },
 )
 
 // Response interceptor to handle auth errors
@@ -32,17 +32,21 @@ axiosInstance.interceptors.response.use(
       authStore.logout()
     }
     return Promise.reject(error)
-  }
+  },
 )
 
 // Create API configuration
 const apiConfiguration = new Configuration({
-  basePath: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'
+  basePath: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080',
 })
 
 // Export API instances
 export const annoncesApi = new AnnoncesApi(apiConfiguration, undefined, axiosInstance)
 export const photosApi = new PhotosApi(apiConfiguration, undefined, axiosInstance)
-export const authentificationApi = new AuthentificationApi(apiConfiguration, undefined, axiosInstance)
+export const authentificationApi = new AuthentificationApi(
+  apiConfiguration,
+  undefined,
+  axiosInstance,
+)
 
 export { axiosInstance }

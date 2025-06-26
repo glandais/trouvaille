@@ -15,8 +15,16 @@
     <div v-else class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <!-- Header -->
       <div class="mb-8">
-        <h1 class="text-3xl font-bold text-gray-900">{{ isEditMode ? 'Modifier l\'annonce' : 'Créer une annonce' }}</h1>
-        <p class="mt-2 text-gray-600">{{ isEditMode ? 'Modifiez les informations de votre annonce' : 'Remplissez les informations ci-dessous pour publier votre annonce' }}</p>
+        <h1 class="text-3xl font-bold text-gray-900">
+          {{ isEditMode ? "Modifier l'annonce" : 'Créer une annonce' }}
+        </h1>
+        <p class="mt-2 text-gray-600">
+          {{
+            isEditMode
+              ? 'Modifiez les informations de votre annonce'
+              : 'Remplissez les informations ci-dessous pour publier votre annonce'
+          }}
+        </p>
       </div>
 
       <!-- Form -->
@@ -24,7 +32,7 @@
         <!-- Basic Information -->
         <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           <h2 class="text-xl font-semibold text-gray-900 mb-6">Informations générales</h2>
-          
+
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Type -->
             <div>
@@ -110,7 +118,7 @@
         <!-- Price -->
         <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           <h2 class="text-xl font-semibold text-gray-900 mb-6">Prix</h2>
-          
+
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Price -->
             <div>
@@ -136,11 +144,7 @@
               <label for="periodeLocation" class="block text-sm font-medium text-gray-700 mb-2">
                 Période de location
               </label>
-              <select
-                id="periodeLocation"
-                v-model="form.periodeLocation"
-                class="form-input"
-              >
+              <select id="periodeLocation" v-model="form.periode_location" class="form-input">
                 <option value="">Non spécifiée</option>
                 <option :value="PeriodeLocation.Jour">Par jour</option>
                 <option :value="PeriodeLocation.Semaine">Par semaine</option>
@@ -153,7 +157,7 @@
         <!-- Status (only in edit mode) -->
         <div v-if="isEditMode" class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           <h2 class="text-xl font-semibold text-gray-900 mb-6">Statut de l'annonce</h2>
-          
+
           <div>
             <label for="statut" class="block text-sm font-medium text-gray-700 mb-2">
               Statut *
@@ -171,7 +175,8 @@
             </select>
             <p v-if="errors.statut" class="mt-1 text-sm text-red-600">{{ errors.statut }}</p>
             <p class="mt-1 text-sm text-gray-500">
-              Changez le statut pour suspendre temporairement votre annonce ou la marquer comme vendue/louée
+              Changez le statut pour suspendre temporairement votre annonce ou la marquer comme
+              vendue/louée
             </p>
           </div>
         </div>
@@ -179,7 +184,7 @@
         <!-- Photos -->
         <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           <h2 class="text-xl font-semibold text-gray-900 mb-6">Photos</h2>
-          
+
           <!-- Photo Upload -->
           <div class="mb-6">
             <label class="block text-sm font-medium text-gray-700 mb-2">
@@ -201,10 +206,10 @@
               />
               <PhotoIcon class="h-12 w-12 text-gray-400 mx-auto mb-4" />
               <p class="text-gray-600 mb-2">
-                Glissez-déposez vos photos ici ou 
+                Glissez-déposez vos photos ici ou
                 <button
                   type="button"
-                  @click="$refs.fileInput.click()"
+                  @click="($refs.fileInput as HTMLInputElement)?.click()"
                   class="text-blue-600 hover:text-blue-700 underline"
                 >
                   parcourez vos fichiers
@@ -218,19 +223,17 @@
 
           <!-- Photo Preview Grid -->
           <div v-if="uploadedPhotos.length > 0" class="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div
-              v-for="(photo, index) in uploadedPhotos"
-              :key="photo.id"
-              class="relative group"
-            >
+            <div v-for="(photo, index) in uploadedPhotos" :key="photo.id" class="relative group">
               <img
                 :src="photo.url"
                 :alt="`Photo ${index + 1}`"
                 class="w-full h-32 object-cover rounded-lg border border-gray-200"
               />
-              
+
               <!-- Photo Actions -->
-              <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all rounded-lg flex items-center justify-center">
+              <div
+                class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all rounded-lg flex items-center justify-center"
+              >
                 <div class="opacity-0 group-hover:opacity-100 transition-opacity space-x-2">
                   <button
                     v-if="index > 0"
@@ -263,7 +266,9 @@
 
               <!-- Primary Badge -->
               <div v-if="index === 0" class="absolute top-2 left-2">
-                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                <span
+                  class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+                >
                   Photo principale
                 </span>
               </div>
@@ -294,7 +299,7 @@
         <!-- Location -->
         <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           <h2 class="text-xl font-semibold text-gray-900 mb-6">Localisation</h2>
-          
+
           <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <!-- Address -->
             <div class="md:col-span-2">
@@ -327,25 +332,36 @@
           </div>
 
           <!-- Manual coordinates -->
-          <div v-if="form.coordinates?.latitude && form.coordinates?.longitude" class="mt-4 p-4 bg-green-50 rounded-lg">
+          <div
+            v-if="form.coordinates?.latitude && form.coordinates?.longitude"
+            class="mt-4 p-4 bg-green-50 rounded-lg"
+          >
             <p class="text-sm text-green-800">
               <MapPinIcon class="h-4 w-4 inline mr-1" />
-              Position définie: {{ form.coordinates.latitude.toFixed(4) }}, {{ form.coordinates.longitude.toFixed(4) }}
+              Position définie: {{ form.coordinates.latitude.toFixed(4) }},
+              {{ form.coordinates.longitude.toFixed(4) }}
             </p>
           </div>
         </div>
 
         <!-- Actions -->
         <div class="flex justify-end space-x-4 pt-6 border-t border-gray-200">
-          <router-link :to="isEditMode ? `/annonces/${props.id}` : '/annonces'" class="btn-secondary">
+          <router-link
+            :to="isEditMode ? `/annonces/${props.id}` : '/annonces'"
+            class="btn-secondary"
+          >
             Annuler
           </router-link>
-          <button
-            type="submit"
-            :disabled="submitting"
-            class="btn-primary"
-          >
-            {{ submitting ? (isEditMode ? 'Modification...' : 'Publication...') : (isEditMode ? 'Modifier l\'annonce' : 'Publier l\'annonce') }}
+          <button type="submit" :disabled="submitting" class="btn-primary">
+            {{
+              submitting
+                ? isEditMode
+                  ? 'Modification...'
+                  : 'Publication...'
+                : isEditMode
+                  ? "Modifier l'annonce"
+                  : "Publier l'annonce"
+            }}
           </button>
         </div>
       </form>
@@ -358,7 +374,16 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useDebounceFn } from '@vueuse/core'
 import { annoncesApi, photosApi } from '../services/api'
-import { AnnonceCreate, AnnonceUpdate, AnnonceType, AnnonceNature, AnnonceStatut, PeriodeLocation, Coordinates, Annonce } from '../api'
+import {
+  AnnonceCreate,
+  AnnonceUpdate,
+  AnnonceType,
+  AnnonceNature,
+  AnnonceStatut,
+  PeriodeLocation,
+  Coordinates,
+  Annonce,
+} from '../api'
 import AppLayout from '../components/AppLayout.vue'
 import MarkdownEditor from '../components/MarkdownEditor.vue'
 import {
@@ -366,7 +391,7 @@ import {
   MapPinIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
-  TrashIcon
+  TrashIcon,
 } from '@heroicons/vue/24/outline'
 import { photoService } from '../services/photoService'
 
@@ -379,21 +404,21 @@ const router = useRouter()
 const route = useRoute()
 
 const form = reactive<AnnonceCreate & { statut?: AnnonceStatut }>({
-  type: undefined,
-  nature: undefined,
+  type: AnnonceType.Vente,
+  nature: AnnonceNature.Offre,
   titre: '',
   description: '',
   prix: undefined,
   periode_location: undefined,
-  coordinates: undefined,
+  coordinates: { latitude: 0, longitude: 0 },
   photos_ids: [],
-  statut: undefined
+  statut: undefined,
 })
 
 const errors = ref<Record<string, string>>({})
 const submitting = ref(false)
-const uploadedPhotos = ref<Array<{ id: string, url: string }>>([])
-const uploadingPhotos = ref<Array<{ name: string, progress: number }>>([])
+const uploadedPhotos = ref<Array<{ id: string; url: string }>>([])
+const uploadingPhotos = ref<Array<{ name: string; progress: number }>>([])
 const addressSearch = ref('')
 const gettingLocation = ref(false)
 const loading = ref(false)
@@ -475,16 +500,15 @@ const uploadPhoto = async (file: File) => {
     // The response data is directly the photo ID (string)
     const photoId = response.data
     const photoUrl = URL.createObjectURL(file)
-    
+
     uploadedPhotos.value.push({ id: photoId, url: photoUrl })
     form.photos_ids?.push(photoId)
-
   } catch (error) {
     console.error('Failed to upload photo:', error)
     alert(`Erreur lors de l'upload de ${file.name}`)
   } finally {
     // Remove from uploading list
-    const index = uploadingPhotos.value.findIndex(up => up.name === file.name)
+    const index = uploadingPhotos.value.findIndex((up) => up.name === file.name)
     if (index > -1) {
       uploadingPhotos.value.splice(index, 1)
     }
@@ -493,13 +517,13 @@ const uploadPhoto = async (file: File) => {
 
 const removePhoto = async (index: number) => {
   const photo = uploadedPhotos.value[index]
-  
+
   try {
     await photosApi.deletePhoto(photo.id)
     uploadedPhotos.value.splice(index, 1)
-    
+
     if (form.photos_ids) {
-      const photoIndex = form.photos_ids.findIndex(id => id === photo.id)
+      const photoIndex = form.photos_ids.findIndex((id) => id === photo.id)
       if (photoIndex > -1) {
         form.photos_ids.splice(photoIndex, 1)
       }
@@ -515,42 +539,42 @@ const removePhoto = async (index: number) => {
 const movePhoto = (fromIndex: number, toIndex: number) => {
   const photos = [...uploadedPhotos.value]
   const photosIds = [...(form.photos_ids || [])]
-  
+
   // Swap photos
   const temp = photos[fromIndex]
   photos[fromIndex] = photos[toIndex]
   photos[toIndex] = temp
-  
+
   // Swap IDs
   const tempId = photosIds[fromIndex]
   photosIds[fromIndex] = photosIds[toIndex]
   photosIds[toIndex] = tempId
-  
+
   uploadedPhotos.value = photos
   form.photos_ids = photosIds
 }
 
 const getCurrentLocation = () => {
   if (!navigator.geolocation) {
-    alert('La géolocalisation n\'est pas supportée par votre navigateur')
+    alert("La géolocalisation n'est pas supportée par votre navigateur")
     return
   }
 
   gettingLocation.value = true
-  
+
   navigator.geolocation.getCurrentPosition(
     (position) => {
       form.coordinates = {
         latitude: position.coords.latitude,
-        longitude: position.coords.longitude
+        longitude: position.coords.longitude,
       }
       gettingLocation.value = false
     },
     (error) => {
       console.error('Geolocation error:', error)
-      alert('Impossible d\'obtenir votre position')
+      alert("Impossible d'obtenir votre position")
       gettingLocation.value = false
-    }
+    },
   )
 }
 
@@ -560,12 +584,12 @@ const debouncedAddressSearch = useDebounceFn(() => {
 
 const loadExistingAnnonce = async () => {
   if (!props.id) return
-  
+
   loading.value = true
   try {
     const response = await annoncesApi.getAnnonce(props.id)
     existingAnnonce.value = response.data
-    
+
     // Populate form with existing data
     form.type = response.data.type
     form.nature = response.data.nature
@@ -575,11 +599,11 @@ const loadExistingAnnonce = async () => {
     form.periode_location = response.data.periode_location
     form.coordinates = response.data.coordinates
     form.statut = response.data.statut
-    
+
     // Load existing photos
     if (response.data.photos && response.data.photos.length > 0) {
       form.photos_ids = [...response.data.photos]
-      
+
       // Charger les URLs des photos existantes via le service
       const photoPromises = response.data.photos.map(async (photoId) => {
         try {
@@ -590,22 +614,20 @@ const loadExistingAnnonce = async () => {
           return null
         }
       })
-      
+
       const photoResults = await Promise.allSettled(photoPromises)
       uploadedPhotos.value = photoResults
-        .filter(result => result.status === 'fulfilled' && result.value !== null)
-        .map(result => (result as PromiseFulfilledResult<{id: string, url: string}>).value)
+        .filter((result) => result.status === 'fulfilled' && result.value !== null)
+        .map((result) => (result as PromiseFulfilledResult<{ id: string; url: string }>).value)
     }
-    
   } catch (error) {
     console.error('Failed to load annonce:', error)
-    alert('Erreur lors du chargement de l\'annonce')
+    alert("Erreur lors du chargement de l'annonce")
     router.push('/annonces')
   } finally {
     loading.value = false
   }
 }
-
 
 const handleSubmit = async () => {
   if (!validateForm()) return
@@ -625,14 +647,14 @@ const handleSubmit = async () => {
         periode_location: form.periode_location,
         coordinates: form.coordinates!,
         statut: form.statut,
-        photos_ids: form.photos_ids
+        photos_ids: form.photos_ids,
       }
       response = await annoncesApi.putAnnonce(props.id, updateData)
     } else {
       // Create new annonce
       response = await annoncesApi.createAnnonce(form)
     }
-    
+
     router.push(`/annonces/${response.data.id}`)
   } catch (error) {
     console.error('Failed to save annonce:', error)

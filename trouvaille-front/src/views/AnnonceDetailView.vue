@@ -19,10 +19,10 @@
     <div v-else-if="error" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div class="text-center py-12">
         <h2 class="text-2xl font-semibold text-gray-900 mb-2">Annonce non trouvée</h2>
-        <p class="text-gray-600 mb-6">L'annonce que vous cherchez n'existe pas ou a été supprimée.</p>
-        <router-link to="/annonces" class="btn-primary">
-          Retour aux annonces
-        </router-link>
+        <p class="text-gray-600 mb-6">
+          L'annonce que vous cherchez n'existe pas ou a été supprimée.
+        </p>
+        <router-link to="/annonces" class="btn-primary"> Retour aux annonces </router-link>
       </div>
     </div>
 
@@ -32,9 +32,7 @@
       <nav class="flex mb-8" aria-label="Breadcrumb">
         <ol class="flex items-center space-x-4">
           <li>
-            <router-link to="/" class="text-gray-400 hover:text-gray-500">
-              Accueil
-            </router-link>
+            <router-link to="/" class="text-gray-400 hover:text-gray-500"> Accueil </router-link>
           </li>
           <li>
             <ChevronRightIcon class="h-4 w-4 text-gray-400" />
@@ -64,11 +62,17 @@
               @click="openPhotoModal"
               @error="onImageError"
             />
-            <div v-else-if="fullPhotoLoading" class="w-full h-96 flex items-center justify-center bg-gray-100">
+            <div
+              v-else-if="fullPhotoLoading"
+              class="w-full h-96 flex items-center justify-center bg-gray-100"
+            >
               <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
               <span class="ml-2 text-sm text-gray-600">Chargement de la photo...</span>
             </div>
-            <div v-else-if="fullPhotoError" class="w-full h-96 flex items-center justify-center bg-red-50">
+            <div
+              v-else-if="fullPhotoError"
+              class="w-full h-96 flex items-center justify-center bg-red-50"
+            >
               <div class="text-center">
                 <PhotoIcon class="h-16 w-16 text-red-400 mx-auto mb-2" />
                 <p class="text-sm text-red-600">Erreur de chargement</p>
@@ -87,7 +91,9 @@
               @click="currentPhotoIndex = index"
               :class="[
                 'aspect-w-1 aspect-h-1 rounded-lg overflow-hidden border-2 transition-colors',
-                currentPhotoIndex === index ? 'border-blue-500' : 'border-gray-200 hover:border-gray-300'
+                currentPhotoIndex === index
+                  ? 'border-blue-500'
+                  : 'border-gray-200 hover:border-gray-300',
               ]"
             >
               <img
@@ -97,7 +103,10 @@
                 class="w-full h-20 object-cover"
                 @error="onImageError"
               />
-              <div v-else-if="thumbErrors[photo]" class="w-full h-20 flex items-center justify-center bg-red-50">
+              <div
+                v-else-if="thumbErrors[photo]"
+                class="w-full h-20 flex items-center justify-center bg-red-50"
+              >
                 <PhotoIcon class="h-4 w-4 text-red-400" />
               </div>
               <div v-else class="w-full h-20 flex items-center justify-center bg-gray-100">
@@ -124,9 +133,9 @@
                 </span>
               </div>
             </div>
-            
+
             <h1 class="text-3xl font-bold text-gray-900 mb-4">{{ annonce.titre }}</h1>
-            
+
             <div class="text-3xl font-bold text-blue-600 mb-4">
               {{ formatPrice(annonce.prix, annonce.periode_location) }}
             </div>
@@ -135,7 +144,10 @@
           <!-- Description -->
           <div>
             <h3 class="text-lg font-medium text-gray-900 mb-3">Description</h3>
-            <div class="prose max-w-none text-gray-600" v-html="renderMarkdown(annonce.description)"></div>
+            <div
+              class="prose max-w-none text-gray-600"
+              v-html="renderMarkdown(annonce.description)"
+            ></div>
           </div>
 
           <!-- Location -->
@@ -156,14 +168,29 @@
             <div class="flex items-center space-x-3">
               <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
                 <span class="text-blue-600 font-medium">
-                  {{ (annonce.utilisateur?.username || annonce.utilisateur?.nickname || 'U')?.charAt(0)?.toUpperCase() }}
+                  {{
+                    (annonce.utilisateur?.username || annonce.utilisateur?.nickname || 'U')
+                      ?.charAt(0)
+                      ?.toUpperCase()
+                  }}
                 </span>
               </div>
               <div>
-                <p class="font-medium text-gray-900">{{ annonce.utilisateur?.username || annonce.utilisateur?.nickname || 'Utilisateur inconnu' }}</p>
+                <p class="font-medium text-gray-900">
+                  {{
+                    annonce.utilisateur?.username ||
+                    annonce.utilisateur?.nickname ||
+                    'Utilisateur inconnu'
+                  }}
+                </p>
                 <p class="text-sm text-gray-500">
                   Publié {{ formatDate(annonce.date_creation) }}
-                  <span v-if="annonce.date_modification && annonce.date_modification !== annonce.date_creation">
+                  <span
+                    v-if="
+                      annonce.date_modification &&
+                      annonce.date_modification !== annonce.date_creation
+                    "
+                  >
                     • Modifié {{ formatDate(annonce.date_modification) }}
                   </span>
                 </p>
@@ -225,7 +252,7 @@
           >
             <XMarkIcon class="h-8 w-8" />
           </button>
-          
+
           <!-- Navigation arrows -->
           <button
             v-if="annonce.photos && annonce.photos.length > 1 && currentPhotoIndex > 0"
@@ -235,7 +262,11 @@
             <ChevronLeftIcon class="h-8 w-8" />
           </button>
           <button
-            v-if="annonce.photos && annonce.photos.length > 1 && currentPhotoIndex < annonce.photos.length - 1"
+            v-if="
+              annonce.photos &&
+              annonce.photos.length > 1 &&
+              currentPhotoIndex < annonce.photos.length - 1
+            "
             @click.stop="currentPhotoIndex++"
             class="absolute right-4 top-1/2 transform -translate-y-1/2 text-white hover:text-gray-300"
           >
@@ -253,7 +284,13 @@ import { useRoute, useRouter } from 'vue-router'
 import MarkdownIt from 'markdown-it'
 import { useAuthStore } from '../stores/auth'
 import { annoncesApi } from '../services/api'
-import { Annonce, AnnonceType, AnnonceNature, AnnonceStatut, PeriodeLocation } from '../types/extended-api'
+import {
+  Annonce,
+  AnnonceType,
+  AnnonceNature,
+  AnnonceStatut,
+  PeriodeLocation,
+} from '../types/extended-api'
 import AppLayout from '../components/AppLayout.vue'
 import {
   PhotoIcon,
@@ -264,7 +301,7 @@ import {
   HeartIcon,
   ChevronRightIcon,
   ChevronLeftIcon,
-  XMarkIcon
+  XMarkIcon,
 } from '@heroicons/vue/24/outline'
 import { usePhotos, usePhoto } from '../composables/usePhoto'
 
@@ -286,7 +323,7 @@ const showPhotoModal = ref(false)
 const md = new MarkdownIt({
   html: false,
   linkify: true,
-  typographer: true
+  typographer: true,
 })
 
 const currentPhoto = computed(() => {
@@ -296,8 +333,16 @@ const currentPhoto = computed(() => {
 
 // Utiliser les composables pour charger les photos
 const photoIds = computed(() => annonce.value?.photos || [])
-const { urls: thumbUrls, loading: thumbsLoading, errors: thumbErrors } = usePhotos(photoIds, 'thumb')
-const { url: fullPhotoUrl, loading: fullPhotoLoading, error: fullPhotoError } = usePhoto(currentPhoto, 'full')
+const {
+  urls: thumbUrls,
+  loading: thumbsLoading,
+  errors: thumbErrors,
+} = usePhotos(photoIds, 'thumb')
+const {
+  url: fullPhotoUrl,
+  loading: fullPhotoLoading,
+  error: fullPhotoError,
+} = usePhoto(currentPhoto, 'full')
 
 const isOwner = computed(() => {
   return authStore.user?.id === annonce.value?.utilisateur?.id
@@ -316,7 +361,6 @@ const fetchAnnonce = async () => {
   }
 }
 
-
 // Fonction pour déboguer les erreurs d'images
 const onImageError = (event: Event) => {
   const img = event.target as HTMLImageElement
@@ -325,23 +369,23 @@ const onImageError = (event: Event) => {
     currentPhoto: currentPhoto.value,
     fullPhotoUrl: fullPhotoUrl.value,
     fullPhotoError: fullPhotoError.value,
-    fullPhotoLoading: fullPhotoLoading.value
+    fullPhotoLoading: fullPhotoLoading.value,
   })
 }
 
 const formatPrice = (prix?: number, periode?: PeriodeLocation) => {
   if (!prix) return 'Prix non spécifié'
-  
+
   const formattedPrice = new Intl.NumberFormat('fr-FR', {
     style: 'currency',
-    currency: 'EUR'
+    currency: 'EUR',
   }).format(prix)
 
   if (periode) {
     const periodLabels = {
       [PeriodeLocation.Jour]: '/jour',
       [PeriodeLocation.Semaine]: '/semaine',
-      [PeriodeLocation.Mois]: '/mois'
+      [PeriodeLocation.Mois]: '/mois',
     }
     return `${formattedPrice}${periodLabels[periode] || ''}`
   }
@@ -352,7 +396,7 @@ const formatPrice = (prix?: number, periode?: PeriodeLocation) => {
 const getTypeLabel = (type?: AnnonceType) => {
   const labels = {
     [AnnonceType.Vente]: 'Vente',
-    [AnnonceType.Location]: 'Location'
+    [AnnonceType.Location]: 'Location',
   }
   return type ? labels[type] : 'N/A'
 }
@@ -360,7 +404,7 @@ const getTypeLabel = (type?: AnnonceType) => {
 const getNatureLabel = (nature?: AnnonceNature) => {
   const labels = {
     [AnnonceNature.Offre]: 'Offre',
-    [AnnonceNature.Demande]: 'Demande'
+    [AnnonceNature.Demande]: 'Demande',
   }
   return nature ? labels[nature] : 'N/A'
 }
@@ -369,7 +413,7 @@ const getStatutLabel = (statut?: AnnonceStatut) => {
   const labels = {
     [AnnonceStatut.Active]: 'Active',
     [AnnonceStatut.Suspendue]: 'Suspendue',
-    [AnnonceStatut.Vendue]: 'Vendue'
+    [AnnonceStatut.Vendue]: 'Vendue',
   }
   return statut ? labels[statut] : 'N/A'
 }
@@ -378,23 +422,23 @@ const getStatutBadgeClass = (statut?: AnnonceStatut) => {
   const classes = {
     [AnnonceStatut.Active]: 'badge badge-active',
     [AnnonceStatut.Suspendue]: 'badge badge-suspended',
-    [AnnonceStatut.Vendue]: 'badge badge-sold'
+    [AnnonceStatut.Vendue]: 'badge badge-sold',
   }
   return statut ? classes[statut] : 'badge'
 }
 
 const formatDate = (dateString?: string) => {
   if (!dateString) return ''
-  
+
   const date = new Date(dateString)
   const now = new Date()
   const diffTime = now.getTime() - date.getTime()
   const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
 
-  if (diffDays === 0) return 'aujourd\'hui'
+  if (diffDays === 0) return "aujourd'hui"
   if (diffDays === 1) return 'hier'
   if (diffDays < 7) return `il y a ${diffDays} jours`
-  
+
   return `le ${date.toLocaleDateString('fr-FR')}`
 }
 
@@ -417,7 +461,9 @@ const closePhotoModal = () => {
 }
 
 const confirmDelete = () => {
-  if (confirm('Êtes-vous sûr de vouloir supprimer cette annonce ? Cette action est irréversible.')) {
+  if (
+    confirm('Êtes-vous sûr de vouloir supprimer cette annonce ? Cette action est irréversible.')
+  ) {
     deleteAnnonce()
   }
 }
@@ -428,7 +474,7 @@ const deleteAnnonce = async () => {
     router.push('/my-annonces')
   } catch (error) {
     console.error('Failed to delete annonce:', error)
-    alert('Erreur lors de la suppression de l\'annonce')
+    alert("Erreur lors de la suppression de l'annonce")
   }
 }
 

@@ -4,8 +4,8 @@ Nature de l\'annonce
 
 ## Enum
 
-* `Offre` (value: `'offre'`)
+- `Offre` (value: `'offre'`)
 
-* `Demande` (value: `'demande'`)
+- `Demande` (value: `'demande'`)
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

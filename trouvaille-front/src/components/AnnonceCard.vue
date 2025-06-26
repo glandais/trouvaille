@@ -9,7 +9,10 @@
         class="w-full h-48 object-cover"
         @error="onImageError"
       />
-      <div v-else-if="photoLoading" class="w-full h-48 flex items-center justify-center bg-gray-100">
+      <div
+        v-else-if="photoLoading"
+        class="w-full h-48 flex items-center justify-center bg-gray-100"
+      >
         <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
       </div>
       <div v-else-if="photoError" class="w-full h-48 flex items-center justify-center bg-red-50">
@@ -99,17 +102,17 @@ const onImageError = () => {
 
 const formatPrice = (prix?: number, periode?: PeriodeLocation) => {
   if (!prix) return 'Prix non spécifié'
-  
+
   const formattedPrice = new Intl.NumberFormat('fr-FR', {
     style: 'currency',
-    currency: 'EUR'
+    currency: 'EUR',
   }).format(prix)
 
   if (periode) {
     const periodLabels = {
       [PeriodeLocation.Jour]: '/jour',
-      [PeriodeLocation.Semaine]: '/semaine', 
-      [PeriodeLocation.Mois]: '/mois'
+      [PeriodeLocation.Semaine]: '/semaine',
+      [PeriodeLocation.Mois]: '/mois',
     }
     return `${formattedPrice}${periodLabels[periode] || ''}`
   }
@@ -120,7 +123,7 @@ const formatPrice = (prix?: number, periode?: PeriodeLocation) => {
 const getTypeLabel = (type?: AnnonceType) => {
   const labels = {
     [AnnonceType.Vente]: 'Vente',
-    [AnnonceType.Location]: 'Location'
+    [AnnonceType.Location]: 'Location',
   }
   return type ? labels[type] : 'N/A'
 }
@@ -128,23 +131,23 @@ const getTypeLabel = (type?: AnnonceType) => {
 const getNatureLabel = (nature?: AnnonceNature) => {
   const labels = {
     [AnnonceNature.Offre]: 'Offre',
-    [AnnonceNature.Demande]: 'Demande'
+    [AnnonceNature.Demande]: 'Demande',
   }
   return nature ? labels[nature] : 'N/A'
 }
 
 const formatDate = (dateString?: string) => {
   if (!dateString) return ''
-  
+
   const date = new Date(dateString)
   const now = new Date()
   const diffTime = now.getTime() - date.getTime()
   const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
 
-  if (diffDays === 0) return 'Aujourd\'hui'
+  if (diffDays === 0) return "Aujourd'hui"
   if (diffDays === 1) return 'Hier'
   if (diffDays < 7) return `Il y a ${diffDays} jours`
-  
+
   return date.toLocaleDateString('fr-FR')
 }
 </script>

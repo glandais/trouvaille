@@ -1,9 +1,9 @@
-import { 
-  AnnonceList as BaseAnnonceList, 
+import {
+  AnnonceList as BaseAnnonceList,
   Annonce as BaseAnnonce,
   Pagination as BasePagination,
   Utilisateur as BaseUtilisateur,
-  AnnonceStatut 
+  AnnonceStatut,
 } from '../api'
 
 // Extended interfaces to handle missing properties and naming inconsistencies

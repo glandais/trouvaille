@@ -10,7 +10,7 @@ class PhotoService {
    */
   async getPhotoUrl(photoId: string, size: PhotoSize = 'thumb'): Promise<string> {
     const cacheKey = `${photoId}-${size}`
-    
+
     // Vérifier si la photo est déjà en cache
     if (this.cache.has(cacheKey)) {
       return this.cache.get(cacheKey)!
@@ -20,7 +20,7 @@ class PhotoService {
       let response
       // Configurer le responseType pour recevoir des données binaires
       const config = { responseType: 'arraybuffer' as const }
-      
+
       if (size === 'full') {
         response = await photosApi.getPhotoFull(photoId, config)
       } else {
@@ -40,10 +40,10 @@ class PhotoService {
       // Créer une URL blob à partir des données binaires
       const blob = new Blob([response.data], { type: 'image/jpeg' })
       const url = URL.createObjectURL(blob)
-      
+
       // Mettre en cache
       this.cache.set(cacheKey, url)
-      
+
       return url
     } catch (error) {
       console.error(`Failed to load photo ${photoId} (${size}):`, error)
@@ -57,7 +57,7 @@ class PhotoService {
   revokePhotoUrl(photoId: string, size: PhotoSize = 'thumb'): void {
     const cacheKey = `${photoId}-${size}`
     const url = this.cache.get(cacheKey)
-    
+
     if (url) {
       URL.revokeObjectURL(url)
       this.cache.delete(cacheKey)
@@ -89,7 +89,7 @@ class PhotoService {
    * Précharge plusieurs photos
    */
   async preloadPhotos(photoIds: string[], size: PhotoSize = 'thumb'): Promise<void> {
-    const promises = photoIds.map(id => this.preloadPhoto(id, size))
+    const promises = photoIds.map((id) => this.preloadPhoto(id, size))
     await Promise.allSettled(promises)
   }
 }

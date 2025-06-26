@@ -8,69 +8,95 @@ import io.github.glandais.trouvaille.service.PhotoService;
 import io.quarkus.security.Authenticated;
 import jakarta.annotation.security.PermitAll;
 import jakarta.ws.rs.core.Response;
-import lombok.RequiredArgsConstructor;
-
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Authenticated
 public class ApiResourcempl implements ApiResource {
 
-    final AnnonceService annonceService;
-    final PhotoService photoService;
-    final AuthService authService;
+  final AnnonceService annonceService;
+  final PhotoService photoService;
+  final AuthService authService;
 
-    @Override
-    public Annonces listAnnonces(AnnonceType type, AnnonceStatut statut, AnnonceNature nature, BigInteger page, BigInteger limit, String search, String userId, BigDecimal prixMin, BigDecimal prixMax, Double latitude, Double longitude, BigDecimal distanceMax, String sortBy, String sortOrder) {
-        return annonceService.listAnnonces(type, statut, nature, page, limit, search, userId, prixMin, prixMax, latitude, longitude, distanceMax, sortBy, sortOrder);
-    }
+  @Override
+  public Annonces listAnnonces(
+      AnnonceType type,
+      AnnonceStatut statut,
+      AnnonceNature nature,
+      BigInteger page,
+      BigInteger limit,
+      String search,
+      String userId,
+      BigDecimal prixMin,
+      BigDecimal prixMax,
+      Double latitude,
+      Double longitude,
+      BigDecimal distanceMax,
+      String sortBy,
+      String sortOrder) {
+    return annonceService.listAnnonces(
+        type,
+        statut,
+        nature,
+        page,
+        limit,
+        search,
+        userId,
+        prixMin,
+        prixMax,
+        latitude,
+        longitude,
+        distanceMax,
+        sortBy,
+        sortOrder);
+  }
 
-    @Override
-    public Annonce createAnnonce(AnnonceCreate data) {
-        return annonceService.createAnnonce(data);
-    }
+  @Override
+  public Annonce createAnnonce(AnnonceCreate data) {
+    return annonceService.createAnnonce(data);
+  }
 
-    @Override
-    public Annonce getAnnonce(String id) {
-        return annonceService.getAnnonce(id);
-    }
+  @Override
+  public Annonce getAnnonce(String id) {
+    return annonceService.getAnnonce(id);
+  }
 
-    @Override
-    public Annonce putAnnonce(String id, AnnonceUpdate data) {
-        return annonceService.putAnnonce(id, data);
-    }
+  @Override
+  public Annonce putAnnonce(String id, AnnonceUpdate data) {
+    return annonceService.putAnnonce(id, data);
+  }
 
-    @Override
-    public void deleteAnnonce(String id) {
-        annonceService.deleteAnnonce(id);
-    }
+  @Override
+  public void deleteAnnonce(String id) {
+    annonceService.deleteAnnonce(id);
+  }
 
-    @Override
-    public String createPhoto(InputStream data) {
-        return photoService.createPhoto(data);
-    }
+  @Override
+  public String createPhoto(InputStream data) {
+    return photoService.createPhoto(data);
+  }
 
-    @Override
-    public void deletePhoto(String photoId) {
-        photoService.deletePhoto(photoId);
-    }
+  @Override
+  public void deletePhoto(String photoId) {
+    photoService.deletePhoto(photoId);
+  }
 
-    @Override
-    public Response getPhotoFull(String photoId) {
-        return photoService.getPhotoFull(photoId);
-    }
+  @Override
+  public Response getPhotoFull(String photoId) {
+    return photoService.getPhotoFull(photoId);
+  }
 
-    @Override
-    public Response getPhotoThumb(String photoId) {
-        return photoService.getPhotoThumb(photoId);
-    }
+  @Override
+  public Response getPhotoThumb(String photoId) {
+    return photoService.getPhotoThumb(photoId);
+  }
 
-    @Override
-    @PermitAll
-    public OAuthTokenResponse exchangeOAuthToken(OAuthTokenRequest data) {
-        return authService.exchangeOAuthToken(data);
-    }
-
+  @Override
+  @PermitAll
+  public OAuthTokenResponse exchangeOAuthToken(OAuthTokenRequest data) {
+    return authService.exchangeOAuthToken(data);
+  }
 }

@@ -1,7 +1,9 @@
 <template>
   <div class="min-h-screen flex items-center justify-center">
     <div class="text-center">
-      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+      <div
+        class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"
+      ></div>
       <p class="text-gray-600">Finalisation de l'authentification...</p>
       <p v-if="debugInfo" class="text-xs text-gray-400 mt-4">{{ debugInfo }}</p>
     </div>
@@ -18,10 +20,9 @@ const router = useRouter()
 const authStore = useAuthStore()
 const debugInfo = ref('')
 
-
 onMounted(async () => {
   debugInfo.value = 'Processing OAuth callback...'
-  
+
   const code = route.query.code as string
   const state = route.query.state as string
 

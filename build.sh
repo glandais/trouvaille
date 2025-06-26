@@ -72,9 +72,14 @@ fi
 log_info "Using tag: $TAG"
 log_info "Backend build type: $BUILD_TYPE"
 
-log_info "Copy contract file"
-cp contract.yaml trouvaille-front
-cp contract.yaml trouvaille-back/src/main/resources/openapi
+# Generate OpenAPI code for both frontend and backend
+log_info "🔄 Generating OpenAPI code..."
+./generate-openapi.sh
+
+if [ $? -ne 0 ]; then
+    log_error "Failed to generate OpenAPI code"
+    exit 1
+fi
 
 # Build backend
 log_info "Building backend image..."

@@ -11,22 +11,23 @@ export const useAuthStore = defineStore('auth', () => {
   const isAuthenticated = computed(() => !!accessToken.value)
 
   const OAUTH_CONFIG = {
-    authorizeUri: import.meta.env.VITE_OAUTH_AUTHORIZE_URI || 'https://chat.n-peloton.fr/oauth/authorize',
+    authorizeUri:
+      import.meta.env.VITE_OAUTH_AUTHORIZE_URI || 'https://chat.n-peloton.fr/oauth/authorize',
     clientId: import.meta.env.VITE_OAUTH_CLIENT_ID || 'trouvaille',
     redirectUri: window.location.origin + '/oauth/callback',
-    scope: 'read'
+    scope: 'read',
   }
 
   const login = () => {
     const state = generateRandomState()
     localStorage.setItem('oauth_state', state)
-    
+
     const params = new URLSearchParams({
       response_type: 'code',
       client_id: OAUTH_CONFIG.clientId,
       redirect_uri: OAUTH_CONFIG.redirectUri,
       scope: OAUTH_CONFIG.scope,
-      state
+      state,
     })
 
     window.location.href = `${OAUTH_CONFIG.authorizeUri}?${params.toString()}`
@@ -34,7 +35,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   const handleOAuthCallback = async (code: string, state: string): Promise<boolean> => {
     const storedState = localStorage.getItem('oauth_state')
-    
+
     if (state !== storedState) {
       console.error('OAuth state mismatch')
       return false
@@ -49,7 +50,7 @@ export const useAuthStore = defineStore('auth', () => {
       const tokenRequest: OAuthTokenRequest = {
         code,
         state,
-        redirectUri: OAUTH_CONFIG.redirectUri
+        redirectUri: OAUTH_CONFIG.redirectUri,
       }
 
       const tokenResponse = await authentificationApi.exchangeOAuthToken(tokenRequest)
@@ -58,7 +59,7 @@ export const useAuthStore = defineStore('auth', () => {
 
       // Fetch user info
       await fetchUserInfo()
-      
+
       return true
     } catch (error) {
       console.error('OAuth callback error:', error)
@@ -74,11 +75,11 @@ export const useAuthStore = defineStore('auth', () => {
     try {
       // Decode JWT to extract user info
       const payload = decodeJWT(accessToken.value)
-      
+
       user.value = {
         id: payload.sub,
         username: payload.username,
-        nickname: payload.nickname
+        nickname: payload.nickname,
       }
     } catch (error) {
       console.error('Failed to decode JWT:', error)
@@ -132,7 +133,7 @@ export const useAuthStore = defineStore('auth', () => {
       // Decode payload (second part)
       const payload = parts[1]
       const decodedPayload = atob(payload.replace(/-/g, '+').replace(/_/g, '/'))
-      
+
       return JSON.parse(decodedPayload)
     } catch (error) {
       console.error('JWT decode error:', error)
@@ -148,6 +149,6 @@ export const useAuthStore = defineStore('auth', () => {
     login,
     logout,
     handleOAuthCallback,
-    initializeAuth
+    initializeAuth,
   }
 })

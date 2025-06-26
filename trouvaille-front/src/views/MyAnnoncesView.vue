@@ -21,7 +21,7 @@
               'whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm transition-colors',
               selectedStatus === status.value
                 ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
             ]"
           >
             {{ status.label }}
@@ -31,7 +31,7 @@
                 'ml-2 py-0.5 px-2 rounded-full text-xs',
                 selectedStatus === status.value
                   ? 'bg-blue-100 text-blue-600'
-                  : 'bg-gray-100 text-gray-600'
+                  : 'bg-gray-100 text-gray-600',
               ]"
             >
               {{ status.count }}
@@ -53,7 +53,10 @@
       </div>
 
       <!-- Annonces Grid -->
-      <div v-else-if="filteredAnnonces.length > 0" class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <div
+        v-else-if="filteredAnnonces.length > 0"
+        class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
+      >
         <div
           v-for="annonce in filteredAnnonces"
           :key="annonce.id"
@@ -62,23 +65,39 @@
           <!-- Image -->
           <div class="aspect-w-16 aspect-h-9 bg-gray-200 relative">
             <img
-              v-if="annonce.photos?.[0] && photoUrls[annonce.photos[0]] && !photoErrors[annonce.photos[0]]"
+              v-if="
+                annonce.photos?.[0] &&
+                photoUrls[annonce.photos[0]] &&
+                !photoErrors[annonce.photos[0]]
+              "
               :src="photoUrls[annonce.photos[0]]"
               :alt="annonce.titre"
               class="w-full h-48 object-cover cursor-pointer"
               @click="goToDetail(annonce.id!)"
               @error="onImageError"
             />
-            <div v-else-if="annonce.photos?.[0] && photoLoadingStates[annonce.photos[0]]" class="w-full h-48 flex items-center justify-center bg-gray-100 cursor-pointer" @click="goToDetail(annonce.id!)">
+            <div
+              v-else-if="annonce.photos?.[0] && photoLoadingStates[annonce.photos[0]]"
+              class="w-full h-48 flex items-center justify-center bg-gray-100 cursor-pointer"
+              @click="goToDetail(annonce.id!)"
+            >
               <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
             </div>
-            <div v-else-if="annonce.photos?.[0] && photoErrors[annonce.photos[0]]" class="w-full h-48 flex items-center justify-center bg-red-50 cursor-pointer" @click="goToDetail(annonce.id!)">
+            <div
+              v-else-if="annonce.photos?.[0] && photoErrors[annonce.photos[0]]"
+              class="w-full h-48 flex items-center justify-center bg-red-50 cursor-pointer"
+              @click="goToDetail(annonce.id!)"
+            >
               <div class="text-center">
                 <PhotoIcon class="h-10 w-10 text-red-400 mx-auto mb-1" />
                 <p class="text-xs text-red-600">Erreur</p>
               </div>
             </div>
-            <div v-else class="w-full h-48 flex items-center justify-center bg-gray-100 cursor-pointer" @click="goToDetail(annonce.id!)">
+            <div
+              v-else
+              class="w-full h-48 flex items-center justify-center bg-gray-100 cursor-pointer"
+              @click="goToDetail(annonce.id!)"
+            >
               <PhotoIcon class="h-12 w-12 text-gray-400" />
             </div>
 
@@ -90,7 +109,9 @@
             </div>
 
             <!-- Quick Actions -->
-            <div class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+            <div
+              class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
+            >
               <div class="flex space-x-1">
                 <button
                   @click="editAnnonce(annonce.id!)"
@@ -114,7 +135,7 @@
           <div class="p-4">
             <!-- Title and Price -->
             <div class="flex justify-between items-start mb-2">
-              <h3 
+              <h3
                 class="text-lg font-medium text-gray-900 line-clamp-2 flex-1 cursor-pointer hover:text-blue-600"
                 @click="goToDetail(annonce.id!)"
               >
@@ -122,7 +143,7 @@
               </h3>
               <div class="ml-2 text-right">
                 <p class="text-lg font-bold text-blue-600">
-                  {{ formatPrice(annonce.prix, annonce.periodeLocation) }}
+                  {{ formatPrice(annonce.prix, annonce.periode_location) }}
                 </p>
               </div>
             </div>
@@ -147,9 +168,13 @@
             <!-- Date and Actions -->
             <div class="flex items-center justify-between">
               <div class="text-xs text-gray-400">
-                {{ formatDate(annonce.dateCreation) }}
-                <span v-if="annonce.dateModification && annonce.dateModification !== annonce.dateCreation">
-                  • Modifié {{ formatDate(annonce.dateModification) }}
+                {{ formatDate(annonce.date_creation) }}
+                <span
+                  v-if="
+                    annonce.date_modification && annonce.date_modification !== annonce.date_creation
+                  "
+                >
+                  • Modifié {{ formatDate(annonce.date_modification) }}
                 </span>
               </div>
 
@@ -172,7 +197,9 @@
                   Réactiver
                 </button>
                 <button
-                  v-if="annonce.statut === AnnonceStatut.Active && annonce.type === AnnonceType.Vente"
+                  v-if="
+                    annonce.statut === AnnonceStatut.Active && annonce.type === AnnonceType.Vente
+                  "
                   @click="changeStatut(annonce, AnnonceStatut.Vendue)"
                   class="text-xs text-gray-600 hover:text-gray-700 underline"
                   title="Marquer comme vendu"
@@ -220,7 +247,7 @@
                 'px-3 py-2 text-sm font-medium rounded-md',
                 page === pagination.page_courante
                   ? 'bg-blue-600 text-white'
-                  : 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-50'
+                  : 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-50',
               ]"
               @click="changePage(typeof page === 'number' ? page : 1)"
             >
@@ -246,14 +273,24 @@ import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 import { annoncesApi } from '../services/api'
-import { AnnonceList, AnnonceUpdate, AnnonceType, AnnonceNature, AnnonceStatut, PeriodeLocation, Pagination, ListAnnoncesSortByEnum, ListAnnoncesSortOrderEnum } from '../types/extended-api'
+import {
+  AnnonceList,
+  AnnonceUpdate,
+  AnnonceType,
+  AnnonceNature,
+  AnnonceStatut,
+  PeriodeLocation,
+  Pagination,
+  ListAnnoncesSortByEnum,
+  ListAnnoncesSortOrderEnum,
+} from '../types/extended-api'
 import AppLayout from '../components/AppLayout.vue'
 import {
   PlusIcon,
   PhotoIcon,
   PencilIcon,
   TrashIcon,
-  DocumentTextIcon
+  DocumentTextIcon,
 } from '@heroicons/vue/24/outline'
 import { photoService } from '../services/photoService'
 
@@ -267,26 +304,26 @@ const selectedStatus = ref('')
 
 const statusTabs = computed(() => [
   { label: 'Toutes', value: '', count: annonces.value.length },
-  { 
-    label: 'Actives', 
-    value: AnnonceStatut.Active, 
-    count: annonces.value.filter(a => a.statut === AnnonceStatut.Active).length 
+  {
+    label: 'Actives',
+    value: AnnonceStatut.Active,
+    count: annonces.value.filter((a) => a.statut === AnnonceStatut.Active).length,
   },
-  { 
-    label: 'Suspendues', 
-    value: AnnonceStatut.Suspendue, 
-    count: annonces.value.filter(a => a.statut === AnnonceStatut.Suspendue).length 
+  {
+    label: 'Suspendues',
+    value: AnnonceStatut.Suspendue,
+    count: annonces.value.filter((a) => a.statut === AnnonceStatut.Suspendue).length,
   },
-  { 
-    label: 'Vendues', 
-    value: AnnonceStatut.Vendue, 
-    count: annonces.value.filter(a => a.statut === AnnonceStatut.Vendue).length 
-  }
+  {
+    label: 'Vendues',
+    value: AnnonceStatut.Vendue,
+    count: annonces.value.filter((a) => a.statut === AnnonceStatut.Vendue).length,
+  },
 ])
 
 const filteredAnnonces = computed(() => {
   if (!selectedStatus.value) return annonces.value
-  return annonces.value.filter(annonce => annonce.statut === selectedStatus.value)
+  return annonces.value.filter((annonce) => annonce.statut === selectedStatus.value)
 })
 
 const fetchMyAnnonces = async (page = 1) => {
@@ -296,7 +333,7 @@ const fetchMyAnnonces = async (page = 1) => {
   try {
     const response = await annoncesApi.listAnnonces(
       undefined, // type
-      selectedStatus.value as AnnonceStatut || undefined, // statut  
+      (selectedStatus.value as AnnonceStatut) || undefined, // statut
       undefined, // nature
       page, // page
       12, // limit
@@ -308,12 +345,12 @@ const fetchMyAnnonces = async (page = 1) => {
       undefined, // longitude
       undefined, // distanceMax
       ListAnnoncesSortByEnum.DateCreation, // sortBy
-      ListAnnoncesSortOrderEnum.Desc // sortOrder
+      ListAnnoncesSortOrderEnum.Desc, // sortOrder
     )
 
     annonces.value = response.data.data || []
     pagination.value = response.data.pagination
-    
+
     // Charger les photos après avoir récupéré les annonces
     loadAllPhotos()
   } catch (error) {
@@ -346,12 +383,12 @@ const changeStatut = async (annonce: AnnonceList, newStatut: AnnonceStatut) => {
       titre: annonce.titre,
       description: annonce.description,
       coordinates: annonce.coordinates!,
-      statut: newStatut
+      statut: newStatut,
     }
     await annoncesApi.putAnnonce(annonce.id, updateData)
-    
+
     // Update local state
-    const index = annonces.value.findIndex(a => a.id === annonce.id)
+    const index = annonces.value.findIndex((a) => a.id === annonce.id)
     if (index > -1) {
       annonces.value[index].statut = newStatut
     }
@@ -362,7 +399,11 @@ const changeStatut = async (annonce: AnnonceList, newStatut: AnnonceStatut) => {
 }
 
 const confirmDelete = (annonce: AnnonceList) => {
-  if (confirm(`Êtes-vous sûr de vouloir supprimer "${annonce.titre}" ? Cette action est irréversible.`)) {
+  if (
+    confirm(
+      `Êtes-vous sûr de vouloir supprimer "${annonce.titre}" ? Cette action est irréversible.`,
+    )
+  ) {
     deleteAnnonce(annonce.id!)
   }
 }
@@ -370,15 +411,15 @@ const confirmDelete = (annonce: AnnonceList) => {
 const deleteAnnonce = async (id: string) => {
   try {
     await annoncesApi.deleteAnnonce(id)
-    
+
     // Remove from local state
-    const index = annonces.value.findIndex(a => a.id === id)
+    const index = annonces.value.findIndex((a) => a.id === id)
     if (index > -1) {
       annonces.value.splice(index, 1)
     }
   } catch (error) {
     console.error('Failed to delete annonce:', error)
-    alert('Erreur lors de la suppression de l\'annonce')
+    alert("Erreur lors de la suppression de l'annonce")
   }
 }
 
@@ -392,10 +433,10 @@ const loadPhotoUrl = async (photoId: string) => {
   if (photoUrls.value[photoId] || photoLoadingStates.value[photoId]) {
     return // Déjà chargé ou en cours de chargement
   }
-  
+
   photoLoadingStates.value[photoId] = true
   photoErrors.value[photoId] = false
-  
+
   try {
     const url = await photoService.getPhotoUrl(photoId, 'thumb')
     photoUrls.value[photoId] = url
@@ -409,7 +450,7 @@ const loadPhotoUrl = async (photoId: string) => {
 
 // Charger toutes les photos des annonces
 const loadAllPhotos = () => {
-  filteredAnnonces.value.forEach(annonce => {
+  filteredAnnonces.value.forEach((annonce) => {
     if (annonce.photos?.[0]) {
       loadPhotoUrl(annonce.photos[0])
     }
@@ -423,17 +464,17 @@ const onImageError = (event: Event) => {
 
 const formatPrice = (prix?: number, periode?: PeriodeLocation) => {
   if (!prix) return 'Prix non spécifié'
-  
+
   const formattedPrice = new Intl.NumberFormat('fr-FR', {
     style: 'currency',
-    currency: 'EUR'
+    currency: 'EUR',
   }).format(prix)
 
   if (periode) {
     const periodLabels = {
       [PeriodeLocation.Jour]: '/jour',
       [PeriodeLocation.Semaine]: '/semaine',
-      [PeriodeLocation.Mois]: '/mois'
+      [PeriodeLocation.Mois]: '/mois',
     }
     return `${formattedPrice}${periodLabels[periode] || ''}`
   }
@@ -444,7 +485,7 @@ const formatPrice = (prix?: number, periode?: PeriodeLocation) => {
 const getTypeLabel = (type?: AnnonceType) => {
   const labels = {
     [AnnonceType.Vente]: 'Vente',
-    [AnnonceType.Location]: 'Location'
+    [AnnonceType.Location]: 'Location',
   }
   return type ? labels[type] : 'N/A'
 }
@@ -452,7 +493,7 @@ const getTypeLabel = (type?: AnnonceType) => {
 const getNatureLabel = (nature?: AnnonceNature) => {
   const labels = {
     [AnnonceNature.Offre]: 'Offre',
-    [AnnonceNature.Demande]: 'Demande'
+    [AnnonceNature.Demande]: 'Demande',
   }
   return nature ? labels[nature] : 'N/A'
 }
@@ -461,7 +502,7 @@ const getStatutLabel = (statut?: AnnonceStatut) => {
   const labels = {
     [AnnonceStatut.Active]: 'Active',
     [AnnonceStatut.Suspendue]: 'Suspendue',
-    [AnnonceStatut.Vendue]: 'Vendue'
+    [AnnonceStatut.Vendue]: 'Vendue',
   }
   return statut ? labels[statut] : 'N/A'
 }
@@ -470,23 +511,23 @@ const getStatutBadgeClass = (statut?: AnnonceStatut) => {
   const classes = {
     [AnnonceStatut.Active]: 'badge badge-active',
     [AnnonceStatut.Suspendue]: 'badge badge-suspended',
-    [AnnonceStatut.Vendue]: 'badge badge-sold'
+    [AnnonceStatut.Vendue]: 'badge badge-sold',
   }
   return statut ? classes[statut] : 'badge'
 }
 
 const formatDate = (dateString?: string) => {
   if (!dateString) return ''
-  
+
   const date = new Date(dateString)
   const now = new Date()
   const diffTime = now.getTime() - date.getTime()
   const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
 
-  if (diffDays === 0) return 'aujourd\'hui'
+  if (diffDays === 0) return "aujourd'hui"
   if (diffDays === 1) return 'hier'
   if (diffDays < 7) return `il y a ${diffDays} jours`
-  
+
   return date.toLocaleDateString('fr-FR')
 }
 
@@ -495,49 +536,49 @@ const getEmptyStateTitle = () => {
     '': 'Aucune annonce',
     [AnnonceStatut.Active]: 'Aucune annonce active',
     [AnnonceStatut.Suspendue]: 'Aucune annonce suspendue',
-    [AnnonceStatut.Vendue]: 'Aucune annonce vendue'
+    [AnnonceStatut.Vendue]: 'Aucune annonce vendue',
   }
   return (titles as any)[selectedStatus.value] || 'Aucune annonce'
 }
 
 const getEmptyStateMessage = () => {
   const messages = {
-    '': 'Vous n\'avez pas encore créé d\'annonce. Commencez dès maintenant !',
-    [AnnonceStatut.Active]: 'Vous n\'avez pas d\'annonce active actuellement.',
-    [AnnonceStatut.Suspendue]: 'Vous n\'avez pas d\'annonce suspendue.',
-    [AnnonceStatut.Vendue]: 'Vous n\'avez pas encore vendu d\'objets.'
+    '': "Vous n'avez pas encore créé d'annonce. Commencez dès maintenant !",
+    [AnnonceStatut.Active]: "Vous n'avez pas d'annonce active actuellement.",
+    [AnnonceStatut.Suspendue]: "Vous n'avez pas d'annonce suspendue.",
+    [AnnonceStatut.Vendue]: "Vous n'avez pas encore vendu d'objets.",
   }
   return (messages as any)[selectedStatus.value] || 'Aucune annonce trouvée.'
 }
 
 const getVisiblePages = () => {
   if (!pagination.value) return []
-  
+
   const current = pagination.value.page_courante
   const total = pagination.value.total_pages
   const delta = 2
-  
+
   const range = []
   const rangeWithDots = []
-  
+
   for (let i = Math.max(2, current - delta); i <= Math.min(total - 1, current + delta); i++) {
     range.push(i)
   }
-  
+
   if (current - delta > 2) {
     rangeWithDots.push(1, '...')
   } else {
     rangeWithDots.push(1)
   }
-  
+
   rangeWithDots.push(...range)
-  
+
   if (current + delta < total - 1) {
     rangeWithDots.push('...', total)
   } else if (total > 1) {
     rangeWithDots.push(total)
   }
-  
+
   return rangeWithDots.filter((page, index, arr) => arr.indexOf(page) === index)
 }
 

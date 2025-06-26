@@ -4,10 +4,10 @@ Période de location
 
 ## Enum
 
-* `Jour` (value: `'jour'`)
+- `Jour` (value: `'jour'`)
 
-* `Semaine` (value: `'semaine'`)
+- `Semaine` (value: `'semaine'`)
 
-* `Mois` (value: `'mois'`)
+- `Mois` (value: `'mois'`)
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

@@ -341,7 +341,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
-
 components:
   schemas:
     Utilisateur:
@@ -409,12 +408,12 @@ components:
           type: string
           minLength: 5
           maxLength: 100
-          example: "Vélo de course en excellent état"
+          example: 'Vélo de course en excellent état'
         description:
           type: string
           format: markdown
           maxLength: 2000
-          example: "Vélo de course **Trek** en parfait état, utilisé seulement 2 fois. Idéal pour débutant."
+          example: 'Vélo de course **Trek** en parfait état, utilisé seulement 2 fois. Idéal pour débutant.'
         prix:
           type: number
           format: decimal
@@ -502,7 +501,6 @@ components:
         pagination:
           $ref: '#/components/schemas/Pagination'
 
-
     AnnonceList:
       allOf:
         - $ref: '#/components/schemas/AnnonceBase'
@@ -547,10 +545,10 @@ components:
       properties:
         code:
           type: string
-          example: "VALIDATION_ERROR"
+          example: 'VALIDATION_ERROR'
         message:
           type: string
-          example: "Les données fournies sont invalides"
+          example: 'Les données fournies sont invalides'
         details:
           type: array
           items:

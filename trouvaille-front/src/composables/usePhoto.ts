@@ -41,7 +41,7 @@ export function usePhoto(photoId: string | Ref<string | null>, size: PhotoSize =
 
   // Surveiller les changements d'ID de photo
   watch(
-    () => typeof photoId === 'string' ? photoId : photoId.value,
+    () => (typeof photoId === 'string' ? photoId : photoId.value),
     (newId, oldId) => {
       if (oldId && url.value) {
         photoService.revokePhotoUrl(oldId, size)
@@ -51,7 +51,7 @@ export function usePhoto(photoId: string | Ref<string | null>, size: PhotoSize =
         loadPhoto(newId)
       }
     },
-    { immediate: true }
+    { immediate: true },
   )
 
   // Nettoyer automatiquement quand le composant est démonté
@@ -65,7 +65,7 @@ export function usePhoto(photoId: string | Ref<string | null>, size: PhotoSize =
       const currentId = typeof photoId === 'string' ? photoId : photoId.value
       if (currentId) loadPhoto(currentId)
     },
-    cleanup
+    cleanup,
   }
 }
 
@@ -110,7 +110,7 @@ export function usePhotos(photoIds: string[] | Ref<string[]>, size: PhotoSize = 
 
   // Surveiller les changements d'IDs de photos
   watch(
-    () => Array.isArray(photoIds) ? photoIds : photoIds.value,
+    () => (Array.isArray(photoIds) ? photoIds : photoIds.value),
     (newIds, oldIds) => {
       // Nettoyer les anciennes photos qui ne sont plus dans la liste
       if (oldIds) {
@@ -126,7 +126,7 @@ export function usePhotos(photoIds: string[] | Ref<string[]>, size: PhotoSize = 
         loadPhotos(newIds)
       }
     },
-    { immediate: true }
+    { immediate: true },
   )
 
   // Nettoyer automatiquement quand le composable est démonté
@@ -137,6 +137,6 @@ export function usePhotos(photoIds: string[] | Ref<string[]>, size: PhotoSize = 
     loading,
     errors,
     loadPhotos: () => loadPhotos(Array.isArray(photoIds) ? photoIds : photoIds.value),
-    cleanup
+    cleanup,
   }
 }
