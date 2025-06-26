@@ -7,6 +7,7 @@ import io.github.glandais.trouvaille.service.AuthService;
 import io.github.glandais.trouvaille.service.PhotoService;
 import io.quarkus.security.Authenticated;
 import jakarta.annotation.security.PermitAll;
+import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
 
 import java.io.InputStream;
@@ -22,8 +23,8 @@ public class ApiResourcempl implements ApiResource {
     final AuthService authService;
 
     @Override
-    public Annonces listAnnonces(AnnonceType type, AnnonceStatut statut, AnnonceNature nature, BigInteger page, BigInteger limit, String search, String userPseudo, BigDecimal prixMin, BigDecimal prixMax, Double latitude, Double longitude, BigDecimal distanceMax, String sortBy, String sortOrder) {
-        return annonceService.listAnnonces(type, statut, nature, page, limit, search, userPseudo, prixMin, prixMax, latitude, longitude, distanceMax, sortBy, sortOrder);
+    public Annonces listAnnonces(AnnonceType type, AnnonceStatut statut, AnnonceNature nature, BigInteger page, BigInteger limit, String search, String userId, BigDecimal prixMin, BigDecimal prixMax, Double latitude, Double longitude, BigDecimal distanceMax, String sortBy, String sortOrder) {
+        return annonceService.listAnnonces(type, statut, nature, page, limit, search, userId, prixMin, prixMax, latitude, longitude, distanceMax, sortBy, sortOrder);
     }
 
     @Override
@@ -54,6 +55,16 @@ public class ApiResourcempl implements ApiResource {
     @Override
     public void deletePhoto(String photoId) {
         photoService.deletePhoto(photoId);
+    }
+
+    @Override
+    public Response getPhotoFull(String photoId) {
+        return photoService.getPhotoFull(photoId);
+    }
+
+    @Override
+    public Response getPhotoThumb(String photoId) {
+        return photoService.getPhotoThumb(photoId);
     }
 
     @Override

@@ -3,12 +3,21 @@
     <!-- Image -->
     <div class="aspect-w-16 aspect-h-9 bg-gray-200">
       <img
-        v-if="annonce.photos && annonce.photos.length > 0"
-        :src="getPhotoUrl(annonce.photos[0])"
+        v-if="photoUrl && !photoError"
+        :src="photoUrl"
         :alt="annonce.titre"
         class="w-full h-48 object-cover"
         @error="onImageError"
       />
+      <div v-else-if="photoLoading" class="w-full h-48 flex items-center justify-center bg-gray-100">
+        <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+      </div>
+      <div v-else-if="photoError" class="w-full h-48 flex items-center justify-center bg-red-50">
+        <div class="text-center">
+          <PhotoIcon class="h-12 w-12 text-red-400 mx-auto mb-1" />
+          <p class="text-xs text-red-600">Erreur image</p>
+        </div>
+      </div>
       <div v-else class="w-full h-48 flex items-center justify-center bg-gray-100">
         <PhotoIcon class="h-12 w-12 text-gray-400" />
       </div>
@@ -23,7 +32,7 @@
         </h3>
         <div class="ml-2 text-right">
           <p class="text-lg font-bold text-blue-600">
-            {{ formatPrice(annonce.prix, annonce.periodeLocation) }}
+            {{ formatPrice(annonce.prix, annonce.periode_location) }}
           </p>
         </div>
       </div>
@@ -54,7 +63,7 @@
 
       <!-- Date -->
       <div class="mt-2 text-xs text-gray-400">
-        {{ formatDate(annonce.dateCreation) }}
+        {{ formatDate(annonce.date_creation) }}
       </div>
     </div>
   </div>
@@ -63,8 +72,9 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { AnnonceList, AnnonceType, AnnonceNature, PeriodeLocation } from '../api'
+import { AnnonceList, AnnonceType, AnnonceNature, PeriodeLocation } from '../types/extended-api'
 import { PhotoIcon, MapPinIcon } from '@heroicons/vue/24/outline'
+import { usePhoto } from '../composables/usePhoto'
 
 interface Props {
   annonce: AnnonceList
@@ -77,14 +87,20 @@ const goToDetail = () => {
   router.push(`/annonces/${props.annonce.id}`)
 }
 
-const getPhotoUrl = (photoId: string) => {
-  const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'
-  return `${baseUrl}/api/v1/photos/${photoId}`
-}
+// Utiliser le composable pour charger la première photo
+const firstPhotoId = computed(() => props.annonce.photos?.[0] || null)
+const { url: photoUrl, loading: photoLoading, error: photoError } = usePhoto(firstPhotoId, 'thumb')
 
+// Fonction pour déboguer les erreurs d'images
 const onImageError = (event: Event) => {
   const img = event.target as HTMLImageElement
-  img.style.display = 'none'
+  console.error('AnnonceCard image error:', {
+    src: img.src,
+    photoId: firstPhotoId.value,
+    photoUrl: photoUrl.value,
+    photoError: photoError.value,
+    photoLoading: photoLoading.value
+  })
 }
 
 const formatPrice = (prix?: number, periode?: PeriodeLocation) => {

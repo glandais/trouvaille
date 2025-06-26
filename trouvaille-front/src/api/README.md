@@ -59,6 +59,8 @@ Class | Method | HTTP request | Description
 *AuthentificationApi* | [**exchangeOAuthToken**](docs/AuthentificationApi.md#exchangeoauthtoken) | **POST** /api/v1/auth/token | Échanger le code OAuth pour un token
 *PhotosApi* | [**createPhoto**](docs/PhotosApi.md#createphoto) | **POST** /api/v1/annonces/photos | Ajouter une photo
 *PhotosApi* | [**deletePhoto**](docs/PhotosApi.md#deletephoto) | **DELETE** /api/v1/annonces/photos/{photoId} | Supprimer une photo
+*PhotosApi* | [**getPhotoFull**](docs/PhotosApi.md#getphotofull) | **GET** /api/v1/photos/{photoId}/full | Récupérer le contenu d\&#39;une photo en taille réelle
+*PhotosApi* | [**getPhotoThumb**](docs/PhotosApi.md#getphotothumb) | **GET** /api/v1/photos/{photoId}/thumb | Récupérer le contenu d\&#39;une photo en miniature
 
 
 ### Documentation For Models

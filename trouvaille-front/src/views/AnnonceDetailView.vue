@@ -57,13 +57,23 @@
           <!-- Main Photo -->
           <div class="aspect-w-16 aspect-h-12 bg-gray-100 rounded-lg overflow-hidden">
             <img
-              v-if="currentPhoto"
-              :src="getPhotoUrl(currentPhoto)"
+              v-if="fullPhotoUrl && !fullPhotoError"
+              :src="fullPhotoUrl"
               :alt="annonce.titre"
               class="w-full h-96 object-cover cursor-pointer"
               @click="openPhotoModal"
               @error="onImageError"
             />
+            <div v-else-if="fullPhotoLoading" class="w-full h-96 flex items-center justify-center bg-gray-100">
+              <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+              <span class="ml-2 text-sm text-gray-600">Chargement de la photo...</span>
+            </div>
+            <div v-else-if="fullPhotoError" class="w-full h-96 flex items-center justify-center bg-red-50">
+              <div class="text-center">
+                <PhotoIcon class="h-16 w-16 text-red-400 mx-auto mb-2" />
+                <p class="text-sm text-red-600">Erreur de chargement</p>
+              </div>
+            </div>
             <div v-else class="w-full h-96 flex items-center justify-center bg-gray-100">
               <PhotoIcon class="h-16 w-16 text-gray-400" />
             </div>
@@ -81,11 +91,18 @@
               ]"
             >
               <img
-                :src="getPhotoUrl(photo)"
+                v-if="thumbUrls[photo] && !thumbErrors[photo]"
+                :src="thumbUrls[photo]"
                 :alt="`Photo ${index + 1}`"
                 class="w-full h-20 object-cover"
                 @error="onImageError"
               />
+              <div v-else-if="thumbErrors[photo]" class="w-full h-20 flex items-center justify-center bg-red-50">
+                <PhotoIcon class="h-4 w-4 text-red-400" />
+              </div>
+              <div v-else class="w-full h-20 flex items-center justify-center bg-gray-100">
+                <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+              </div>
             </button>
           </div>
         </div>
@@ -111,7 +128,7 @@
             <h1 class="text-3xl font-bold text-gray-900 mb-4">{{ annonce.titre }}</h1>
             
             <div class="text-3xl font-bold text-blue-600 mb-4">
-              {{ formatPrice(annonce.prix, annonce.periodeLocation) }}
+              {{ formatPrice(annonce.prix, annonce.periode_location) }}
             </div>
           </div>
 
@@ -127,8 +144,8 @@
             <div class="flex items-center space-x-2 text-gray-600">
               <MapPinIcon class="h-5 w-5" />
               <span>{{ formatCoordinates(annonce.coordinates) }}</span>
-              <span v-if="annonce.distance" class="text-sm text-gray-500">
-                ({{ annonce.distance }}km de vous)
+              <span v-if="(annonce as any).distance" class="text-sm text-gray-500">
+                ({{ (annonce as any).distance }}km de vous)
               </span>
             </div>
           </div>
@@ -139,15 +156,15 @@
             <div class="flex items-center space-x-3">
               <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
                 <span class="text-blue-600 font-medium">
-                  {{ annonce.utilisateur?.pseudo?.charAt(0)?.toUpperCase() }}
+                  {{ (annonce.utilisateur?.username || annonce.utilisateur?.nickname || 'U')?.charAt(0)?.toUpperCase() }}
                 </span>
               </div>
               <div>
-                <p class="font-medium text-gray-900">{{ annonce.utilisateur?.pseudo }}</p>
+                <p class="font-medium text-gray-900">{{ annonce.utilisateur?.username || annonce.utilisateur?.nickname || 'Utilisateur inconnu' }}</p>
                 <p class="text-sm text-gray-500">
-                  Publié {{ formatDate(annonce.dateCreation) }}
-                  <span v-if="annonce.dateModification && annonce.dateModification !== annonce.dateCreation">
-                    • Modifié {{ formatDate(annonce.dateModification) }}
+                  Publié {{ formatDate(annonce.date_creation) }}
+                  <span v-if="annonce.date_modification && annonce.date_modification !== annonce.date_creation">
+                    • Modifié {{ formatDate(annonce.date_modification) }}
                   </span>
                 </p>
               </div>
@@ -194,10 +211,14 @@
       >
         <div class="relative max-w-4xl max-h-screen p-4">
           <img
-            :src="getPhotoUrl(currentPhoto)"
+            v-if="fullPhotoUrl"
+            :src="fullPhotoUrl"
             :alt="annonce.titre"
             class="max-w-full max-h-full object-contain"
           />
+          <div v-else class="flex items-center justify-center w-96 h-96">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+          </div>
           <button
             @click="closePhotoModal"
             class="absolute top-4 right-4 text-white hover:text-gray-300"
@@ -232,7 +253,7 @@ import { useRoute, useRouter } from 'vue-router'
 import MarkdownIt from 'markdown-it'
 import { useAuthStore } from '../stores/auth'
 import { annoncesApi } from '../services/api'
-import { Annonce, AnnonceType, AnnonceNature, AnnonceStatut, PeriodeLocation } from '../api'
+import { Annonce, AnnonceType, AnnonceNature, AnnonceStatut, PeriodeLocation } from '../types/extended-api'
 import AppLayout from '../components/AppLayout.vue'
 import {
   PhotoIcon,
@@ -245,6 +266,7 @@ import {
   ChevronLeftIcon,
   XMarkIcon
 } from '@heroicons/vue/24/outline'
+import { usePhotos, usePhoto } from '../composables/usePhoto'
 
 interface Props {
   id: string
@@ -272,14 +294,19 @@ const currentPhoto = computed(() => {
   return annonce.value.photos[currentPhotoIndex.value]
 })
 
+// Utiliser les composables pour charger les photos
+const photoIds = computed(() => annonce.value?.photos || [])
+const { urls: thumbUrls, loading: thumbsLoading, errors: thumbErrors } = usePhotos(photoIds, 'thumb')
+const { url: fullPhotoUrl, loading: fullPhotoLoading, error: fullPhotoError } = usePhoto(currentPhoto, 'full')
+
 const isOwner = computed(() => {
-  return authStore.user?.pseudo === annonce.value?.utilisateur?.pseudo
+  return authStore.user?.id === annonce.value?.utilisateur?.id
 })
 
 const fetchAnnonce = async () => {
   try {
     loading.value = true
-    const response = await annoncesApi.getAnnonce(props.id)
+    const response = await annoncesApi.getAnnonce(props.id!)
     annonce.value = response.data
   } catch (err) {
     console.error('Failed to fetch annonce:', err)
@@ -289,14 +316,17 @@ const fetchAnnonce = async () => {
   }
 }
 
-const getPhotoUrl = (photoId: string) => {
-  const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'
-  return `${baseUrl}/api/v1/photos/${photoId}`
-}
 
+// Fonction pour déboguer les erreurs d'images
 const onImageError = (event: Event) => {
   const img = event.target as HTMLImageElement
-  img.style.display = 'none'
+  console.error('Image error:', {
+    src: img.src,
+    currentPhoto: currentPhoto.value,
+    fullPhotoUrl: fullPhotoUrl.value,
+    fullPhotoError: fullPhotoError.value,
+    fullPhotoLoading: fullPhotoLoading.value
+  })
 }
 
 const formatPrice = (prix?: number, periode?: PeriodeLocation) => {

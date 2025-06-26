@@ -154,6 +154,32 @@
           </div>
         </div>
 
+        <!-- Status (only in edit mode) -->
+        <div v-if="isEditMode" class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <h2 class="text-xl font-semibold text-gray-900 mb-6">Statut de l'annonce</h2>
+          
+          <div>
+            <label for="statut" class="block text-sm font-medium text-gray-700 mb-2">
+              Statut *
+            </label>
+            <select
+              id="statut"
+              v-model="form.statut"
+              required
+              class="form-input"
+              :class="{ 'border-red-500': errors.statut }"
+            >
+              <option :value="AnnonceStatut.Active">Active</option>
+              <option :value="AnnonceStatut.Suspendue">Suspendue</option>
+              <option :value="AnnonceStatut.Vendue">Vendue/Louée</option>
+            </select>
+            <p v-if="errors.statut" class="mt-1 text-sm text-red-600">{{ errors.statut }}</p>
+            <p class="mt-1 text-sm text-gray-500">
+              Changez le statut pour suspendre temporairement votre annonce ou la marquer comme vendue/louée
+            </p>
+          </div>
+        </div>
+
         <!-- Photos -->
         <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           <h2 class="text-xl font-semibold text-gray-900 mb-6">Photos</h2>
@@ -336,7 +362,7 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useDebounceFn } from '@vueuse/core'
 import { annoncesApi, photosApi } from '../services/api'
-import { AnnonceCreate, AnnonceType, AnnonceNature, PeriodeLocation, Coordinates, Annonce } from '../api'
+import { AnnonceCreate, AnnonceUpdate, AnnonceType, AnnonceNature, AnnonceStatut, PeriodeLocation, Coordinates, Annonce } from '../api'
 import AppLayout from '../components/AppLayout.vue'
 import {
   PhotoIcon,
@@ -345,6 +371,7 @@ import {
   ChevronRightIcon,
   TrashIcon
 } from '@heroicons/vue/24/outline'
+import { photoService } from '../services/photoService'
 
 interface Props {
   id?: string
@@ -354,15 +381,16 @@ const props = defineProps<Props>()
 const router = useRouter()
 const route = useRoute()
 
-const form = reactive<AnnonceCreate>({
+const form = reactive<AnnonceCreate & { statut?: AnnonceStatut }>({
   type: undefined,
   nature: undefined,
   titre: '',
   description: '',
   prix: undefined,
-  periodeLocation: undefined,
+  periode_location: undefined,
   coordinates: undefined,
-  photosIds: []
+  photos_ids: [],
+  statut: undefined
 })
 
 const errors = ref<Record<string, string>>({})
@@ -434,9 +462,6 @@ const uploadPhoto = async (file: File) => {
   uploadingPhotos.value.push(uploadProgress)
 
   try {
-    const formData = new FormData()
-    formData.append('file', file)
-
     // Simulate upload progress
     const progressInterval = setInterval(() => {
       if (uploadProgress.progress < 90) {
@@ -444,23 +469,18 @@ const uploadPhoto = async (file: File) => {
       }
     }, 100)
 
-    const response = await photosApi.uploadPhoto(formData, {
-      onUploadProgress: (progressEvent) => {
-        if (progressEvent.total) {
-          uploadProgress.progress = Math.round((progressEvent.loaded * 100) / progressEvent.total)
-        }
-      }
-    })
+    // Send raw file data as required by the API
+    const response = await photosApi.createPhoto(file)
 
     clearInterval(progressInterval)
     uploadProgress.progress = 100
 
-    // Add to uploaded photos
-    const photoId = response.data.id
+    // The response data is directly the photo ID (string)
+    const photoId = response.data
     const photoUrl = URL.createObjectURL(file)
     
     uploadedPhotos.value.push({ id: photoId, url: photoUrl })
-    form.photosIds?.push(photoId)
+    form.photos_ids?.push(photoId)
 
   } catch (error) {
     console.error('Failed to upload photo:', error)
@@ -481,10 +501,10 @@ const removePhoto = async (index: number) => {
     await photosApi.deletePhoto(photo.id)
     uploadedPhotos.value.splice(index, 1)
     
-    if (form.photosIds) {
-      const photoIndex = form.photosIds.findIndex(id => id === photo.id)
+    if (form.photos_ids) {
+      const photoIndex = form.photos_ids.findIndex(id => id === photo.id)
       if (photoIndex > -1) {
-        form.photosIds.splice(photoIndex, 1)
+        form.photos_ids.splice(photoIndex, 1)
       }
     }
 
@@ -497,7 +517,7 @@ const removePhoto = async (index: number) => {
 
 const movePhoto = (fromIndex: number, toIndex: number) => {
   const photos = [...uploadedPhotos.value]
-  const photosIds = [...(form.photosIds || [])]
+  const photosIds = [...(form.photos_ids || [])]
   
   // Swap photos
   const temp = photos[fromIndex]
@@ -510,7 +530,7 @@ const movePhoto = (fromIndex: number, toIndex: number) => {
   photosIds[toIndex] = tempId
   
   uploadedPhotos.value = photos
-  form.photosIds = photosIds
+  form.photos_ids = photosIds
 }
 
 const getCurrentLocation = () => {
@@ -555,16 +575,29 @@ const loadExistingAnnonce = async () => {
     form.titre = response.data.titre || ''
     form.description = response.data.description || ''
     form.prix = response.data.prix
-    form.periodeLocation = response.data.periodeLocation
+    form.periode_location = response.data.periode_location
     form.coordinates = response.data.coordinates
+    form.statut = response.data.statut
     
     // Load existing photos
     if (response.data.photos && response.data.photos.length > 0) {
-      form.photosIds = [...response.data.photos]
-      uploadedPhotos.value = response.data.photos.map(photoId => ({
-        id: photoId,
-        url: getPhotoUrl(photoId)
-      }))
+      form.photos_ids = [...response.data.photos]
+      
+      // Charger les URLs des photos existantes via le service
+      const photoPromises = response.data.photos.map(async (photoId) => {
+        try {
+          const url = await photoService.getPhotoUrl(photoId, 'thumb')
+          return { id: photoId, url }
+        } catch (error) {
+          console.warn(`Failed to load existing photo ${photoId}:`, error)
+          return null
+        }
+      })
+      
+      const photoResults = await Promise.allSettled(photoPromises)
+      uploadedPhotos.value = photoResults
+        .filter(result => result.status === 'fulfilled' && result.value !== null)
+        .map(result => (result as PromiseFulfilledResult<{id: string, url: string}>).value)
     }
     
   } catch (error) {
@@ -576,10 +609,6 @@ const loadExistingAnnonce = async () => {
   }
 }
 
-const getPhotoUrl = (photoId: string) => {
-  const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'
-  return `${baseUrl}/api/v1/photos/${photoId}`
-}
 
 const handleSubmit = async () => {
   if (!validateForm()) return
@@ -589,8 +618,19 @@ const handleSubmit = async () => {
   try {
     let response
     if (isEditMode.value && props.id) {
-      // Update existing annonce
-      response = await annoncesApi.putAnnonce(props.id, form)
+      // Update existing annonce - use AnnonceUpdate interface
+      const updateData: AnnonceUpdate = {
+        type: form.type!,
+        nature: form.nature!,
+        titre: form.titre,
+        description: form.description,
+        prix: form.prix,
+        periode_location: form.periode_location,
+        coordinates: form.coordinates!,
+        statut: form.statut,
+        photos_ids: form.photos_ids
+      }
+      response = await annoncesApi.putAnnonce(props.id, updateData)
     } else {
       // Create new annonce
       response = await annoncesApi.createAnnonce(form)

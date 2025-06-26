@@ -4,13 +4,11 @@ import io.github.glandais.trouvaille.entity.UserEntity;
 import io.github.glandais.trouvaille.repository.UserRepository;
 import io.quarkus.security.identity.SecurityIdentity;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
-import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
@@ -32,16 +30,21 @@ public class UserService {
             throw new IllegalStateException("User is not authenticated");
         }
 
-        String sub = getAttribute("sub");
+        String externalId = getAttribute("externalId");
         String username = getAttribute("username");
         String nickname = getAttribute("nickname");
 
-        Optional<UserEntity> userOptional = userRepository.find("username", username).singleResultOptional();
+        return getUserEntity(externalId, username, nickname);
+    }
+
+    public UserEntity getUserEntity(String externalId, String username, String nickname) {
+        Optional<UserEntity> userOptional = userRepository.find("externalId", externalId).singleResultOptional();
         if (userOptional.isEmpty()) {
-            UserEntity userEntity = new UserEntity(new ObjectId(), sub, username, nickname);
+            UserEntity userEntity = new UserEntity(new ObjectId(), externalId, username, nickname);
             userRepository.persist(userEntity);
             return userEntity;
         } else {
+
             return userOptional.get();
         }
     }
@@ -54,8 +57,8 @@ public class UserService {
         return username;
     }
 
-    public UserEntity getUser(String username) {
-        return userRepository.find("username", username).singleResultOptional().orElse(null);
+    public UserEntity getUser(String userId) {
+        return userRepository.findById(new ObjectId(userId));
     }
 
 }

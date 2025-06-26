@@ -62,13 +62,22 @@
           <!-- Image -->
           <div class="aspect-w-16 aspect-h-9 bg-gray-200 relative">
             <img
-              v-if="annonce.photos && annonce.photos.length > 0"
-              :src="getPhotoUrl(annonce.photos[0])"
+              v-if="annonce.photos?.[0] && photoUrls[annonce.photos[0]] && !photoErrors[annonce.photos[0]]"
+              :src="photoUrls[annonce.photos[0]]"
               :alt="annonce.titre"
               class="w-full h-48 object-cover cursor-pointer"
               @click="goToDetail(annonce.id!)"
               @error="onImageError"
             />
+            <div v-else-if="annonce.photos?.[0] && photoLoadingStates[annonce.photos[0]]" class="w-full h-48 flex items-center justify-center bg-gray-100 cursor-pointer" @click="goToDetail(annonce.id!)">
+              <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+            </div>
+            <div v-else-if="annonce.photos?.[0] && photoErrors[annonce.photos[0]]" class="w-full h-48 flex items-center justify-center bg-red-50 cursor-pointer" @click="goToDetail(annonce.id!)">
+              <div class="text-center">
+                <PhotoIcon class="h-10 w-10 text-red-400 mx-auto mb-1" />
+                <p class="text-xs text-red-600">Erreur</p>
+              </div>
+            </div>
             <div v-else class="w-full h-48 flex items-center justify-center bg-gray-100 cursor-pointer" @click="goToDetail(annonce.id!)">
               <PhotoIcon class="h-12 w-12 text-gray-400" />
             </div>
@@ -193,12 +202,12 @@
       </div>
 
       <!-- Pagination -->
-      <div v-if="pagination && pagination.totalPages > 1" class="mt-12">
+      <div v-if="pagination && pagination.total_pages > 1" class="mt-12">
         <nav class="flex justify-center">
           <div class="flex space-x-2">
             <button
-              :disabled="pagination.pageCourante <= 1"
-              @click="changePage(pagination.pageCourante - 1)"
+              :disabled="pagination.page_courante <= 1"
+              @click="changePage(pagination.page_courante - 1)"
               class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Précédent
@@ -209,18 +218,18 @@
               :key="page"
               :class="[
                 'px-3 py-2 text-sm font-medium rounded-md',
-                page === pagination.pageCourante
+                page === pagination.page_courante
                   ? 'bg-blue-600 text-white'
                   : 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-50'
               ]"
-              @click="changePage(page)"
+              @click="changePage(typeof page === 'number' ? page : 1)"
             >
               {{ page }}
             </button>
 
             <button
-              :disabled="pagination.pageCourante >= pagination.totalPages"
-              @click="changePage(pagination.pageCourante + 1)"
+              :disabled="pagination.page_courante >= pagination.total_pages"
+              @click="changePage(pagination.page_courante + 1)"
               class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Suivant
@@ -237,7 +246,7 @@ import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 import { annoncesApi } from '../services/api'
-import { AnnonceList, AnnonceType, AnnonceNature, AnnonceStatut, PeriodeLocation, Pagination } from '../api'
+import { AnnonceList, AnnonceUpdate, AnnonceType, AnnonceNature, AnnonceStatut, PeriodeLocation, Pagination, ListAnnoncesSortByEnum, ListAnnoncesSortOrderEnum } from '../types/extended-api'
 import AppLayout from '../components/AppLayout.vue'
 import {
   PlusIcon,
@@ -246,6 +255,7 @@ import {
   TrashIcon,
   DocumentTextIcon
 } from '@heroicons/vue/24/outline'
+import { photoService } from '../services/photoService'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -280,21 +290,32 @@ const filteredAnnonces = computed(() => {
 })
 
 const fetchMyAnnonces = async (page = 1) => {
-  if (!authStore.user?.pseudo) return
+  if (!authStore.user?.id) return
 
   loading.value = true
   try {
-    const response = await annoncesApi.listAnnonces({
-      page,
-      limit: 12,
-      userPseudo: authStore.user.pseudo,
-      statut: selectedStatus.value as AnnonceStatut || undefined,
-      sortBy: 'date_creation',
-      sortOrder: 'desc'
-    })
+    const response = await annoncesApi.listAnnonces(
+      undefined, // type
+      selectedStatus.value as AnnonceStatut || undefined, // statut  
+      undefined, // nature
+      page, // page
+      12, // limit
+      undefined, // search
+      authStore.user.id, // userId
+      undefined, // prixMin
+      undefined, // prixMax
+      undefined, // latitude
+      undefined, // longitude
+      undefined, // distanceMax
+      ListAnnoncesSortByEnum.DateCreation, // sortBy
+      ListAnnoncesSortOrderEnum.Desc // sortOrder
+    )
 
     annonces.value = response.data.data || []
     pagination.value = response.data.pagination
+    
+    // Charger les photos après avoir récupéré les annonces
+    loadAllPhotos()
   } catch (error) {
     console.error('Failed to fetch my annonces:', error)
   } finally {
@@ -319,9 +340,15 @@ const changeStatut = async (annonce: AnnonceList, newStatut: AnnonceStatut) => {
   if (!annonce.id) return
 
   try {
-    await annoncesApi.putAnnonce(annonce.id, {
+    const updateData: AnnonceUpdate = {
+      type: annonce.type!,
+      nature: annonce.nature!,
+      titre: annonce.titre,
+      description: annonce.description,
+      coordinates: annonce.coordinates!,
       statut: newStatut
-    })
+    }
+    await annoncesApi.putAnnonce(annonce.id, updateData)
     
     // Update local state
     const index = annonces.value.findIndex(a => a.id === annonce.id)
@@ -355,9 +382,38 @@ const deleteAnnonce = async (id: string) => {
   }
 }
 
-const getPhotoUrl = (photoId: string) => {
-  const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'
-  return `${baseUrl}/api/v1/photos/${photoId}`
+// URLs de photos chargées
+const photoUrls = ref<Record<string, string>>({})
+const photoLoadingStates = ref<Record<string, boolean>>({})
+const photoErrors = ref<Record<string, boolean>>({})
+
+// Charger une photo et mettre à jour les refs
+const loadPhotoUrl = async (photoId: string) => {
+  if (photoUrls.value[photoId] || photoLoadingStates.value[photoId]) {
+    return // Déjà chargé ou en cours de chargement
+  }
+  
+  photoLoadingStates.value[photoId] = true
+  photoErrors.value[photoId] = false
+  
+  try {
+    const url = await photoService.getPhotoUrl(photoId, 'thumb')
+    photoUrls.value[photoId] = url
+  } catch (error) {
+    console.error(`Failed to load photo ${photoId}:`, error)
+    photoErrors.value[photoId] = true
+  } finally {
+    photoLoadingStates.value[photoId] = false
+  }
+}
+
+// Charger toutes les photos des annonces
+const loadAllPhotos = () => {
+  filteredAnnonces.value.forEach(annonce => {
+    if (annonce.photos?.[0]) {
+      loadPhotoUrl(annonce.photos[0])
+    }
+  })
 }
 
 const onImageError = (event: Event) => {
@@ -457,8 +513,8 @@ const getEmptyStateMessage = () => {
 const getVisiblePages = () => {
   if (!pagination.value) return []
   
-  const current = pagination.value.pageCourante
-  const total = pagination.value.totalPages
+  const current = pagination.value.page_courante
+  const total = pagination.value.total_pages
   const delta = 2
   
   const range = []
@@ -492,6 +548,11 @@ onMounted(() => {
 // Watch status changes
 watch(selectedStatus, () => {
   fetchMyAnnonces()
+})
+
+// Watch filtered annonces pour charger les nouvelles photos
+watch(filteredAnnonces, () => {
+  loadAllPhotos()
 })
 </script>
 

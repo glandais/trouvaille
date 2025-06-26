@@ -60,24 +60,4 @@ public class ImageService {
         return outputStream.toByteArray();
     }
 
-    public String detectImageFormat(byte[] imageData) throws IOException {
-        try (ByteArrayInputStream bis = new ByteArrayInputStream(imageData)) {
-            BufferedImage image = ImageIO.read(bis);
-            if (image == null) {
-                throw new IOException("Invalid image format");
-            }
-            
-            // Default to JPEG for unknown formats
-            return "jpg";
-        }
-    }
-
-    public boolean isValidImageFormat(String contentType) {
-        return contentType != null && (
-                contentType.equals("image/jpeg") ||
-                contentType.equals("image/png") ||
-                contentType.equals("image/webp") ||
-                contentType.equals("image/gif")
-        );
-    }
 }

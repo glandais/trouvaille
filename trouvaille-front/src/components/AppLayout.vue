@@ -58,7 +58,7 @@
               >
                 <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
                   <span class="text-blue-600 text-sm font-medium">
-                    {{ authStore.user?.pseudo?.charAt(0)?.toUpperCase() }}
+                    {{ (authStore.user?.username || authStore.user?.nickname || 'U')?.charAt(0)?.toUpperCase() }}
                   </span>
                 </div>
                 <ChevronDownIcon class="h-4 w-4" />
@@ -71,7 +71,7 @@
                 class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50"
               >
                 <div class="px-4 py-2 text-sm text-gray-700 border-b">
-                  {{ authStore.user?.pseudo }}
+                  {{ authStore.user?.username || authStore.user?.nickname || 'Utilisateur' }}
                 </div>
                 <router-link
                   to="/my-annonces"

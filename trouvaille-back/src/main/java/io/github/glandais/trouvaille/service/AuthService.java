@@ -4,6 +4,7 @@ import io.github.glandais.trouvaille.client.OAuth2Client;
 import io.github.glandais.trouvaille.client.dto.TokenResponse;
 import io.github.glandais.trouvaille.client.dto.User;
 import io.github.glandais.trouvaille.config.OAuthConfig;
+import io.github.glandais.trouvaille.entity.UserEntity;
 import io.github.glandais.trouvaille.openapi.beans.OAuthTokenRequest;
 import io.github.glandais.trouvaille.openapi.beans.OAuthTokenResponse;
 import io.smallrye.jwt.build.Jwt;
@@ -18,6 +19,9 @@ import java.util.Set;
 @ApplicationScoped
 @Slf4j
 public class AuthService {
+
+    @Inject
+    UserService userService;
 
     @Inject
     OAuthConfig oauthConfig;
@@ -44,13 +48,16 @@ public class AuthService {
                     "Bearer " + tokenResponse.getAccessToken()
             );
 
+            UserEntity userEntity = userService.getUserEntity(user.getId(), user.getUsername(), user.getNickname());
+
             // Create JWT token for our application
             String jwtToken = Jwt.issuer("trouvaille")
                     .upn(user.getUsername())
                     .groups(Set.of("user"))
-                    .claim("sub", user.getId())
-                    .claim("username", user.getUsername())
-                    .claim("nickname", user.getNickname())
+                    .claim("sub", userEntity.getId())
+                    .claim("externalId", userEntity.getExternalId())
+                    .claim("username", userEntity.getUsername())
+                    .claim("nickname", userEntity.getNickname())
                     .expiresIn(Duration.ofHours(24))
                     .sign();
 

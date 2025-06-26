@@ -8,6 +8,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.NotFoundException;
+import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -41,9 +42,6 @@ public class PhotoService {
                 throw new BadRequestException("Empty image data");
             }
 
-            // Validate image format
-            String format = imageService.detectImageFormat(imageData);
-
             // Create photo entity
             PhotoEntity photoEntity = new PhotoEntity(new ObjectId(), userService.getCurrentUser().getId());
 
@@ -53,17 +51,17 @@ public class PhotoService {
             // Resize and save full size image (max 2048x2048)
             byte[] fullSizeData = imageService.resizeImage(
                     new java.io.ByteArrayInputStream(imageData),
-                    2048, 2048, format
+                    2048, 2048, "jpg"
             );
-            Path fullSizePath = photoDir.resolve("full." + format);
+            Path fullSizePath = photoDir.resolve("full.jpg");
             Files.write(fullSizePath, fullSizeData, StandardOpenOption.CREATE);
 
             // Resize and save thumbnail (256x256)
             byte[] thumbnailData = imageService.resizeImage(
                     new java.io.ByteArrayInputStream(imageData),
-                    256, 256, format
+                    256, 256, "jpg"
             );
-            Path thumbnailPath = photoDir.resolve("thumb." + format);
+            Path thumbnailPath = photoDir.resolve("thumb.jpg");
             Files.write(thumbnailPath, thumbnailData, StandardOpenOption.CREATE);
 
             // Save to database
@@ -138,6 +136,40 @@ public class PhotoService {
         String dir4 = photoId.substring(3, 4);
 
         return Paths.get(storageBasePath, dir1, dir2, dir3, dir4, photoId);
+    }
+
+    public Response getPhotoFull(String photoId) {
+        return getPhotoFile(photoId, "full.jpg");
+    }
+
+    public Response getPhotoThumb(String photoId) {
+        return getPhotoFile(photoId, "thumb.jpg");
+    }
+
+    private Response getPhotoFile(String photoId, String filename) {
+        try {
+            ObjectId objectId = new ObjectId(photoId);
+            PhotoEntity photoEntity = photoRepository.findById(objectId);
+            
+            if (photoEntity == null) {
+                throw new NotFoundException("Photo not found");
+            }
+            
+            Path photoFile = getPhotoDirectory(photoId).resolve(filename);
+            
+            if (!Files.exists(photoFile)) {
+                throw new NotFoundException("Photo file not found");
+            }
+            
+            byte[] fileBytes = Files.readAllBytes(photoFile);
+            
+            return Response.ok(fileBytes)
+                    .header("Content-Type", "image/jpeg")
+                    .build();
+            
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to read photo file: " + e.getMessage());
+        }
     }
 
     private void removePhotoFromAnnonces(ObjectId photoId) {
