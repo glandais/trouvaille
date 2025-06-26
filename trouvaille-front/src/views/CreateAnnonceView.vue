@@ -91,22 +91,18 @@
             <label for="description" class="block text-sm font-medium text-gray-700 mb-2">
               Description *
             </label>
-            <textarea
-              id="description"
+            <MarkdownEditor
               v-model="form.description"
-              rows="6"
-              required
-              maxlength="2000"
-              placeholder="Décrivez votre objet en détail (Markdown supporté)"
-              class="form-textarea"
+              :max-length="2000"
+              placeholder="Décrivez votre objet en détail..."
               :class="{ 'border-red-500': errors.description }"
-            ></textarea>
+            />
             <div class="flex justify-between mt-1">
               <p v-if="errors.description" class="text-sm text-red-600">{{ errors.description }}</p>
               <p class="text-sm text-gray-500">{{ form.description.length }}/2000</p>
             </div>
             <p class="mt-1 text-sm text-gray-500">
-              Vous pouvez utiliser le Markdown pour formater votre texte (gras, italique, listes...)
+              Utilisez l'éditeur pour formater votre texte (gras, italique, listes, liens...)
             </p>
           </div>
         </div>
@@ -364,6 +360,7 @@ import { useDebounceFn } from '@vueuse/core'
 import { annoncesApi, photosApi } from '../services/api'
 import { AnnonceCreate, AnnonceUpdate, AnnonceType, AnnonceNature, AnnonceStatut, PeriodeLocation, Coordinates, Annonce } from '../api'
 import AppLayout from '../components/AppLayout.vue'
+import MarkdownEditor from '../components/MarkdownEditor.vue'
 import {
   PhotoIcon,
   MapPinIcon,

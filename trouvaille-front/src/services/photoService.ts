@@ -13,11 +13,8 @@ class PhotoService {
     
     // Vérifier si la photo est déjà en cache
     if (this.cache.has(cacheKey)) {
-      console.log(`Photo ${photoId} (${size}) loaded from cache`)
       return this.cache.get(cacheKey)!
     }
-
-    console.log(`Loading photo ${photoId} (${size}) from API...`)
 
     try {
       let response
@@ -30,13 +27,6 @@ class PhotoService {
         response = await photosApi.getPhotoThumb(photoId, config)
       }
 
-      console.log(`Photo ${photoId} (${size}) API response:`, {
-        status: response.status,
-        dataType: typeof response.data,
-        dataSize: response.data instanceof ArrayBuffer ? response.data.byteLength : 'unknown',
-        data: response.data instanceof ArrayBuffer ? 'Binary data' : response.data
-      })
-
       // Vérifier que nous avons des données
       if (!response.data) {
         throw new Error('No data received from API')
@@ -44,7 +34,6 @@ class PhotoService {
 
       // Si les données sont une chaîne, il y a probablement une erreur
       if (typeof response.data === 'string') {
-        console.error(`Photo ${photoId} (${size}) received string instead of binary data:`, response.data)
         throw new Error(`Received string data instead of binary: ${response.data}`)
       }
 
@@ -52,19 +41,12 @@ class PhotoService {
       const blob = new Blob([response.data], { type: 'image/jpeg' })
       const url = URL.createObjectURL(blob)
       
-      console.log(`Photo ${photoId} (${size}) blob URL created:`, url)
-      
       // Mettre en cache
       this.cache.set(cacheKey, url)
       
       return url
     } catch (error) {
-      console.error(`Failed to load photo ${photoId} (${size}):`, {
-        error,
-        photoId,
-        size,
-        errorMessage: error instanceof Error ? error.message : 'Unknown error'
-      })
+      console.error(`Failed to load photo ${photoId} (${size}):`, error)
       throw error
     }
   }
@@ -100,7 +82,6 @@ class PhotoService {
       await this.getPhotoUrl(photoId, size)
     } catch (error) {
       // Ignorer les erreurs de préchargement
-      console.warn(`Failed to preload photo ${photoId} (${size}):`, error)
     }
   }
 

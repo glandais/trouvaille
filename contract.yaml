@@ -510,6 +510,11 @@ components:
           properties:
             id:
               type: string
+            photos:
+              type: array
+              items:
+                type: string
+              maxItems: 10
             distance:
               type: number
               format: decimal

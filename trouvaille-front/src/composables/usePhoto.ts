@@ -19,7 +19,8 @@ export function usePhoto(photoId: string | Ref<string | null>, size: PhotoSize =
     error.value = ''
 
     try {
-      url.value = await photoService.getPhotoUrl(id, size)
+      const photoUrl = await photoService.getPhotoUrl(id, size)
+      url.value = photoUrl
     } catch (err) {
       error.value = 'Erreur lors du chargement de la photo'
       console.error('Photo loading error:', err)

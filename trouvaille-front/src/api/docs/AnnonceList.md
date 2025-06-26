@@ -13,6 +13,7 @@ Name | Type | Description | Notes
 **periode_location** | [**PeriodeLocation**](PeriodeLocation.md) |  | [optional] [default to undefined]
 **coordinates** | [**Coordinates**](Coordinates.md) |  | [default to undefined]
 **id** | **string** |  | [optional] [default to undefined]
+**photos** | **Array&lt;string&gt;** |  | [optional] [default to undefined]
 **distance** | **number** | Distance en kilomètres (présent uniquement si tri par distance) | [optional] [default to undefined]
 
 ## Example
@@ -29,6 +30,7 @@ const instance: AnnonceList = {
     periode_location,
     coordinates,
     id,
+    photos,
     distance,
 };
 ```

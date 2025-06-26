@@ -89,18 +89,12 @@ const goToDetail = () => {
 
 // Utiliser le composable pour charger la première photo
 const firstPhotoId = computed(() => props.annonce.photos?.[0] || null)
+
 const { url: photoUrl, loading: photoLoading, error: photoError } = usePhoto(firstPhotoId, 'thumb')
 
-// Fonction pour déboguer les erreurs d'images
-const onImageError = (event: Event) => {
-  const img = event.target as HTMLImageElement
-  console.error('AnnonceCard image error:', {
-    src: img.src,
-    photoId: firstPhotoId.value,
-    photoUrl: photoUrl.value,
-    photoError: photoError.value,
-    photoLoading: photoLoading.value
-  })
+// Fonction pour gérer les erreurs d'images
+const onImageError = () => {
+  // L'erreur sera gérée par le composable usePhoto
 }
 
 const formatPrice = (prix?: number, periode?: PeriodeLocation) => {

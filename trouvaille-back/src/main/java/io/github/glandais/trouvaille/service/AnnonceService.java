@@ -112,7 +112,7 @@ public class AnnonceService {
             pipeline.add(new Document("$geoNear", geoNearOptions));
 
             // Add distance field in kilometers using addFields stage
-            pipeline.add(new Document("$addFields", new Document("distanceKm",
+            pipeline.add(new Document("$addFields", new Document("distance",
                     new Document("$divide", List.of("$calculatedDistance", 1000)))));
         }
 
@@ -322,11 +322,17 @@ public class AnnonceService {
             annonceList.setCoordinates(coords);
         }
 
+        // Map photos
+        List<ObjectId> photos = doc.getList("photos", ObjectId.class);
+        if (photos != null) {
+            annonceList.setPhotos(photos.stream().map(ObjectId::toString).toList());
+        }
+
         // Map distance only if geo query was performed
         if (hasGeoQuery) {
-            Double distanceKm = doc.getDouble("distanceKm");
-            if (distanceKm != null) {
-                annonceList.setDistance(Math.round(distanceKm * 10.0) / 10.0);
+            Double distance = doc.getDouble("distance");
+            if (distance != null) {
+                annonceList.setDistance(Math.round(distance * 10.0) / 10.0);
             }
         }
 

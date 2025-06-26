@@ -273,6 +273,12 @@ export interface AnnonceList {
      */
     'id'?: string;
     /**
+     * 
+     * @type {Array<string>}
+     * @memberof AnnonceList
+     */
+    'photos'?: Array<string>;
+    /**
      * Distance en kilomètres (présent uniquement si tri par distance)
      * @type {number}
      * @memberof AnnonceList

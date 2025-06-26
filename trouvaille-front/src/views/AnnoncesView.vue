@@ -317,20 +317,25 @@ const fetchAnnonces = async (page = 1) => {
     const [sortBy, sortOrder] = sortOption.value.split('_')
     const realSortBy = sortBy === 'date' ? `${sortBy}_creation` : sortBy
     
-    const response = await annoncesApi.listAnnonces({
+    const typeParam = filters.value.type || undefined
+    const natureParam = filters.value.nature || undefined
+    
+    const response = await annoncesApi.listAnnonces(
+      typeParam,
+      undefined, // statut
+      natureParam,
       page,
-      limit: 12,
-      search: filters.value.search || undefined,
-      type: filters.value.type as AnnonceType || undefined,
-      nature: filters.value.nature as AnnonceNature || undefined,
-      prixMin: filters.value.prixMin ? parseFloat(filters.value.prixMin) : undefined,
-      prixMax: filters.value.prixMax ? parseFloat(filters.value.prixMax) : undefined,
-      latitude: filters.value.latitude || undefined,
-      longitude: filters.value.longitude || undefined,
-      distanceMax: filters.value.distanceMax ? parseFloat(filters.value.distanceMax) : undefined,
-      sortBy: realSortBy,
-      sortOrder: sortOrder === 'desc' ? 'desc' : 'asc'
-    })
+      12, // limit
+      filters.value.search || undefined,
+      undefined, // userId
+      filters.value.prixMin ? parseFloat(filters.value.prixMin) : undefined,
+      filters.value.prixMax ? parseFloat(filters.value.prixMax) : undefined,
+      filters.value.latitude || undefined,
+      filters.value.longitude || undefined,
+      filters.value.distanceMax ? parseFloat(filters.value.distanceMax) : undefined,
+      realSortBy,
+      sortOrder === 'desc' ? 'desc' : 'asc'
+    )
 
     annonces.value = response.data.data || []
     pagination.value = response.data.pagination
