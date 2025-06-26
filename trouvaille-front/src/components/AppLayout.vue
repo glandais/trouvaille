@@ -6,7 +6,7 @@
         <div class="flex justify-between h-16">
           <div class="flex items-center">
             <!-- Logo -->
-            <router-link to="/" class="flex-shrink-0 flex items-center">
+            <router-link to="/annonces" class="flex-shrink-0 flex items-center">
               <h1 class="text-xl font-bold text-blue-600">Trouvaille</h1>
             </router-link>
 
@@ -53,7 +53,7 @@
             <!-- User Menu -->
             <div v-if="authStore.isAuthenticated" class="relative">
               <button
-                @click="showUserMenu = !showUserMenu"
+                @click="toggleUserMenu"
                 class="flex items-center space-x-2 text-gray-700 hover:text-gray-900 transition-colors"
               >
                 <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
@@ -65,32 +65,75 @@
                     }}
                   </span>
                 </div>
-                <ChevronDownIcon class="h-4 w-4" />
+                <ChevronDownIcon
+                  :class="['h-4 w-4 transition-transform', showUserMenu ? 'rotate-180' : '']"
+                />
               </button>
 
               <!-- User Dropdown -->
-              <div
-                v-if="showUserMenu"
-                v-click-outside="() => (showUserMenu = false)"
-                class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50"
+              <Transition
+                enter-active-class="transition ease-out duration-100"
+                enter-from-class="transform opacity-0 scale-95"
+                enter-to-class="transform opacity-100 scale-100"
+                leave-active-class="transition ease-in duration-75"
+                leave-from-class="transform opacity-100 scale-100"
+                leave-to-class="transform opacity-0 scale-95"
               >
-                <div class="px-4 py-2 text-sm text-gray-700 border-b">
-                  {{ authStore.user?.username || authStore.user?.nickname || 'Utilisateur' }}
+                <div
+                  v-if="showUserMenu"
+                  class="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg border border-gray-200 py-1 z-50"
+                >
+                  <!-- User Info -->
+                  <div class="px-4 py-3 border-b border-gray-100">
+                    <p class="text-sm font-medium text-gray-900">
+                      {{ authStore.user?.username || authStore.user?.nickname || 'Utilisateur' }}
+                    </p>
+                    <p class="text-xs text-gray-500">Connecté</p>
+                  </div>
+
+                  <!-- Menu Items -->
+                  <router-link
+                    to="/my-annonces"
+                    class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                    @click="closeUserMenu"
+                  >
+                    <svg
+                      class="mr-3 h-4 w-4 text-gray-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                      />
+                    </svg>
+                    Mes annonces
+                  </router-link>
+
+                  <button
+                    @click="handleLogout"
+                    class="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                  >
+                    <svg
+                      class="mr-3 h-4 w-4 text-red-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                      />
+                    </svg>
+                    Se déconnecter
+                  </button>
                 </div>
-                <router-link
-                  to="/my-annonces"
-                  class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  @click="showUserMenu = false"
-                >
-                  Mes annonces
-                </router-link>
-                <button
-                  @click="handleLogout"
-                  class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                >
-                  Se déconnecter
-                </button>
-              </div>
+              </Transition>
             </div>
 
             <!-- Mobile Menu Button -->
@@ -135,7 +178,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { useAuthStore } from '../stores/auth'
 import { PlusIcon, ChevronDownIcon, Bars3Icon, XMarkIcon } from '@heroicons/vue/24/outline'
 
@@ -143,23 +186,34 @@ const authStore = useAuthStore()
 const showUserMenu = ref(false)
 const showMobileMenu = ref(false)
 
-const handleLogout = () => {
-  authStore.logout()
+const toggleUserMenu = () => {
+  showUserMenu.value = !showUserMenu.value
+}
+
+const closeUserMenu = () => {
   showUserMenu.value = false
 }
 
-// Click outside directive implementation
-const vClickOutside = {
-  beforeMount(el: any, binding: any) {
-    el.clickOutsideEvent = (event: Event) => {
-      if (!(el === event.target || el.contains(event.target))) {
-        binding.value(event)
-      }
-    }
-    document.addEventListener('click', el.clickOutsideEvent)
-  },
-  unmounted(el: any) {
-    document.removeEventListener('click', el.clickOutsideEvent)
-  },
+const handleLogout = () => {
+  authStore.logout()
+  closeUserMenu()
 }
+
+// Close menu when clicking outside
+const handleClickOutside = (event: Event) => {
+  const target = event.target as Element
+  const userMenuContainer = document.querySelector('.relative')
+  
+  if (showUserMenu.value && userMenuContainer && !userMenuContainer.contains(target)) {
+    closeUserMenu()
+  }
+}
+
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleClickOutside)
+})
 </script>

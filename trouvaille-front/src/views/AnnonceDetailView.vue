@@ -230,50 +230,21 @@
         </div>
       </div>
 
-      <!-- Photo Modal -->
-      <div
-        v-if="showPhotoModal"
-        class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75"
-        @click="closePhotoModal"
-      >
-        <div class="relative max-w-4xl max-h-screen p-4">
-          <img
-            v-if="fullPhotoUrl"
-            :src="fullPhotoUrl"
-            :alt="annonce.titre"
-            class="max-w-full max-h-full object-contain"
-          />
-          <div v-else class="flex items-center justify-center w-96 h-96">
-            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
-          </div>
-          <button
-            @click="closePhotoModal"
-            class="absolute top-4 right-4 text-white hover:text-gray-300"
-          >
-            <XMarkIcon class="h-8 w-8" />
-          </button>
-
-          <!-- Navigation arrows -->
-          <button
-            v-if="annonce.photos && annonce.photos.length > 1 && currentPhotoIndex > 0"
-            @click.stop="currentPhotoIndex--"
-            class="absolute left-4 top-1/2 transform -translate-y-1/2 text-white hover:text-gray-300"
-          >
-            <ChevronLeftIcon class="h-8 w-8" />
-          </button>
-          <button
-            v-if="
-              annonce.photos &&
-              annonce.photos.length > 1 &&
-              currentPhotoIndex < annonce.photos.length - 1
-            "
-            @click.stop="currentPhotoIndex++"
-            class="absolute right-4 top-1/2 transform -translate-y-1/2 text-white hover:text-gray-300"
-          >
-            <ChevronRightIcon class="h-8 w-8" />
-          </button>
-        </div>
-      </div>
+      <!-- Photo Viewer -->
+      <PhotoViewer
+        :show="showPhotoModal"
+        :photo-url="fullPhotoUrl"
+        :alt="annonce.titre"
+        :loading="fullPhotoLoading"
+        :show-previous="hasPhotos && currentPhotoIndex > 0"
+        :show-next="hasPhotos && currentPhotoIndex < totalPhotos - 1"
+        :current-index="currentPhotoIndex"
+        :total-count="totalPhotos"
+        @close="closePhotoModal"
+        @previous="previousPhoto"
+        @next="nextPhoto"
+        @error="onPhotoViewerError"
+      />
     </div>
   </AppLayout>
 </template>
@@ -292,6 +263,7 @@ import {
   PeriodeLocation,
 } from '../types/extended-api'
 import AppLayout from '../components/AppLayout.vue'
+import PhotoViewer from '../components/PhotoViewer.vue'
 import {
   PhotoIcon,
   MapPinIcon,
@@ -346,6 +318,14 @@ const {
 
 const isOwner = computed(() => {
   return authStore.user?.id === annonce.value?.utilisateur?.id
+})
+
+const hasPhotos = computed(() => {
+  return annonce.value?.photos && annonce.value.photos.length > 0
+})
+
+const totalPhotos = computed(() => {
+  return annonce.value?.photos?.length || 0
 })
 
 const fetchAnnonce = async () => {
@@ -458,6 +438,22 @@ const openPhotoModal = () => {
 
 const closePhotoModal = () => {
   showPhotoModal.value = false
+}
+
+const previousPhoto = () => {
+  if (currentPhotoIndex.value > 0) {
+    currentPhotoIndex.value--
+  }
+}
+
+const nextPhoto = () => {
+  if (hasPhotos.value && currentPhotoIndex.value < totalPhotos.value - 1) {
+    currentPhotoIndex.value++
+  }
+}
+
+const onPhotoViewerError = () => {
+  console.error('Photo viewer error for photo:', currentPhoto.value)
 }
 
 const confirmDelete = () => {

@@ -35,7 +35,7 @@
               id="type"
               v-model="filters.type"
               class="form-input"
-              @change="() => fetchAnnonces()"
+              @change="debouncedSearch"
             >
               <option value="">Tous</option>
               <option :value="AnnonceType.Vente">Vente</option>
@@ -52,7 +52,7 @@
               id="nature"
               v-model="filters.nature"
               class="form-input"
-              @change="() => fetchAnnonces()"
+              @change="debouncedSearch"
             >
               <option value="">Toutes</option>
               <option :value="AnnonceNature.Offre">Offre</option>
@@ -65,7 +65,7 @@
             <label for="sort" class="block text-sm font-medium text-gray-700 mb-1">
               Trier par
             </label>
-            <select id="sort" v-model="sortOption" class="form-input" @change="handleSortChange">
+            <select id="sort" v-model="sortOption" class="form-input" @change="debouncedSearch">
               <option value="date_creation_desc">Plus récent</option>
               <option value="date_creation_asc">Plus ancien</option>
               <option value="prix_asc">Prix croissant</option>
@@ -126,18 +126,31 @@
           </div>
           <div>
             <label for="distance" class="block text-sm font-medium text-gray-700 mb-1">
-              Distance max (km)
+              Distance max: {{ distanceLabel }}
             </label>
-            <input
-              id="distance"
-              v-model="filters.distanceMax"
-              type="number"
-              min="1"
-              max="100"
-              placeholder="Illimitée"
-              class="form-input"
-              @input="debouncedSearch"
-            />
+            <div class="space-y-2">
+              <input
+                id="distance-slider"
+                v-model="distanceSlider"
+                type="range"
+                min="1"
+                max="100"
+                step="1"
+                class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+                @input="handleDistanceSliderChange"
+              />
+              <input
+                id="distance-input"
+                v-model="distanceInput"
+                type="number"
+                min="1"
+                max="100"
+                step="1"
+                placeholder="Illimitée"
+                class="form-input w-full text-center"
+                @input="handleDistanceInputChange"
+              />
+            </div>
           </div>
         </div>
 
@@ -284,6 +297,8 @@ const pagination = ref<Pagination>()
 const loading = ref(false)
 const locationSearch = ref('')
 const sortOption = ref('date_creation_desc')
+const distanceSlider = ref(50)
+const distanceInput = ref('')
 
 const filters = ref({
   search: '',
@@ -291,9 +306,14 @@ const filters = ref({
   nature: '',
   prixMin: '',
   prixMax: '',
-  distanceMax: '',
+  distanceMax: '50',
   latitude: null as number | null,
   longitude: null as number | null,
+})
+
+const distanceLabel = computed(() => {
+  const distance = distanceInput.value || distanceSlider.value
+  return distance ? `${distance} km` : 'Illimitée'
 })
 
 const hasActiveFilters = computed(() => {
@@ -328,7 +348,7 @@ const fetchAnnonces = async (page = 1) => {
       filters.value.prixMax ? parseFloat(filters.value.prixMax) : undefined,
       filters.value.latitude || undefined,
       filters.value.longitude || undefined,
-      filters.value.distanceMax ? parseFloat(filters.value.distanceMax) : undefined,
+      filters.value.distanceMax ? Math.round(parseFloat(filters.value.distanceMax)) : undefined,
       realSortBy as ListAnnoncesSortByEnum,
       sortOrder === 'desc' ? ListAnnoncesSortOrderEnum.Desc : ListAnnoncesSortOrderEnum.Asc,
     )
@@ -346,8 +366,22 @@ const debouncedSearch = useDebounceFn(() => {
   fetchAnnonces()
 }, 500)
 
-const handleSortChange = () => {
-  fetchAnnonces()
+const handleDistanceSliderChange = () => {
+  distanceInput.value = distanceSlider.value.toString()
+  filters.value.distanceMax = distanceSlider.value.toString()
+  debouncedSearch()
+}
+
+const handleDistanceInputChange = () => {
+  const value = parseInt(distanceInput.value)
+  if (!isNaN(value) && value >= 1 && value <= 100) {
+    distanceSlider.value = value
+    filters.value.distanceMax = value.toString()
+    debouncedSearch()
+  } else if (distanceInput.value === '') {
+    filters.value.distanceMax = ''
+    debouncedSearch()
+  }
 }
 
 const changePage = (page: number) => {
@@ -372,6 +406,8 @@ const clearAllFilters = () => {
     longitude: null,
   }
   locationSearch.value = ''
+  distanceSlider.value = 50
+  distanceInput.value = ''
   sortOption.value = 'date_creation_desc'
   fetchAnnonces()
 }
@@ -437,3 +473,38 @@ watch(
   },
 )
 </script>
+
+<style scoped>
+.slider::-webkit-slider-thumb {
+  appearance: none;
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  background: #3b82f6;
+  cursor: pointer;
+  border: 2px solid #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.slider::-moz-range-thumb {
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  background: #3b82f6;
+  cursor: pointer;
+  border: 2px solid #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.slider::-webkit-slider-track {
+  height: 8px;
+  border-radius: 4px;
+  background: #e5e7eb;
+}
+
+.slider::-moz-range-track {
+  height: 8px;
+  border-radius: 4px;
+  background: #e5e7eb;
+}
+</style>
