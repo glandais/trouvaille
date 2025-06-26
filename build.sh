@@ -72,6 +72,10 @@ fi
 log_info "Using tag: $TAG"
 log_info "Backend build type: $BUILD_TYPE"
 
+log_info "Copy contract file"
+cp contract.yaml trouvaille-front
+cp contract.yaml trouvaille-back/src/main/resources/openapi
+
 # Build backend
 log_info "Building backend image..."
 cd trouvaille-back
