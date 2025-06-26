@@ -40,8 +40,12 @@
             <ext:options>{name: "photosIdx"}</ext:options>
         </ext:createIndex>
         <ext:createIndex collectionName="Annonce">
-            <ext:keys>{dateCreation: 1}</ext:keys>
+            <ext:keys>{dateCreation: -1}</ext:keys>
             <ext:options>{name: "dateCreationIdx"}</ext:options>
+        </ext:createIndex>
+        <ext:createIndex collectionName="Annonce">
+            <ext:keys>{dateModification: -1}</ext:keys>
+            <ext:options>{name: "dateModificationIdx"}</ext:options>
         </ext:createIndex>
         <ext:createIndex collectionName="Annonce">
             <ext:keys>{coordinates: "2dsphere"}</ext:keys>
@@ -49,13 +53,42 @@
         </ext:createIndex>
 
         <ext:createIndex collectionName="User">
+            <ext:keys>{externalId: 1}</ext:keys>
+            <ext:options>{name: "externalIdIdx", unique: true}</ext:options>
+        </ext:createIndex>
+        <ext:createIndex collectionName="User">
             <ext:keys>{username: 1}</ext:keys>
             <ext:options>{name: "usernameIdx"}</ext:options>
         </ext:createIndex>
         <ext:createIndex collectionName="Photo">
             <ext:keys>{utilisateur: 1}</ext:keys>
-            <ext:options>{name: "usernameIdx"}</ext:options>
+            <ext:options>{name: "photoUtilisateurIdx"}</ext:options>
         </ext:createIndex>
+    </changeSet>
+
+    <changeSet id="2" author="glandais">
+        <!-- Text search index for full-text search on title and description -->
+        <ext:runCommand>
+            <ext:command>
+                {
+                    createIndexes: "Annonce",
+                    indexes: [
+                        {
+                            key: {
+                                titre: "text",
+                                description: "text"
+                            },
+                            name: "textSearchIdx",
+                            weights: {
+                                titre: 10,
+                                description: 5
+                            },
+                            default_language: "french"
+                        }
+                    ]
+                }
+            </ext:command>
+        </ext:runCommand>
     </changeSet>
 
 </databaseChangeLog>
