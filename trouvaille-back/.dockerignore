@@ -1,5 +1,37 @@
-*
+# Maven - only include needed artifacts
+target/
 !target/*-runner
-!target/*-runner.jar
-!target/lib/*
-!target/quarkus-app/*
+!target/quarkus-app/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Git
+.git/
+.gitignore
+
+# Documentation
+*.md
+docs/
+
+# Scripts
+*.sh
+
+# Data directories (runtime data)
+data/
+photos/
+
+# Maven wrapper (keep)
+!mvnw
+!.mvn/

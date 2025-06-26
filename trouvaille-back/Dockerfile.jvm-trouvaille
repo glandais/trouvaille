@@ -1,0 +1,29 @@
+####
+# Trouvaille-specific Dockerfile for JVM builds  
+# Based on Quarkus JVM Dockerfile with additional setup
+####
+FROM registry.access.redhat.com/ubi9/openjdk-21:1.21
+
+ENV LANGUAGE='en_US:en'
+
+# Create app directories with standard path
+RUN mkdir -p /app/data/photos /app/data/keys \
+    && chown -R 185:root /deployments /app \
+    && chmod -R "g+rwX" /deployments /app
+
+# We make four distinct layers so if there are application changes the library layers can be re-used
+COPY --chown=185 target/quarkus-app/lib/ /deployments/lib/
+COPY --chown=185 target/quarkus-app/*.jar /deployments/
+COPY --chown=185 target/quarkus-app/app/ /deployments/app/
+COPY --chown=185 target/quarkus-app/quarkus/ /deployments/quarkus/
+
+EXPOSE 8080
+USER 185
+
+# Environment variables for Quarkus and Trouvaille
+ENV JAVA_OPTS_APPEND="-Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jboss.logmanager.LogManager"
+ENV JAVA_APP_JAR="/deployments/quarkus-run.jar"
+ENV PHOTOS_BASE_PATH=/app/data/photos
+ENV JWT_KEYS_PATH=/app/data/keys
+
+ENTRYPOINT [ "/opt/jboss/container/java/run/run-java.sh" ]

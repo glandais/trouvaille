@@ -1,0 +1,118 @@
+version: '3.8'
+
+services:
+  # Reverse proxy
+  traefik:
+    image: traefik:v3.1
+    container_name: trouvaille-traefik
+    restart: unless-stopped
+    command:
+      - "--api.dashboard=true"
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--log.level=INFO"
+      - "--accesslog=true"
+    ports:
+      - "${HTTP_PORT:-8090}:80"        # HTTP configurable (default 8090)
+      - "127.0.0.1:${TRAEFIK_DASHBOARD_PORT:-8080}:8080"  # Dashboard (localhost only)
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - trouvaille-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.traefik.rule=Host(`traefik.localhost`)"
+      - "traefik.http.routers.traefik.service=api@internal"
+
+  # MongoDB
+  mongodb:
+    image: mongo:7.0
+    container_name: trouvaille-mongodb
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: trouvaille
+    volumes:
+      - mongodb_data:/data/db
+      # Only run init script if needed (schema validation, DB settings)
+      - ./trouvaille-back/scripts/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    networks:
+      - trouvaille-network
+    ports:
+      - "127.0.0.1:27017:27017"    # MongoDB (localhost only)
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+
+  # Backend Quarkus
+  backend:
+    image: trouvaille/backend:latest
+    container_name: trouvaille-backend
+    restart: unless-stopped
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    environment:
+      # MongoDB connection
+      QUARKUS_MONGODB_CONNECTION_STRING: mongodb://admin:password@mongodb:27017/trouvaille?authSource=admin
+      QUARKUS_MONGODB_DATABASE: trouvaille
+      
+      # OAuth configuration
+      OAUTH_AUTHORIZE_URI: https://chat.n-peloton.fr/oauth/authorize
+      OAUTH_TOKEN_URI: https://chat.n-peloton.fr/oauth/access_token
+      OAUTH_USER_INFO_URI: https://chat.n-peloton.fr/api/v4/users/me
+      OAUTH_CLIENT_ID: ${OAUTH_CLIENT_ID:-your-client-id}
+      OAUTH_CLIENT_SECRET: ${OAUTH_CLIENT_SECRET:-your-client-secret}
+      OAUTH_REDIRECT_URI: http://localhost/oauth/callback
+      
+      # Application configuration
+      QUARKUS_HTTP_PORT: 8080
+      QUARKUS_HTTP_HOST: 0.0.0.0
+      QUARKUS_LOG_LEVEL: INFO
+      
+      # Photos storage (standardized path for both native and JVM)
+      # PHOTOS_BASE_PATH and JWT_KEYS_PATH are set in Dockerfile
+    volumes:
+      - photos_data:/app/data/photos
+      - jwt_keys:/app/data/keys
+    networks:
+      - trouvaille-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.backend.rule=PathPrefix(`/api`)"
+      - "traefik.http.routers.backend.entrypoints=web"
+      - "traefik.http.services.backend.loadbalancer.server.port=8080"
+
+  # Frontend Vue.js
+  frontend:
+    image: trouvaille/frontend:latest
+    container_name: trouvaille-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    networks:
+      - trouvaille-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend.rule=PathPrefix(`/`)"
+      - "traefik.http.routers.frontend.entrypoints=web"
+      - "traefik.http.services.frontend.loadbalancer.server.port=80"
+      - "traefik.http.routers.frontend.priority=1"
+
+volumes:
+  mongodb_data:
+    driver: local
+  photos_data:
+    driver: local
+  jwt_keys:
+    driver: local
+
+networks:
+  trouvaille-network:
+    driver: bridge
