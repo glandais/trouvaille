@@ -61,7 +61,7 @@ declare module '@toast-ui/editor' {
   export class Editor {
     static factory(options: EditorOptions): Editor | null
     constructor(options: EditorOptions)
-    
+
     changePreviewStyle(style: PreviewStyle): void
     focus(): void
     blur(): void

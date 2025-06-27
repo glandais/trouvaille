@@ -31,10 +31,7 @@
       />
 
       <!-- Loading -->
-      <div
-        v-else-if="loading"
-        class="absolute inset-0 flex items-center justify-center text-white"
-      >
+      <div v-else-if="loading" class="absolute inset-0 flex items-center justify-center text-white">
         <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
         <span class="ml-3">Chargement...</span>
       </div>
@@ -88,21 +85,26 @@
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
         </svg>
       </button>
-      
+
       <button
         @click="resetZoom"
         class="px-3 py-2 rounded-full bg-black bg-opacity-50 text-white hover:bg-opacity-70 transition-all text-sm"
       >
         {{ Math.round(scale * 100) }}%
       </button>
-      
+
       <button
         @click="zoomIn"
         :disabled="scale >= maxScale"
         class="p-2 rounded-full bg-black bg-opacity-50 text-white hover:bg-opacity-70 transition-all disabled:opacity-50"
       >
         <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 4v16m8-8H4"
+          />
         </svg>
       </button>
     </div>
@@ -178,25 +180,34 @@ const imageStyle = computed(() => ({
 }))
 
 // Watch for photo changes to reset view
-watch(() => props.photoUrl, () => {
-  resetView()
-})
-
-watch(() => props.currentIndex, () => {
-  resetView()
-})
-
-watch(() => props.show, (newShow) => {
-  if (newShow) {
+watch(
+  () => props.photoUrl,
+  () => {
     resetView()
-    nextTick(() => {
-      // Add keyboard listener
-      document.addEventListener('keydown', handleKeyDown)
-    })
-  } else {
-    document.removeEventListener('keydown', handleKeyDown)
-  }
-})
+  },
+)
+
+watch(
+  () => props.currentIndex,
+  () => {
+    resetView()
+  },
+)
+
+watch(
+  () => props.show,
+  (newShow) => {
+    if (newShow) {
+      resetView()
+      nextTick(() => {
+        // Add keyboard listener
+        document.addEventListener('keydown', handleKeyDown)
+      })
+    } else {
+      document.removeEventListener('keydown', handleKeyDown)
+    }
+  },
+)
 
 // Methods
 const resetView = () => {
@@ -240,10 +251,10 @@ const fitImageToContainer = () => {
   // Calculate scale to fit image in container (borderless)
   const scaleX = containerWidth / naturalWidth.value
   const scaleY = containerHeight / naturalHeight.value
-  
+
   // Use the smaller scale to ensure the entire image is visible
   const calculatedOptimalScale = Math.min(scaleX, scaleY) // Allow scaling up to fill container
-  
+
   // Save optimal scale as minimum scale
   optimalScale.value = calculatedOptimalScale
   scale.value = calculatedOptimalScale
@@ -278,10 +289,10 @@ const onImageLoad = () => {
 // Mouse events
 const handleWheel = (event: WheelEvent) => {
   event.preventDefault()
-  
+
   const delta = -event.deltaY / 1000
   const newScale = Math.max(optimalScale.value, Math.min(maxScale, scale.value + delta))
-  
+
   if (newScale !== scale.value) {
     // Zoom towards mouse position
     const rect = containerRef.value?.getBoundingClientRect()
@@ -290,17 +301,17 @@ const handleWheel = (event: WheelEvent) => {
       const mouseY = event.clientY - rect.top
       const centerX = rect.width / 2
       const centerY = rect.height / 2
-      
+
       // Calculate offset from center
       const offsetX = mouseX - centerX
       const offsetY = mouseY - centerY
-      
+
       // Adjust translation to zoom towards mouse
       const scaleRatio = newScale / scale.value
       translateX.value = (translateX.value - offsetX) * scaleRatio + offsetX
       translateY.value = (translateY.value - offsetY) * scaleRatio + offsetY
     }
-    
+
     scale.value = newScale
     constrainPosition()
   }
@@ -319,13 +330,13 @@ const handleMouseMove = (event: MouseEvent) => {
   if (isDragging.value && scale.value > 1) {
     const deltaX = event.clientX - lastMouseX.value
     const deltaY = event.clientY - lastMouseY.value
-    
+
     translateX.value += deltaX
     translateY.value += deltaY
-    
+
     lastMouseX.value = event.clientX
     lastMouseY.value = event.clientY
-    
+
     constrainPosition()
   }
 }
@@ -340,8 +351,7 @@ const getTouchDistance = (touches: TouchList) => {
   const touch1 = touches[0]
   const touch2 = touches[1]
   return Math.sqrt(
-    Math.pow(touch2.clientX - touch1.clientX, 2) + 
-    Math.pow(touch2.clientY - touch1.clientY, 2)
+    Math.pow(touch2.clientX - touch1.clientX, 2) + Math.pow(touch2.clientY - touch1.clientY, 2),
   )
 }
 
@@ -351,7 +361,7 @@ const getTouchCenter = (touches: TouchList) => {
   } else if (touches.length === 2) {
     return {
       x: (touches[0].clientX + touches[1].clientX) / 2,
-      y: (touches[0].clientY + touches[1].clientY) / 2
+      y: (touches[0].clientY + touches[1].clientY) / 2,
     }
   }
   return { x: 0, y: 0 }
@@ -359,7 +369,7 @@ const getTouchCenter = (touches: TouchList) => {
 
 const handleTouchStart = (event: TouchEvent) => {
   event.preventDefault()
-  
+
   if (event.touches.length === 1) {
     // Single touch - start dragging
     if (scale.value > 1) {
@@ -379,28 +389,28 @@ const handleTouchStart = (event: TouchEvent) => {
 
 const handleTouchMove = (event: TouchEvent) => {
   event.preventDefault()
-  
+
   if (event.touches.length === 1 && isDragging.value) {
     // Single touch - drag
     const deltaX = event.touches[0].clientX - lastTouchX.value
     const deltaY = event.touches[0].clientY - lastTouchY.value
-    
+
     translateX.value += deltaX
     translateY.value += deltaY
-    
+
     lastTouchX.value = event.touches[0].clientX
     lastTouchY.value = event.touches[0].clientY
-    
+
     constrainPosition()
   } else if (event.touches.length === 2) {
     // Two touches - pinch zoom
     const currentDistance = getTouchDistance(event.touches)
     const center = getTouchCenter(event.touches)
-    
+
     if (lastTouchDistance.value > 0) {
       const scaleChange = currentDistance / lastTouchDistance.value
       const newScale = Math.max(optimalScale.value, Math.min(maxScale, scale.value * scaleChange))
-      
+
       if (newScale !== scale.value) {
         // Zoom towards touch center
         const rect = containerRef.value?.getBoundingClientRect()
@@ -409,20 +419,20 @@ const handleTouchMove = (event: TouchEvent) => {
           const touchY = center.y - rect.top
           const centerX = rect.width / 2
           const centerY = rect.height / 2
-          
+
           const offsetX = touchX - centerX
           const offsetY = touchY - centerY
-          
+
           const scaleRatio = newScale / scale.value
           translateX.value = (translateX.value - offsetX) * scaleRatio + offsetX
           translateY.value = (translateY.value - offsetY) * scaleRatio + offsetY
         }
-        
+
         scale.value = newScale
         constrainPosition()
       }
     }
-    
+
     lastTouchDistance.value = currentDistance
     lastTouchX.value = center.x
     lastTouchY.value = center.y

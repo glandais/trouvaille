@@ -77,6 +77,12 @@ export interface Annonce {
   periode_location?: PeriodeLocation
   /**
    *
+   * @type {Array<string>}
+   * @memberof Annonce
+   */
+  photos?: Array<string>
+  /**
+   *
    * @type {Coordinates}
    * @memberof Annonce
    */
@@ -86,19 +92,25 @@ export interface Annonce {
    * @type {string}
    * @memberof Annonce
    */
+  ville: string
+  /**
+   *
+   * @type {string}
+   * @memberof Annonce
+   */
   id: string
+  /**
+   *
+   * @type {AnnonceStatut}
+   * @memberof Annonce
+   */
+  statut: AnnonceStatut
   /**
    *
    * @type {Utilisateur}
    * @memberof Annonce
    */
   utilisateur: Utilisateur
-  /**
-   *
-   * @type {Array<string>}
-   * @memberof Annonce
-   */
-  photos?: Array<string>
   /**
    *
    * @type {string}
@@ -111,12 +123,6 @@ export interface Annonce {
    * @memberof Annonce
    */
   date_modification?: string
-  /**
-   *
-   * @type {AnnonceStatut}
-   * @memberof Annonce
-   */
-  statut: AnnonceStatut
 }
 
 /**
@@ -163,66 +169,22 @@ export interface AnnonceBase {
   periode_location?: PeriodeLocation
   /**
    *
+   * @type {Array<string>}
+   * @memberof AnnonceBase
+   */
+  photos?: Array<string>
+  /**
+   *
    * @type {Coordinates}
    * @memberof AnnonceBase
    */
   coordinates: Coordinates
-}
-
-/**
- *
- * @export
- * @interface AnnonceCreate
- */
-export interface AnnonceCreate {
-  /**
-   *
-   * @type {AnnonceType}
-   * @memberof AnnonceCreate
-   */
-  type: AnnonceType
-  /**
-   *
-   * @type {AnnonceNature}
-   * @memberof AnnonceCreate
-   */
-  nature: AnnonceNature
   /**
    *
    * @type {string}
-   * @memberof AnnonceCreate
+   * @memberof AnnonceBase
    */
-  titre: string
-  /**
-   *
-   * @type {string}
-   * @memberof AnnonceCreate
-   */
-  description: string
-  /**
-   *
-   * @type {number}
-   * @memberof AnnonceCreate
-   */
-  prix?: number
-  /**
-   *
-   * @type {PeriodeLocation}
-   * @memberof AnnonceCreate
-   */
-  periode_location?: PeriodeLocation
-  /**
-   *
-   * @type {Coordinates}
-   * @memberof AnnonceCreate
-   */
-  coordinates: Coordinates
-  /**
-   * Ids des photos déjà uploadées
-   * @type {Array<string>}
-   * @memberof AnnonceCreate
-   */
-  photos_ids?: Array<string>
+  ville: string
 }
 
 /**
@@ -269,6 +231,12 @@ export interface AnnonceList {
   periode_location?: PeriodeLocation
   /**
    *
+   * @type {Array<string>}
+   * @memberof AnnonceList
+   */
+  photos?: Array<string>
+  /**
+   *
    * @type {Coordinates}
    * @memberof AnnonceList
    */
@@ -278,13 +246,37 @@ export interface AnnonceList {
    * @type {string}
    * @memberof AnnonceList
    */
-  id?: string
+  ville: string
   /**
    *
-   * @type {Array<string>}
+   * @type {string}
    * @memberof AnnonceList
    */
-  photos?: Array<string>
+  id: string
+  /**
+   *
+   * @type {AnnonceStatut}
+   * @memberof AnnonceList
+   */
+  statut: AnnonceStatut
+  /**
+   *
+   * @type {Utilisateur}
+   * @memberof AnnonceList
+   */
+  utilisateur: Utilisateur
+  /**
+   *
+   * @type {string}
+   * @memberof AnnonceList
+   */
+  date_creation: string
+  /**
+   *
+   * @type {string}
+   * @memberof AnnonceList
+   */
+  date_modification?: string
   /**
    * Distance en kilomètres (présent uniquement si tri par distance)
    * @type {number}
@@ -330,63 +322,69 @@ export enum AnnonceType {
 /**
  *
  * @export
- * @interface AnnonceUpdate
+ * @interface AnnonceWithStatut
  */
-export interface AnnonceUpdate {
+export interface AnnonceWithStatut {
   /**
    *
    * @type {AnnonceType}
-   * @memberof AnnonceUpdate
+   * @memberof AnnonceWithStatut
    */
   type: AnnonceType
   /**
    *
    * @type {AnnonceNature}
-   * @memberof AnnonceUpdate
+   * @memberof AnnonceWithStatut
    */
   nature: AnnonceNature
   /**
    *
    * @type {string}
-   * @memberof AnnonceUpdate
+   * @memberof AnnonceWithStatut
    */
   titre: string
   /**
    *
    * @type {string}
-   * @memberof AnnonceUpdate
+   * @memberof AnnonceWithStatut
    */
   description: string
   /**
    *
    * @type {number}
-   * @memberof AnnonceUpdate
+   * @memberof AnnonceWithStatut
    */
   prix?: number
   /**
    *
    * @type {PeriodeLocation}
-   * @memberof AnnonceUpdate
+   * @memberof AnnonceWithStatut
    */
   periode_location?: PeriodeLocation
   /**
    *
+   * @type {Array<string>}
+   * @memberof AnnonceWithStatut
+   */
+  photos?: Array<string>
+  /**
+   *
    * @type {Coordinates}
-   * @memberof AnnonceUpdate
+   * @memberof AnnonceWithStatut
    */
   coordinates: Coordinates
   /**
    *
+   * @type {string}
+   * @memberof AnnonceWithStatut
+   */
+  ville: string
+  /**
+   *
    * @type {AnnonceStatut}
-   * @memberof AnnonceUpdate
+   * @memberof AnnonceWithStatut
    */
   statut?: AnnonceStatut
-  /**
-   * Ids des photos déjà uploadées
-   * @type {Array<string>}
-   * @memberof AnnonceUpdate
-   */
-  photos_ids?: Array<string>
 }
 
 /**
@@ -587,16 +585,16 @@ export const AnnoncesApiAxiosParamCreator = function (configuration?: Configurat
     /**
      * Création d\'une annonce
      * @summary Créer une nouvelle annonce
-     * @param {AnnonceCreate} annonceCreate
+     * @param {AnnonceBase} annonceBase
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     createAnnonce: async (
-      annonceCreate: AnnonceCreate,
+      annonceBase: AnnonceBase,
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
-      // verify required parameter 'annonceCreate' is not null or undefined
-      assertParamExists('createAnnonce', 'annonceCreate', annonceCreate)
+      // verify required parameter 'annonceBase' is not null or undefined
+      assertParamExists('createAnnonce', 'annonceBase', annonceBase)
       const localVarPath = `/api/v1/annonces`
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
       const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
@@ -623,7 +621,7 @@ export const AnnoncesApiAxiosParamCreator = function (configuration?: Configurat
         ...options.headers,
       }
       localVarRequestOptions.data = serializeDataIfNeeded(
-        annonceCreate,
+        annonceBase,
         localVarRequestOptions,
         configuration,
       )
@@ -846,19 +844,19 @@ export const AnnoncesApiAxiosParamCreator = function (configuration?: Configurat
      *
      * @summary Mettre à jour une annonce
      * @param {string} id
-     * @param {AnnonceUpdate} annonceUpdate
+     * @param {AnnonceWithStatut} annonceWithStatut
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     putAnnonce: async (
       id: string,
-      annonceUpdate: AnnonceUpdate,
+      annonceWithStatut: AnnonceWithStatut,
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
       // verify required parameter 'id' is not null or undefined
       assertParamExists('putAnnonce', 'id', id)
-      // verify required parameter 'annonceUpdate' is not null or undefined
-      assertParamExists('putAnnonce', 'annonceUpdate', annonceUpdate)
+      // verify required parameter 'annonceWithStatut' is not null or undefined
+      assertParamExists('putAnnonce', 'annonceWithStatut', annonceWithStatut)
       const localVarPath = `/api/v1/annonces/{id}`.replace(
         `{${'id'}}`,
         encodeURIComponent(String(id)),
@@ -888,7 +886,7 @@ export const AnnoncesApiAxiosParamCreator = function (configuration?: Configurat
         ...options.headers,
       }
       localVarRequestOptions.data = serializeDataIfNeeded(
-        annonceUpdate,
+        annonceWithStatut,
         localVarRequestOptions,
         configuration,
       )
@@ -911,18 +909,15 @@ export const AnnoncesApiFp = function (configuration?: Configuration) {
     /**
      * Création d\'une annonce
      * @summary Créer une nouvelle annonce
-     * @param {AnnonceCreate} annonceCreate
+     * @param {AnnonceBase} annonceBase
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     async createAnnonce(
-      annonceCreate: AnnonceCreate,
+      annonceBase: AnnonceBase,
       options?: RawAxiosRequestConfig,
     ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Annonce>> {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.createAnnonce(
-        annonceCreate,
-        options,
-      )
+      const localVarAxiosArgs = await localVarAxiosParamCreator.createAnnonce(annonceBase, options)
       const localVarOperationServerIndex = configuration?.serverIndex ?? 0
       const localVarOperationServerBasePath =
         operationServerMap['AnnoncesApi.createAnnonce']?.[localVarOperationServerIndex]?.url
@@ -1049,18 +1044,18 @@ export const AnnoncesApiFp = function (configuration?: Configuration) {
      *
      * @summary Mettre à jour une annonce
      * @param {string} id
-     * @param {AnnonceUpdate} annonceUpdate
+     * @param {AnnonceWithStatut} annonceWithStatut
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     async putAnnonce(
       id: string,
-      annonceUpdate: AnnonceUpdate,
+      annonceWithStatut: AnnonceWithStatut,
       options?: RawAxiosRequestConfig,
     ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Annonce>> {
       const localVarAxiosArgs = await localVarAxiosParamCreator.putAnnonce(
         id,
-        annonceUpdate,
+        annonceWithStatut,
         options,
       )
       const localVarOperationServerIndex = configuration?.serverIndex ?? 0
@@ -1091,16 +1086,16 @@ export const AnnoncesApiFactory = function (
     /**
      * Création d\'une annonce
      * @summary Créer une nouvelle annonce
-     * @param {AnnonceCreate} annonceCreate
+     * @param {AnnonceBase} annonceBase
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     createAnnonce(
-      annonceCreate: AnnonceCreate,
+      annonceBase: AnnonceBase,
       options?: RawAxiosRequestConfig,
     ): AxiosPromise<Annonce> {
       return localVarFp
-        .createAnnonce(annonceCreate, options)
+        .createAnnonce(annonceBase, options)
         .then((request) => request(axios, basePath))
     },
     /**
@@ -1184,17 +1179,17 @@ export const AnnoncesApiFactory = function (
      *
      * @summary Mettre à jour une annonce
      * @param {string} id
-     * @param {AnnonceUpdate} annonceUpdate
+     * @param {AnnonceWithStatut} annonceWithStatut
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     putAnnonce(
       id: string,
-      annonceUpdate: AnnonceUpdate,
+      annonceWithStatut: AnnonceWithStatut,
       options?: RawAxiosRequestConfig,
     ): AxiosPromise<Annonce> {
       return localVarFp
-        .putAnnonce(id, annonceUpdate, options)
+        .putAnnonce(id, annonceWithStatut, options)
         .then((request) => request(axios, basePath))
     },
   }
@@ -1210,14 +1205,14 @@ export class AnnoncesApi extends BaseAPI {
   /**
    * Création d\'une annonce
    * @summary Créer une nouvelle annonce
-   * @param {AnnonceCreate} annonceCreate
+   * @param {AnnonceBase} annonceBase
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
    * @memberof AnnoncesApi
    */
-  public createAnnonce(annonceCreate: AnnonceCreate, options?: RawAxiosRequestConfig) {
+  public createAnnonce(annonceBase: AnnonceBase, options?: RawAxiosRequestConfig) {
     return AnnoncesApiFp(this.configuration)
-      .createAnnonce(annonceCreate, options)
+      .createAnnonce(annonceBase, options)
       .then((request) => request(this.axios, this.basePath))
   }
 
@@ -1312,14 +1307,18 @@ export class AnnoncesApi extends BaseAPI {
    *
    * @summary Mettre à jour une annonce
    * @param {string} id
-   * @param {AnnonceUpdate} annonceUpdate
+   * @param {AnnonceWithStatut} annonceWithStatut
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
    * @memberof AnnoncesApi
    */
-  public putAnnonce(id: string, annonceUpdate: AnnonceUpdate, options?: RawAxiosRequestConfig) {
+  public putAnnonce(
+    id: string,
+    annonceWithStatut: AnnonceWithStatut,
+    options?: RawAxiosRequestConfig,
+  ) {
     return AnnoncesApiFp(this.configuration)
-      .putAnnonce(id, annonceUpdate, options)
+      .putAnnonce(id, annonceWithStatut, options)
       .then((request) => request(this.axios, this.basePath))
   }
 }

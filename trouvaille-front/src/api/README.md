@@ -70,12 +70,11 @@ All URIs are relative to _http://localhost_
 
 - [Annonce](docs/Annonce.md)
 - [AnnonceBase](docs/AnnonceBase.md)
-- [AnnonceCreate](docs/AnnonceCreate.md)
 - [AnnonceList](docs/AnnonceList.md)
 - [AnnonceNature](docs/AnnonceNature.md)
 - [AnnonceStatut](docs/AnnonceStatut.md)
 - [AnnonceType](docs/AnnonceType.md)
-- [AnnonceUpdate](docs/AnnonceUpdate.md)
+- [AnnonceWithStatut](docs/AnnonceWithStatut.md)
 - [Annonces](docs/Annonces.md)
 - [Coordinates](docs/Coordinates.md)
 - [ErrorDetailsInner](docs/ErrorDetailsInner.md)

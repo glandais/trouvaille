@@ -27,12 +27,7 @@
           <!-- Type -->
           <div>
             <label for="type" class="block text-sm font-medium text-gray-700 mb-1"> Type </label>
-            <select
-              id="type"
-              v-model="filters.type"
-              class="form-input"
-              @change="debouncedSearch"
-            >
+            <select id="type" v-model="filters.type" class="form-input" @change="debouncedSearch">
               <option value="">Tous</option>
               <option :value="AnnonceType.Vente">Vente</option>
               <option :value="AnnonceType.Location">Location</option>
@@ -108,11 +103,8 @@
 
         <!-- Location Filters -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-          <LocationField
-            v-model="selectedLocation"
-            @change="handleLocationChange"
-          />
-          
+          <LocationField v-model="selectedLocation" @change="handleLocationChange" />
+
           <div>
             <label for="distance" class="block text-sm font-medium text-gray-700 mb-1">
               Distance max: {{ distanceLabel }}
@@ -128,7 +120,7 @@
                 :disabled="!hasCoordinates"
                 :class="[
                   'w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider',
-                  !hasCoordinates && 'opacity-50 cursor-not-allowed'
+                  !hasCoordinates && 'opacity-50 cursor-not-allowed',
                 ]"
                 @input="handleDistanceSliderChange"
               />
@@ -143,7 +135,7 @@
                 :disabled="!hasCoordinates"
                 :class="[
                   'form-input w-full text-center',
-                  !hasCoordinates && 'opacity-50 cursor-not-allowed'
+                  !hasCoordinates && 'opacity-50 cursor-not-allowed',
                 ]"
                 @input="handleDistanceInputChange"
               />
@@ -214,7 +206,12 @@
           v-if="annonces.length > 0"
           class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
         >
-          <AnnonceCard v-for="annonce in annonces" :key="annonce.id" :annonce="annonce" />
+          <AnnonceCard
+            v-for="annonce in annonces"
+            :key="annonce.id"
+            :annonce="annonce"
+            :show-modification-date="true"
+          />
         </div>
 
         <!-- Empty State -->
@@ -289,11 +286,7 @@ import AppLayout from '../components/AppLayout.vue'
 import AnnonceCard from '../components/AnnonceCard.vue'
 import LocationField from '../components/LocationField.vue'
 import { PlusIcon, XMarkIcon, MagnifyingGlassIcon } from '@heroicons/vue/24/outline'
-
-interface SelectedLocation {
-  label: string
-  coordinates: [number, number] // [longitude, latitude]
-}
+import { SelectedLocation } from '@/types/location'
 
 const route = useRoute()
 const authStore = useAuthStore()
@@ -476,7 +469,6 @@ const getVisiblePages = () => {
 
   return rangeWithDots.filter((page, index, arr) => arr.indexOf(page) === index)
 }
-
 
 onMounted(() => {
   // Initialize filters from URL query params

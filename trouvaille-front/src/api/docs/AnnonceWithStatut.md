@@ -1,4 +1,4 @@
-# AnnonceBase
+# AnnonceWithStatut
 
 ## Properties
 
@@ -13,13 +13,14 @@
 | **photos**           | **Array&lt;string&gt;**                   |             | [optional] [default to undefined] |
 | **coordinates**      | [**Coordinates**](Coordinates.md)         |             | [default to undefined]            |
 | **ville**            | **string**                                |             | [default to undefined]            |
+| **statut**           | [**AnnonceStatut**](AnnonceStatut.md)     |             | [optional] [default to undefined] |
 
 ## Example
 
 ```typescript
-import { AnnonceBase } from '@trouvaille/api'
+import { AnnonceWithStatut } from '@trouvaille/api'
 
-const instance: AnnonceBase = {
+const instance: AnnonceWithStatut = {
   type,
   nature,
   titre,
@@ -29,6 +30,7 @@ const instance: AnnonceBase = {
   photos,
   coordinates,
   ville,
+  statut,
 }
 ```
 

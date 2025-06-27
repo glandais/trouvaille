@@ -42,10 +42,17 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import { useAuthStore } from './stores/auth'
+import { useLocationStore } from './stores/location'
 
 const authStore = useAuthStore()
+const locationStore = useLocationStore()
 
-onMounted(() => {
-  authStore.initializeAuth()
+onMounted(async () => {
+  await authStore.initializeAuth()
+
+  // Initialize user location once authenticated
+  if (authStore.isAuthenticated) {
+    locationStore.initializeUserLocation()
+  }
 })
 </script>

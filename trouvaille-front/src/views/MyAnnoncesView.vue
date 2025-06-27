@@ -53,154 +53,14 @@
         v-else-if="filteredAnnonces.length > 0"
         class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
       >
-        <div
+        <AnnonceCard
           v-for="annonce in filteredAnnonces"
           :key="annonce.id"
-          class="card hover:shadow-lg transition-shadow"
-        >
-          <!-- Image -->
-          <div class="aspect-w-16 aspect-h-9 bg-gray-200 relative">
-            <img
-              v-if="
-                annonce.photos?.[0] &&
-                photoUrls[annonce.photos[0]] &&
-                !photoErrors[annonce.photos[0]]
-              "
-              :src="photoUrls[annonce.photos[0]]"
-              :alt="annonce.titre"
-              class="w-full h-48 object-cover cursor-pointer"
-              @click="goToDetail(annonce.id!)"
-              @error="onImageError"
-            />
-            <div
-              v-else-if="annonce.photos?.[0] && photoLoadingStates[annonce.photos[0]]"
-              class="w-full h-48 flex items-center justify-center bg-gray-100 cursor-pointer"
-              @click="goToDetail(annonce.id!)"
-            >
-              <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
-            </div>
-            <div
-              v-else-if="annonce.photos?.[0] && photoErrors[annonce.photos[0]]"
-              class="w-full h-48 flex items-center justify-center bg-red-50 cursor-pointer"
-              @click="goToDetail(annonce.id!)"
-            >
-              <div class="text-center">
-                <PhotoIcon class="h-10 w-10 text-red-400 mx-auto mb-1" />
-                <p class="text-xs text-red-600">Erreur</p>
-              </div>
-            </div>
-            <div
-              v-else
-              class="w-full h-48 flex items-center justify-center bg-gray-100 cursor-pointer"
-              @click="goToDetail(annonce.id!)"
-            >
-              <PhotoIcon class="h-12 w-12 text-gray-400" />
-            </div>
-
-            <!-- Status Badge -->
-            <div class="absolute top-2 left-2">
-              <span :class="getStatutBadgeClass(annonce.statut)">
-                {{ getStatutLabel(annonce.statut) }}
-              </span>
-            </div>
-
-            <!-- Quick Actions -->
-            <div
-              class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
-            >
-              <div class="flex space-x-1">
-                <button
-                  @click="editAnnonce(annonce.id!)"
-                  class="p-2 bg-white bg-opacity-90 rounded-full text-gray-600 hover:text-blue-600 transition-colors"
-                  title="Modifier"
-                >
-                  <PencilIcon class="h-4 w-4" />
-                </button>
-                <button
-                  @click="confirmDelete(annonce)"
-                  class="p-2 bg-white bg-opacity-90 rounded-full text-gray-600 hover:text-red-600 transition-colors"
-                  title="Supprimer"
-                >
-                  <TrashIcon class="h-4 w-4" />
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Content -->
-          <div class="p-4">
-            <!-- Title and Price -->
-            <div class="flex justify-between items-start mb-2">
-              <h3
-                class="text-lg font-medium text-gray-900 line-clamp-2 flex-1 cursor-pointer hover:text-blue-600"
-                @click="goToDetail(annonce.id!)"
-              >
-                {{ annonce.titre }}
-              </h3>
-              <div class="ml-2 text-right">
-                <p class="text-lg font-bold text-blue-600">
-                  {{ formatPrice(annonce.prix, annonce.periode_location) }}
-                </p>
-              </div>
-            </div>
-
-            <!-- Meta info -->
-            <div class="flex items-center justify-between text-xs text-gray-500 mb-3">
-              <div class="flex items-center space-x-2">
-                <span class="badge bg-blue-100 text-blue-800">
-                  {{ getTypeLabel(annonce.type) }}
-                </span>
-                <span class="badge bg-green-100 text-green-800">
-                  {{ getNatureLabel(annonce.nature) }}
-                </span>
-              </div>
-            </div>
-
-            <!-- Date and Actions -->
-            <div class="flex items-center justify-between">
-              <div class="text-xs text-gray-400">
-                {{ formatDate(annonce.date_creation) }}
-                <span
-                  v-if="
-                    annonce.date_modification && annonce.date_modification !== annonce.date_creation
-                  "
-                >
-                  • Modifié {{ formatDate(annonce.date_modification) }}
-                </span>
-              </div>
-
-              <!-- Status Actions -->
-              <div class="flex space-x-1">
-                <button
-                  v-if="annonce.statut === AnnonceStatut.Active"
-                  @click="changeStatut(annonce, AnnonceStatut.Suspendue)"
-                  class="text-xs text-yellow-600 hover:text-yellow-700 underline"
-                  title="Suspendre"
-                >
-                  Suspendre
-                </button>
-                <button
-                  v-if="annonce.statut === AnnonceStatut.Suspendue"
-                  @click="changeStatut(annonce, AnnonceStatut.Active)"
-                  class="text-xs text-green-600 hover:text-green-700 underline"
-                  title="Réactiver"
-                >
-                  Réactiver
-                </button>
-                <button
-                  v-if="
-                    annonce.statut === AnnonceStatut.Active && annonce.type === AnnonceType.Vente
-                  "
-                  @click="changeStatut(annonce, AnnonceStatut.Vendue)"
-                  class="text-xs text-gray-600 hover:text-gray-700 underline"
-                  title="Marquer comme vendu"
-                >
-                  Vendu
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+          :annonce="annonce"
+          :show-status="true"
+          @updated="fetchMyAnnonces"
+          @deleted="handleAnnonceDeleted"
+        />
       </div>
 
       <!-- Empty State -->
@@ -266,24 +126,16 @@ import { useAuthStore } from '../stores/auth'
 import { annoncesApi } from '../services/api'
 import {
   AnnonceList,
-  AnnonceUpdate,
   AnnonceType,
   AnnonceNature,
   AnnonceStatut,
-  PeriodeLocation,
   Pagination,
   ListAnnoncesSortByEnum,
   ListAnnoncesSortOrderEnum,
-} from '../types/extended-api'
+} from '../api'
 import AppLayout from '../components/AppLayout.vue'
-import {
-  PlusIcon,
-  PhotoIcon,
-  PencilIcon,
-  TrashIcon,
-  DocumentTextIcon,
-} from '@heroicons/vue/24/outline'
-import { photoService } from '../services/photoService'
+import AnnonceCard from '../components/AnnonceCard.vue'
+import { PlusIcon, DocumentTextIcon } from '@heroicons/vue/24/outline'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -341,9 +193,6 @@ const fetchMyAnnonces = async (page = 1) => {
 
     annonces.value = response.data.data || []
     pagination.value = response.data.pagination
-
-    // Charger les photos après avoir récupéré les annonces
-    loadAllPhotos()
   } catch (error) {
     console.error('Failed to fetch my annonces:', error)
   } finally {
@@ -360,166 +209,12 @@ const goToDetail = (id: string) => {
   router.push(`/annonces/${id}`)
 }
 
-const editAnnonce = (id: string) => {
-  router.push(`/annonces/${id}/edit`)
-}
-
-const changeStatut = async (annonce: AnnonceList, newStatut: AnnonceStatut) => {
-  if (!annonce.id) return
-
-  try {
-    const updateData: AnnonceUpdate = {
-      type: annonce.type!,
-      nature: annonce.nature!,
-      titre: annonce.titre,
-      description: annonce.description,
-      coordinates: annonce.coordinates!,
-      statut: newStatut,
-    }
-    await annoncesApi.putAnnonce(annonce.id, updateData)
-
-    // Update local state
-    const index = annonces.value.findIndex((a) => a.id === annonce.id)
-    if (index > -1) {
-      annonces.value[index].statut = newStatut
-    }
-  } catch (error) {
-    console.error('Failed to update annonce status:', error)
-    alert('Erreur lors de la mise à jour du statut')
+const handleAnnonceDeleted = (annonceId: string) => {
+  // Remove from local state
+  const index = annonces.value.findIndex((a) => a.id === annonceId)
+  if (index > -1) {
+    annonces.value.splice(index, 1)
   }
-}
-
-const confirmDelete = (annonce: AnnonceList) => {
-  if (
-    confirm(
-      `Êtes-vous sûr de vouloir supprimer "${annonce.titre}" ? Cette action est irréversible.`,
-    )
-  ) {
-    deleteAnnonce(annonce.id!)
-  }
-}
-
-const deleteAnnonce = async (id: string) => {
-  try {
-    await annoncesApi.deleteAnnonce(id)
-
-    // Remove from local state
-    const index = annonces.value.findIndex((a) => a.id === id)
-    if (index > -1) {
-      annonces.value.splice(index, 1)
-    }
-  } catch (error) {
-    console.error('Failed to delete annonce:', error)
-    alert("Erreur lors de la suppression de l'annonce")
-  }
-}
-
-// URLs de photos chargées
-const photoUrls = ref<Record<string, string>>({})
-const photoLoadingStates = ref<Record<string, boolean>>({})
-const photoErrors = ref<Record<string, boolean>>({})
-
-// Charger une photo et mettre à jour les refs
-const loadPhotoUrl = async (photoId: string) => {
-  if (photoUrls.value[photoId] || photoLoadingStates.value[photoId]) {
-    return // Déjà chargé ou en cours de chargement
-  }
-
-  photoLoadingStates.value[photoId] = true
-  photoErrors.value[photoId] = false
-
-  try {
-    const url = await photoService.getPhotoUrl(photoId, 'thumb')
-    photoUrls.value[photoId] = url
-  } catch (error) {
-    console.error(`Failed to load photo ${photoId}:`, error)
-    photoErrors.value[photoId] = true
-  } finally {
-    photoLoadingStates.value[photoId] = false
-  }
-}
-
-// Charger toutes les photos des annonces
-const loadAllPhotos = () => {
-  filteredAnnonces.value.forEach((annonce) => {
-    if (annonce.photos?.[0]) {
-      loadPhotoUrl(annonce.photos[0])
-    }
-  })
-}
-
-const onImageError = (event: Event) => {
-  const img = event.target as HTMLImageElement
-  img.style.display = 'none'
-}
-
-const formatPrice = (prix?: number, periode?: PeriodeLocation) => {
-  if (!prix) return 'Prix non spécifié'
-
-  const formattedPrice = new Intl.NumberFormat('fr-FR', {
-    style: 'currency',
-    currency: 'EUR',
-  }).format(prix)
-
-  if (periode) {
-    const periodLabels = {
-      [PeriodeLocation.Jour]: '/jour',
-      [PeriodeLocation.Semaine]: '/semaine',
-      [PeriodeLocation.Mois]: '/mois',
-    }
-    return `${formattedPrice}${periodLabels[periode] || ''}`
-  }
-
-  return formattedPrice
-}
-
-const getTypeLabel = (type?: AnnonceType) => {
-  const labels = {
-    [AnnonceType.Vente]: 'Vente',
-    [AnnonceType.Location]: 'Location',
-  }
-  return type ? labels[type] : 'N/A'
-}
-
-const getNatureLabel = (nature?: AnnonceNature) => {
-  const labels = {
-    [AnnonceNature.Offre]: 'Offre',
-    [AnnonceNature.Demande]: 'Demande',
-  }
-  return nature ? labels[nature] : 'N/A'
-}
-
-const getStatutLabel = (statut?: AnnonceStatut) => {
-  const labels = {
-    [AnnonceStatut.Active]: 'Active',
-    [AnnonceStatut.Suspendue]: 'Suspendue',
-    [AnnonceStatut.Vendue]: 'Vendue',
-  }
-  return statut ? labels[statut] : 'N/A'
-}
-
-const getStatutBadgeClass = (statut?: AnnonceStatut) => {
-  const classes = {
-    [AnnonceStatut.Active]: 'badge badge-active',
-    [AnnonceStatut.Suspendue]: 'badge badge-suspended',
-    [AnnonceStatut.Vendue]: 'badge badge-sold',
-  }
-  return statut ? classes[statut] : 'badge'
-}
-
-const formatDate = (dateString?: string) => {
-  if (!dateString) return ''
-
-  const date = new Date(dateString)
-  const now = new Date()
-  const diffTime = now.getTime() - date.getTime()
-  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
-
-  if (diffDays === 0) return "aujourd'hui"
-  if (diffDays === 1) return 'hier'
-  if (diffDays < 7) return `il y a ${diffDays} jours`
-
-  return date.toLocaleDateString('fr-FR')
 }
 
 const getEmptyStateTitle = () => {
@@ -581,11 +276,6 @@ onMounted(() => {
 watch(selectedStatus, () => {
   fetchMyAnnonces()
 })
-
-// Watch filtered annonces pour charger les nouvelles photos
-watch(filteredAnnonces, () => {
-  loadAllPhotos()
-})
 </script>
 
 <style scoped>
@@ -594,9 +284,5 @@ watch(filteredAnnonces, () => {
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-}
-
-.group:hover .group-hover\:opacity-100 {
-  opacity: 1;
 }
 </style>

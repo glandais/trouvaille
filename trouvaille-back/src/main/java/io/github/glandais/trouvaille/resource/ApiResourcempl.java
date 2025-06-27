@@ -55,7 +55,7 @@ public class ApiResourcempl implements ApiResource {
   }
 
   @Override
-  public Annonce createAnnonce(AnnonceCreate data) {
+  public Annonce createAnnonce(AnnonceBase data) {
     return annonceService.createAnnonce(data);
   }
 
@@ -65,7 +65,7 @@ public class ApiResourcempl implements ApiResource {
   }
 
   @Override
-  public Annonce putAnnonce(String id, AnnonceUpdate data) {
+  public Annonce putAnnonce(String id, AnnonceWithStatut data) {
     return annonceService.putAnnonce(id, data);
   }
 

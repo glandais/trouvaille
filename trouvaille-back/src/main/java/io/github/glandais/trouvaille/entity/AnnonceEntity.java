@@ -35,6 +35,8 @@ public class AnnonceEntity {
 
   public CoordinatesEntity coordinates;
 
+  public String ville;
+
   @Builder.Default public List<ObjectId> photos = new ArrayList<>();
 
   public Date dateCreation;

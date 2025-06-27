@@ -148,14 +148,15 @@
           </div>
 
           <!-- Location -->
-          <div v-if="annonce.coordinates">
+          <div v-if="annonce.ville || annonce.coordinates">
             <h3 class="text-lg font-medium text-gray-900 mb-3">Localisation</h3>
             <div class="flex items-center space-x-2 text-gray-600">
               <MapPinIcon class="h-5 w-5" />
-              <span>{{ formatCoordinates(annonce.coordinates) }}</span>
-              <span v-if="(annonce as any).distance" class="text-sm text-gray-500">
-                ({{ (annonce as any).distance }}km de vous)
-              </span>
+              <span>{{ annonce.ville || 'Localisation définie' }}</span>
+              <DistanceDisplay
+                :distance="(annonce as any).distance"
+                :coordinates="annonce.coordinates"
+              />
             </div>
           </div>
 
@@ -251,16 +252,11 @@ import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 import { annoncesApi } from '../services/api'
-import {
-  Annonce,
-  AnnonceType,
-  AnnonceNature,
-  AnnonceStatut,
-  PeriodeLocation,
-} from '../types/extended-api'
+import { Annonce, AnnonceType, AnnonceNature, AnnonceStatut, PeriodeLocation } from '../api'
 import AppLayout from '../components/AppLayout.vue'
 import PhotoViewer from '../components/PhotoViewer.vue'
 import MarkdownViewer from '../components/MarkdownViewer.vue'
+import DistanceDisplay from '../components/DistanceDisplay.vue'
 import {
   PhotoIcon,
   MapPinIcon,
@@ -288,7 +284,6 @@ const loading = ref(true)
 const error = ref(false)
 const currentPhotoIndex = ref(0)
 const showPhotoModal = ref(false)
-
 
 const currentPhoto = computed(() => {
   if (!annonce.value?.photos || annonce.value.photos.length === 0) return null
@@ -413,12 +408,6 @@ const formatDate = (dateString?: string) => {
 
   return `le ${date.toLocaleDateString('fr-FR')}`
 }
-
-const formatCoordinates = (coordinates: any) => {
-  if (!coordinates?.latitude || !coordinates?.longitude) return 'Localisation non spécifiée'
-  return `${coordinates.latitude.toFixed(4)}, ${coordinates.longitude.toFixed(4)}`
-}
-
 
 const openPhotoModal = () => {
   showPhotoModal.value = true

@@ -12,28 +12,28 @@ All URIs are relative to _http://localhost_
 
 # **createAnnonce**
 
-> Annonce createAnnonce(annonceCreate)
+> Annonce createAnnonce(annonceBase)
 
 Création d\'une annonce
 
 ### Example
 
 ```typescript
-import { AnnoncesApi, Configuration, AnnonceCreate } from '@trouvaille/api'
+import { AnnoncesApi, Configuration, AnnonceBase } from '@trouvaille/api'
 
 const configuration = new Configuration()
 const apiInstance = new AnnoncesApi(configuration)
 
-let annonceCreate: AnnonceCreate //
+let annonceBase: AnnonceBase //
 
-const { status, data } = await apiInstance.createAnnonce(annonceCreate)
+const { status, data } = await apiInstance.createAnnonce(annonceBase)
 ```
 
 ### Parameters
 
-| Name              | Type              | Description | Notes |
-| ----------------- | ----------------- | ----------- | ----- |
-| **annonceCreate** | **AnnonceCreate** |             |       |
+| Name            | Type            | Description | Notes |
+| --------------- | --------------- | ----------- | ----- |
+| **annonceBase** | **AnnonceBase** |             |       |
 
 ### Return type
 
@@ -236,28 +236,28 @@ const { status, data } = await apiInstance.listAnnonces(
 
 # **putAnnonce**
 
-> Annonce putAnnonce(annonceUpdate)
+> Annonce putAnnonce(annonceWithStatut)
 
 ### Example
 
 ```typescript
-import { AnnoncesApi, Configuration, AnnonceUpdate } from '@trouvaille/api'
+import { AnnoncesApi, Configuration, AnnonceWithStatut } from '@trouvaille/api'
 
 const configuration = new Configuration()
 const apiInstance = new AnnoncesApi(configuration)
 
 let id: string // (default to undefined)
-let annonceUpdate: AnnonceUpdate //
+let annonceWithStatut: AnnonceWithStatut //
 
-const { status, data } = await apiInstance.putAnnonce(id, annonceUpdate)
+const { status, data } = await apiInstance.putAnnonce(id, annonceWithStatut)
 ```
 
 ### Parameters
 
-| Name              | Type              | Description | Notes                 |
-| ----------------- | ----------------- | ----------- | --------------------- |
-| **annonceUpdate** | **AnnonceUpdate** |             |                       |
-| **id**            | [**string**]      |             | defaults to undefined |
+| Name                  | Type                  | Description | Notes                 |
+| --------------------- | --------------------- | ----------- | --------------------- |
+| **annonceWithStatut** | **AnnonceWithStatut** |             |                       |
+| **id**                | [**string**]          |             | defaults to undefined |
 
 ### Return type
 

@@ -8,12 +8,11 @@ common.ts
 configuration.ts
 docs/Annonce.md
 docs/AnnonceBase.md
-docs/AnnonceCreate.md
 docs/AnnonceList.md
 docs/AnnonceNature.md
 docs/AnnonceStatut.md
 docs/AnnonceType.md
-docs/AnnonceUpdate.md
+docs/AnnonceWithStatut.md
 docs/Annonces.md
 docs/AnnoncesApi.md
 docs/AuthentificationApi.md

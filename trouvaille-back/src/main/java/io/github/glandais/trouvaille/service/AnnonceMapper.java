@@ -4,14 +4,13 @@ import io.github.glandais.trouvaille.entity.AnnonceEntity;
 import io.github.glandais.trouvaille.entity.AnnonceEntityNature;
 import io.github.glandais.trouvaille.entity.AnnonceEntityStatut;
 import io.github.glandais.trouvaille.entity.AnnonceEntityType;
-import io.github.glandais.trouvaille.openapi.beans.AnnonceCreate;
+import io.github.glandais.trouvaille.openapi.beans.AnnonceBase;
 import io.github.glandais.trouvaille.openapi.beans.AnnonceNature;
 import io.github.glandais.trouvaille.openapi.beans.AnnonceStatut;
 import io.github.glandais.trouvaille.openapi.beans.AnnonceType;
-import io.github.glandais.trouvaille.openapi.beans.AnnonceUpdate;
+import io.github.glandais.trouvaille.openapi.beans.AnnonceWithStatut;
 import org.bson.types.ObjectId;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.ReportingPolicy;
 
@@ -22,12 +21,10 @@ public abstract class AnnonceMapper {
     return new ObjectId(objectId);
   }
 
-  @Mapping(source = "photosIds", target = "photos")
-  public abstract AnnonceEntity mapAnnonceCreate(AnnonceCreate data);
+  public abstract AnnonceEntity mapAnnonceCreate(AnnonceBase data);
 
-  @Mapping(source = "photosIds", target = "photos")
   public abstract void updateAnnonceEntity(
-      @MappingTarget AnnonceEntity annonceEntity, AnnonceUpdate data);
+      @MappingTarget AnnonceEntity annonceEntity, AnnonceWithStatut data);
 
   public abstract AnnonceEntityType mapAnnonceType(AnnonceType type);
 

@@ -338,8 +338,8 @@ import { useRouter, useRoute } from 'vue-router'
 import { useDebounceFn } from '@vueuse/core'
 import { annoncesApi, photosApi } from '../services/api'
 import {
-  AnnonceCreate,
-  AnnonceUpdate,
+  AnnonceBase,
+  AnnonceWithStatut,
   AnnonceType,
   AnnonceNature,
   AnnonceStatut,
@@ -350,28 +350,19 @@ import {
 import AppLayout from '../components/AppLayout.vue'
 import MarkdownEditor from '../components/MarkdownEditor.vue'
 import LocationField from '../components/LocationField.vue'
-import {
-  PhotoIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  TrashIcon,
-} from '@heroicons/vue/24/outline'
+import { PhotoIcon, ChevronLeftIcon, ChevronRightIcon, TrashIcon } from '@heroicons/vue/24/outline'
 import { photoService } from '../services/photoService'
+import { SelectedLocation } from '@/types/location'
 
 interface Props {
   id?: string
-}
-
-interface SelectedLocation {
-  label: string
-  coordinates: [number, number] // [longitude, latitude]
 }
 
 const props = defineProps<Props>()
 const router = useRouter()
 const route = useRoute()
 
-const form = reactive<AnnonceCreate & { statut?: AnnonceStatut }>({
+const form = reactive<AnnonceBase & { statut?: AnnonceStatut }>({
   type: AnnonceType.Vente,
   nature: AnnonceNature.Offre,
   titre: '',
@@ -379,7 +370,8 @@ const form = reactive<AnnonceCreate & { statut?: AnnonceStatut }>({
   prix: undefined,
   periode_location: undefined,
   coordinates: { latitude: 0, longitude: 0 },
-  photos_ids: [],
+  ville: '',
+  photos: [],
   statut: undefined,
 })
 
@@ -469,7 +461,7 @@ const uploadPhoto = async (file: File) => {
     const photoUrl = URL.createObjectURL(file)
 
     uploadedPhotos.value.push({ id: photoId, url: photoUrl })
-    form.photos_ids?.push(photoId)
+    form.photos?.push(photoId)
   } catch (error) {
     console.error('Failed to upload photo:', error)
     alert(`Erreur lors de l'upload de ${file.name}`)
@@ -489,10 +481,10 @@ const removePhoto = async (index: number) => {
     await photosApi.deletePhoto(photo.id)
     uploadedPhotos.value.splice(index, 1)
 
-    if (form.photos_ids) {
-      const photoIndex = form.photos_ids.findIndex((id) => id === photo.id)
+    if (form.photos) {
+      const photoIndex = form.photos.findIndex((id) => id === photo.id)
       if (photoIndex > -1) {
-        form.photos_ids.splice(photoIndex, 1)
+        form.photos.splice(photoIndex, 1)
       }
     }
 
@@ -505,7 +497,7 @@ const removePhoto = async (index: number) => {
 
 const movePhoto = (fromIndex: number, toIndex: number) => {
   const photos = [...uploadedPhotos.value]
-  const photosIds = [...(form.photos_ids || [])]
+  const photosIds = [...(form.photos || [])]
 
   // Swap photos
   const temp = photos[fromIndex]
@@ -518,7 +510,7 @@ const movePhoto = (fromIndex: number, toIndex: number) => {
   photosIds[toIndex] = tempId
 
   uploadedPhotos.value = photos
-  form.photos_ids = photosIds
+  form.photos = photosIds
 }
 
 const handleLocationChange = (location: SelectedLocation | null) => {
@@ -527,8 +519,10 @@ const handleLocationChange = (location: SelectedLocation | null) => {
       latitude: location.coordinates[1], // latitude is at index 1
       longitude: location.coordinates[0], // longitude is at index 0
     }
+    form.ville = location.city
   } else {
     form.coordinates = { latitude: 0, longitude: 0 }
+    form.ville = 'Inconnue'
   }
 }
 
@@ -548,19 +542,21 @@ const loadExistingAnnonce = async () => {
     form.prix = response.data.prix
     form.periode_location = response.data.periode_location
     form.coordinates = response.data.coordinates
+    form.ville = response.data.ville
     form.statut = response.data.statut
 
     // Set selected location if coordinates exist
     if (response.data.coordinates?.latitude && response.data.coordinates?.longitude) {
       selectedLocation.value = {
         label: `Position sauvegardée (${response.data.coordinates.latitude.toFixed(4)}, ${response.data.coordinates.longitude.toFixed(4)})`,
-        coordinates: [response.data.coordinates.longitude, response.data.coordinates.latitude]
+        city: response.data.ville,
+        coordinates: [response.data.coordinates.longitude, response.data.coordinates.latitude],
       }
     }
 
     // Load existing photos
     if (response.data.photos && response.data.photos.length > 0) {
-      form.photos_ids = [...response.data.photos]
+      form.photos = [...response.data.photos]
 
       // Charger les URLs des photos existantes via le service
       const photoPromises = response.data.photos.map(async (photoId) => {
@@ -595,8 +591,8 @@ const handleSubmit = async () => {
   try {
     let response
     if (isEditMode.value && props.id) {
-      // Update existing annonce - use AnnonceUpdate interface
-      const updateData: AnnonceUpdate = {
+      // Update existing annonce - use AnnonceWithStatut interface
+      const updateData: AnnonceWithStatut = {
         type: form.type!,
         nature: form.nature!,
         titre: form.titre,
@@ -604,8 +600,9 @@ const handleSubmit = async () => {
         prix: form.prix,
         periode_location: form.periode_location,
         coordinates: form.coordinates!,
+        ville: form.ville,
         statut: form.statut,
-        photos_ids: form.photos_ids,
+        photos: form.photos,
       }
       response = await annoncesApi.putAnnonce(props.id, updateData)
     } else {

@@ -131,7 +131,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AnnonceCreate'
+              $ref: '#/components/schemas/AnnonceBase'
       responses:
         '201':
           description: Annonce créée avec succès
@@ -188,7 +188,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AnnonceUpdate'
+              $ref: '#/components/schemas/AnnonceWithStatut'
       responses:
         '200':
           description: Annonce mise à jour
@@ -422,26 +422,22 @@ components:
           example: 350.00
         periode_location:
           $ref: '#/components/schemas/PeriodeLocation'
+        photos:
+          type: array
+          items:
+            type: string
+          maxItems: 10
         coordinates:
           $ref: '#/components/schemas/Coordinates'
+        ville:
+          type: string
       required:
         - type
         - nature
         - titre
         - description
         - coordinates
-
-    AnnonceCreate:
-      allOf:
-        - $ref: '#/components/schemas/AnnonceBase'
-        - type: object
-          properties:
-            photos_ids:
-              type: array
-              items:
-                type: string
-              maxItems: 10
-              description: Ids des photos déjà uploadées
+        - ville
 
     AnnonceStatut:
       type: string
@@ -450,19 +446,13 @@ components:
         - suspendue
         - vendue
 
-    AnnonceUpdate:
+    AnnonceWithStatut:
       allOf:
         - $ref: '#/components/schemas/AnnonceBase'
         - type: object
           properties:
             statut:
               $ref: '#/components/schemas/AnnonceStatut'
-            photos_ids:
-              type: array
-              items:
-                type: string
-              maxItems: 10
-              description: Ids des photos déjà uploadées
 
     Annonce:
       allOf:
@@ -471,21 +461,16 @@ components:
           properties:
             id:
               type: string
+            statut:
+              $ref: '#/components/schemas/AnnonceStatut'
             utilisateur:
               $ref: '#/components/schemas/Utilisateur'
-            photos:
-              type: array
-              items:
-                type: string
-              maxItems: 10
             date_creation:
               type: string
               format: date-time
             date_modification:
               type: string
               format: date-time
-            statut:
-              $ref: '#/components/schemas/AnnonceStatut'
           required:
             - id
             - utilisateur
@@ -505,16 +490,9 @@ components:
 
     AnnonceList:
       allOf:
-        - $ref: '#/components/schemas/AnnonceBase'
+        - $ref: '#/components/schemas/Annonce'
         - type: object
           properties:
-            id:
-              type: string
-            photos:
-              type: array
-              items:
-                type: string
-              maxItems: 10
             distance:
               type: number
               format: decimal

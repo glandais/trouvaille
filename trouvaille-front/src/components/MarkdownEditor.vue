@@ -2,9 +2,7 @@
   <div class="markdown-editor">
     <div class="editor-container">
       <div ref="editorElement" class="toastui-editor-wrapper"></div>
-      <div v-if="maxLength" class="character-count">
-        {{ currentLength }}/{{ maxLength }}
-      </div>
+      <div v-if="maxLength" class="character-count">{{ currentLength }}/{{ maxLength }}</div>
     </div>
   </div>
 </template>
@@ -60,22 +58,22 @@ const initEditor = () => {
     toolbarItems: [
       ['heading', 'bold', 'italic'],
       ['ul', 'ol', 'indent', 'outdent'],
-      ['table', 'link']
+      ['table', 'link'],
     ],
     events: {
       change: () => {
         if (editor) {
           const markdown = editor.getMarkdown()
           updateLength(markdown)
-          
+
           if (props.maxLength && currentLength.value > props.maxLength) {
             // Don't update if exceeding max length
             return
           }
-          
+
           emit('update:modelValue', markdown)
         }
-      }
+      },
     },
     hooks: {
       addImageBlobHook: (blob: Blob | File, callback: (url: string, text?: string) => void) => {
@@ -83,8 +81,8 @@ const initEditor = () => {
         const url = URL.createObjectURL(blob)
         const fileName = blob instanceof File ? blob.name : 'image'
         callback(url, fileName)
-      }
-    }
+      },
+    },
   }
 
   editor = new Editor(options)
@@ -105,7 +103,7 @@ watch(
       editor.setMarkdown(newValue, false)
       updateLength(newValue)
     }
-  }
+  },
 )
 
 // Watch for height changes
@@ -115,7 +113,7 @@ watch(
     if (editor) {
       editor.setHeight(newHeight)
     }
-  }
+  },
 )
 
 // Watch for preview style changes
@@ -125,7 +123,7 @@ watch(
     if (editor) {
       editor.changePreviewStyle(newStyle)
     }
-  }
+  },
 )
 
 // Expose editor methods for parent components
@@ -169,7 +167,7 @@ defineExpose({
   insertText,
   focus,
   blur,
-  editor: () => editor
+  editor: () => editor,
 })
 
 onMounted(() => {

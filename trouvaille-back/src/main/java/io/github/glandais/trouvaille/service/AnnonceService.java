@@ -3,6 +3,7 @@ package io.github.glandais.trouvaille.service;
 import com.mongodb.client.model.Aggregates;
 import io.github.glandais.trouvaille.entity.AnnonceEntity;
 import io.github.glandais.trouvaille.entity.AnnonceEntityStatut;
+import io.github.glandais.trouvaille.entity.AnnonceEntityWithDistance;
 import io.github.glandais.trouvaille.entity.UserEntity;
 import io.github.glandais.trouvaille.openapi.beans.*;
 import io.github.glandais.trouvaille.repository.AnnonceRepository;
@@ -73,7 +74,7 @@ public class AnnonceService {
         pageSize);
   }
 
-  public Annonce createAnnonce(AnnonceCreate data) {
+  public Annonce createAnnonce(AnnonceBase data) {
     AnnonceEntity annonceEntity = annonceMapper.mapAnnonceCreate(data);
     annonceEntity.setId(new ObjectId());
     annonceEntity.setUtilisateur(userService.getCurrentUser().getId());
@@ -90,7 +91,7 @@ public class AnnonceService {
     return annonceEntityMapper.mapAnnonceEntity(annonceEntity);
   }
 
-  public Annonce putAnnonce(String id, AnnonceUpdate data) {
+  public Annonce putAnnonce(String id, AnnonceWithStatut data) {
     AnnonceEntity annonceEntity = annonceRepository.findById(new ObjectId(id));
     checkAnnonceOwnership(annonceEntity);
     annonceMapper.updateAnnonceEntity(annonceEntity, data);
@@ -192,16 +193,16 @@ public class AnnonceService {
     pipeline.add(Aggregates.limit(pageSize));
 
     // Execute main aggregation
-    List<Document> documents =
+    List<AnnonceEntityWithDistance> annonceEntities =
         annonceRepository
             .mongoDatabase()
             .getCollection("Annonce")
-            .aggregate(pipeline, Document.class)
+            .aggregate(pipeline, AnnonceEntityWithDistance.class)
             .into(new ArrayList<>());
 
     // Convert documents to AnnonceList DTOs
     List<AnnonceList> annoncesList =
-        documents.stream().map(doc -> documentToAnnonceList(doc, hasGeoQuery)).toList();
+        annonceEntities.stream().map(annonceEntityMapper::mapAnnonceEntityToAnnonceList).toList();
 
     // Build pagination info
     Pagination pagination = new Pagination();
@@ -344,51 +345,5 @@ public class AnnonceService {
         matchStage.append("statut", AnnonceEntityStatut.active.toString());
       }
     }
-  }
-
-  // ===============================
-  // DOCUMENT CONVERSION
-  // ===============================
-
-  private AnnonceList documentToAnnonceList(Document doc, boolean hasGeoQuery) {
-    AnnonceList annonceList = new AnnonceList();
-
-    // Map basic fields
-    annonceList.setId(doc.getObjectId("_id").toString());
-    annonceList.setType(annonceEntityMapper.mapStringToAnnonceType(doc.getString("type")));
-    annonceList.setNature(annonceEntityMapper.mapStringToAnnonceNature(doc.getString("nature")));
-    annonceList.setTitre(doc.getString("titre"));
-    annonceList.setDescription(doc.getString("description"));
-    annonceList.setPrix(doc.getDouble("prix"));
-    annonceList.setPeriodeLocation(
-        annonceEntityMapper.mapStringToPeriodeLocation(doc.getString("periodeLocation")));
-
-    // Map coordinates
-    Document coordinates = doc.get("coordinates", Document.class);
-    if (coordinates != null) {
-      Coordinates coords = new Coordinates();
-      List<Double> coordArray = coordinates.getList("coordinates", Double.class);
-      if (coordArray != null && coordArray.size() >= 2) {
-        coords.setLongitude(coordArray.get(0));
-        coords.setLatitude(coordArray.get(1));
-      }
-      annonceList.setCoordinates(coords);
-    }
-
-    // Map photos
-    List<ObjectId> photos = doc.getList("photos", ObjectId.class);
-    if (photos != null) {
-      annonceList.setPhotos(photos.stream().map(ObjectId::toString).toList());
-    }
-
-    // Map distance only if geo query was performed
-    if (hasGeoQuery) {
-      Double distance = doc.getDouble("distance");
-      if (distance != null) {
-        annonceList.setDistance(Math.round(distance * 10.0) / 10.0);
-      }
-    }
-
-    return annonceList;
   }
 }

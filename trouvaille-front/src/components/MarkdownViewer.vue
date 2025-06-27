@@ -19,7 +19,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   theme: 'default',
   extendedAutolinks: true,
-  linkAttributes: () => ({ target: '_blank', rel: 'noopener noreferrer' })
+  linkAttributes: () => ({ target: '_blank', rel: 'noopener noreferrer' }),
 })
 
 const viewerElement = ref<HTMLElement>()
@@ -31,7 +31,7 @@ const initViewer = () => {
   const options: EditorOptions = {
     el: viewerElement.value,
     viewer: true,
-    initialValue: props.modelValue
+    initialValue: props.modelValue,
   }
 
   viewer = Editor.factory(options)
@@ -51,7 +51,7 @@ watch(
     if (viewer && newValue !== undefined) {
       viewer.setMarkdown(newValue)
     }
-  }
+  },
 )
 
 // Watch for theme changes
@@ -63,7 +63,7 @@ watch(
     nextTick(() => {
       initViewer()
     })
-  }
+  },
 )
 
 // Expose viewer methods for parent components
@@ -75,7 +75,7 @@ const setMarkdown = (markdown: string) => {
 
 defineExpose({
   setMarkdown,
-  viewer: () => viewer
+  viewer: () => viewer,
 })
 
 onMounted(() => {
@@ -101,7 +101,8 @@ onUnmounted(() => {
 /* Override Toast UI Viewer styles */
 .toastui-viewer-wrapper :deep(.toastui-editor-contents) {
   @apply text-gray-900 leading-relaxed;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 }
 
 .toastui-viewer-wrapper :deep(.toastui-editor-contents h1) {

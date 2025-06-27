@@ -203,7 +203,7 @@ const handleLogout = () => {
 const handleClickOutside = (event: Event) => {
   const target = event.target as Element
   const userMenuContainer = document.querySelector('.relative')
-  
+
   if (showUserMenu.value && userMenuContainer && !userMenuContainer.contains(target)) {
     closeUserMenu()
   }
