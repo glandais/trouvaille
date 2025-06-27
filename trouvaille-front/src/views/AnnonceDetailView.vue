@@ -215,14 +215,15 @@
               </button>
             </div>
             <div v-else class="space-y-3">
-              <button class="btn-primary w-full">
+              <a
+                :href="`https://chat.n-peloton.fr/np/messages/@${annonce.utilisateur?.username}`"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="btn-primary w-full text-center block"
+              >
                 <ChatBubbleLeftIcon class="h-4 w-4 mr-2 inline" />
                 Contacter le vendeur
-              </button>
-              <button class="btn-secondary w-full">
-                <HeartIcon class="h-4 w-4 mr-2 inline" />
-                Ajouter aux favoris
-              </button>
+              </a>
             </div>
           </div>
         </div>

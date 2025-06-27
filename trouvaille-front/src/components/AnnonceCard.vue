@@ -106,6 +106,7 @@
         <!-- Distance (if available and not in owner mode) -->
         <div v-if="annonce.distance || annonce.coordinates" class="flex items-center">
           <MapPinIcon class="h-3 w-3 mr-1" />
+              <span>{{ annonce.ville || 'Localisation définie' }}</span>
           <DistanceDisplay :distance="annonce.distance" :coordinates="annonce.coordinates" />
         </div>
       </div>
