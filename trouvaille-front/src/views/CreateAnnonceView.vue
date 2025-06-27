@@ -299,49 +299,12 @@
         <!-- Location -->
         <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           <h2 class="text-xl font-semibold text-gray-900 mb-6">Localisation</h2>
-
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <!-- Address -->
-            <div class="md:col-span-2">
-              <label for="address" class="block text-sm font-medium text-gray-700 mb-2">
-                Adresse
-              </label>
-              <input
-                id="address"
-                v-model="addressSearch"
-                type="text"
-                placeholder="Rechercher une adresse..."
-                class="form-input"
-                @input="debouncedAddressSearch"
-              />
-              <!-- Address suggestions would go here in a full implementation -->
-            </div>
-
-            <!-- Coordinates -->
-            <div>
-              <button
-                type="button"
-                @click="getCurrentLocation"
-                :disabled="gettingLocation"
-                class="btn-secondary w-full"
-              >
-                <MapPinIcon class="h-4 w-4 mr-2" />
-                {{ gettingLocation ? 'Localisation...' : 'Ma position' }}
-              </button>
-            </div>
-          </div>
-
-          <!-- Manual coordinates -->
-          <div
-            v-if="form.coordinates?.latitude && form.coordinates?.longitude"
-            class="mt-4 p-4 bg-green-50 rounded-lg"
-          >
-            <p class="text-sm text-green-800">
-              <MapPinIcon class="h-4 w-4 inline mr-1" />
-              Position définie: {{ form.coordinates.latitude.toFixed(4) }},
-              {{ form.coordinates.longitude.toFixed(4) }}
-            </p>
-          </div>
+          Seules les coordonnées seront stockées dans l'annonce, pas l'adresse.
+          <LocationField
+            v-model="selectedLocation"
+            :auto-detect="!isEditMode"
+            @change="handleLocationChange"
+          />
         </div>
 
         <!-- Actions -->
@@ -386,9 +349,9 @@ import {
 } from '../api'
 import AppLayout from '../components/AppLayout.vue'
 import MarkdownEditor from '../components/MarkdownEditor.vue'
+import LocationField from '../components/LocationField.vue'
 import {
   PhotoIcon,
-  MapPinIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
   TrashIcon,
@@ -397,6 +360,11 @@ import { photoService } from '../services/photoService'
 
 interface Props {
   id?: string
+}
+
+interface SelectedLocation {
+  label: string
+  coordinates: [number, number] // [longitude, latitude]
 }
 
 const props = defineProps<Props>()
@@ -419,8 +387,7 @@ const errors = ref<Record<string, string>>({})
 const submitting = ref(false)
 const uploadedPhotos = ref<Array<{ id: string; url: string }>>([])
 const uploadingPhotos = ref<Array<{ name: string; progress: number }>>([])
-const addressSearch = ref('')
-const gettingLocation = ref(false)
+const selectedLocation = ref<SelectedLocation | null>(null)
 const loading = ref(false)
 
 const isEditMode = computed(() => !!props.id)
@@ -554,33 +521,16 @@ const movePhoto = (fromIndex: number, toIndex: number) => {
   form.photos_ids = photosIds
 }
 
-const getCurrentLocation = () => {
-  if (!navigator.geolocation) {
-    alert("La géolocalisation n'est pas supportée par votre navigateur")
-    return
+const handleLocationChange = (location: SelectedLocation | null) => {
+  if (location) {
+    form.coordinates = {
+      latitude: location.coordinates[1], // latitude is at index 1
+      longitude: location.coordinates[0], // longitude is at index 0
+    }
+  } else {
+    form.coordinates = { latitude: 0, longitude: 0 }
   }
-
-  gettingLocation.value = true
-
-  navigator.geolocation.getCurrentPosition(
-    (position) => {
-      form.coordinates = {
-        latitude: position.coords.latitude,
-        longitude: position.coords.longitude,
-      }
-      gettingLocation.value = false
-    },
-    (error) => {
-      console.error('Geolocation error:', error)
-      alert("Impossible d'obtenir votre position")
-      gettingLocation.value = false
-    },
-  )
 }
-
-const debouncedAddressSearch = useDebounceFn(() => {
-  // In a full implementation, this would call a geocoding API
-}, 500)
 
 const loadExistingAnnonce = async () => {
   if (!props.id) return
@@ -599,6 +549,14 @@ const loadExistingAnnonce = async () => {
     form.periode_location = response.data.periode_location
     form.coordinates = response.data.coordinates
     form.statut = response.data.statut
+
+    // Set selected location if coordinates exist
+    if (response.data.coordinates?.latitude && response.data.coordinates?.longitude) {
+      selectedLocation.value = {
+        label: `Position sauvegardée (${response.data.coordinates.latitude.toFixed(4)}, ${response.data.coordinates.longitude.toFixed(4)})`,
+        coordinates: [response.data.coordinates.longitude, response.data.coordinates.latitude]
+      }
+    }
 
     // Load existing photos
     if (response.data.photos && response.data.photos.length > 0) {

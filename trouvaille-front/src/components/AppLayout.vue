@@ -59,7 +59,7 @@
                 <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
                   <span class="text-blue-600 text-sm font-medium">
                     {{
-                      (authStore.user?.username || authStore.user?.nickname || 'U')
+                      (authStore.user?.nickname || authStore.user?.username || 'U')
                         ?.charAt(0)
                         ?.toUpperCase()
                     }}
@@ -86,7 +86,7 @@
                   <!-- User Info -->
                   <div class="px-4 py-3 border-b border-gray-100">
                     <p class="text-sm font-medium text-gray-900">
-                      {{ authStore.user?.username || authStore.user?.nickname || 'Utilisateur' }}
+                      {{ authStore.user?.nickname || authStore.user?.username || 'Utilisateur' }}
                     </p>
                     <p class="text-xs text-gray-500">Connecté</p>
                   </div>

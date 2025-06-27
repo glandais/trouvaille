@@ -108,18 +108,11 @@
 
         <!-- Location Filters -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-          <div>
-            <label for="location" class="block text-sm font-medium text-gray-700 mb-1">
-              Localisation
-            </label>
-            <input
-              id="location"
-              v-model="locationSearch"
-              type="text"
-              placeholder="Adresse, ville..."
-              class="form-input"
-            />
-          </div>
+          <LocationField
+            v-model="selectedLocation"
+            @change="handleLocationChange"
+          />
+          
           <div>
             <label for="distance" class="block text-sm font-medium text-gray-700 mb-1">
               Distance max: {{ distanceLabel }}
@@ -132,7 +125,11 @@
                 min="1"
                 max="100"
                 step="1"
-                class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+                :disabled="!hasCoordinates"
+                :class="[
+                  'w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider',
+                  !hasCoordinates && 'opacity-50 cursor-not-allowed'
+                ]"
                 @input="handleDistanceSliderChange"
               />
               <input
@@ -143,9 +140,16 @@
                 max="100"
                 step="1"
                 placeholder="Illimitée"
-                class="form-input w-full text-center"
+                :disabled="!hasCoordinates"
+                :class="[
+                  'form-input w-full text-center',
+                  !hasCoordinates && 'opacity-50 cursor-not-allowed'
+                ]"
                 @input="handleDistanceInputChange"
               />
+              <p v-if="!hasCoordinates" class="text-xs text-gray-500 text-center">
+                Sélectionnez une localisation pour activer le filtre distance
+              </p>
             </div>
           </div>
         </div>
@@ -283,7 +287,13 @@ import {
 } from '../api'
 import AppLayout from '../components/AppLayout.vue'
 import AnnonceCard from '../components/AnnonceCard.vue'
+import LocationField from '../components/LocationField.vue'
 import { PlusIcon, XMarkIcon, MagnifyingGlassIcon } from '@heroicons/vue/24/outline'
+
+interface SelectedLocation {
+  label: string
+  coordinates: [number, number] // [longitude, latitude]
+}
 
 const route = useRoute()
 const authStore = useAuthStore()
@@ -291,10 +301,10 @@ const authStore = useAuthStore()
 const annonces = ref<AnnonceList[]>([])
 const pagination = ref<Pagination>()
 const loading = ref(false)
-const locationSearch = ref('')
 const sortOption = ref('date_creation_desc')
 const distanceSlider = ref(50)
 const distanceInput = ref('')
+const selectedLocation = ref<SelectedLocation | null>(null)
 
 const filters = ref({
   search: '',
@@ -321,6 +331,10 @@ const hasActiveFilters = computed(() => {
     filters.value.prixMax ||
     filters.value.distanceMax
   )
+})
+
+const hasCoordinates = computed(() => {
+  return filters.value.latitude !== null && filters.value.longitude !== null
 })
 
 const fetchAnnonces = async (page = 1) => {
@@ -401,11 +415,25 @@ const clearAllFilters = () => {
     latitude: null,
     longitude: null,
   }
-  locationSearch.value = ''
+  selectedLocation.value = null
   distanceSlider.value = 50
   distanceInput.value = ''
   sortOption.value = 'date_creation_desc'
   fetchAnnonces()
+}
+
+const handleLocationChange = (location: SelectedLocation | null) => {
+  if (location) {
+    filters.value.longitude = location.coordinates[0]
+    filters.value.latitude = location.coordinates[1]
+  } else {
+    filters.value.longitude = null
+    filters.value.latitude = null
+    filters.value.distanceMax = ''
+    distanceSlider.value = 50
+    distanceInput.value = ''
+  }
+  debouncedSearch()
 }
 
 const getTypeLabel = (type: string) => {
@@ -448,6 +476,7 @@ const getVisiblePages = () => {
 
   return rangeWithDots.filter((page, index, arr) => arr.indexOf(page) === index)
 }
+
 
 onMounted(() => {
   // Initialize filters from URL query params

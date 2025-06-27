@@ -166,7 +166,7 @@
               <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
                 <span class="text-blue-600 font-medium">
                   {{
-                    (annonce.utilisateur?.username || annonce.utilisateur?.nickname || 'U')
+                    (annonce.utilisateur?.nickname || annonce.utilisateur?.username || 'U')
                       ?.charAt(0)
                       ?.toUpperCase()
                   }}
@@ -175,8 +175,8 @@
               <div>
                 <p class="font-medium text-gray-900">
                   {{
-                    annonce.utilisateur?.username ||
                     annonce.utilisateur?.nickname ||
+                    annonce.utilisateur?.username ||
                     'Utilisateur inconnu'
                   }}
                 </p>
