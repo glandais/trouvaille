@@ -48,27 +48,18 @@ case "$ACTION" in
             exit 1
         fi
         
-        # Create necessary directories based on environment
-        if [ "$ENVIRONMENT" = "production" ]; then
-            log_info "Creating production directories..."
-            sudo mkdir -p /opt/trouvaille/{data/{photos,mongodb,keys},logs/traefik}
-            sudo chown -R $(id -u):$(id -g) /opt/trouvaille
-        else
-            mkdir -p data/{photos,mongodb,keys}
-        fi
+        # Create necessary directories based
+        mkdir -p data/{photos,mongodb,keys}
         
         # Select compose files based on environment
         COMPOSE_FILES="-f docker-compose.yml"
-        if [ "$ENVIRONMENT" = "development" ]; then
-            COMPOSE_FILES="$COMPOSE_FILES -f docker-compose.dev.yml"
-            log_info "Using development configuration with exposed ports on localhost"
-        elif [ "$ENVIRONMENT" = "production" ]; then
+        if [ "$ENVIRONMENT" = "production" ]; then
             COMPOSE_FILES="$COMPOSE_FILES -f docker-compose.prod.yml"
             log_info "Using production configuration with enhanced security"
         fi
         
         # Start services
-        docker-compose $COMPOSE_FILES up -d
+        docker compose $COMPOSE_FILES up -d
         
         log_success "Services started!"
         log_info "Waiting for services to be ready..."
@@ -78,34 +69,26 @@ case "$ACTION" in
         log_info "Checking service health..."
         
         # Check if containers are running
-        if docker-compose ps | grep -q "Up"; then
+        if docker compose ps | grep -q "Up"; then
             log_success "Containers are running"
         else
             log_error "Some containers failed to start"
-            docker-compose logs
+            docker compose logs
             exit 1
         fi
         
-        # Get HTTP port from .env or use default
         HTTP_PORT=$(grep "^HTTP_PORT=" .env 2>/dev/null | cut -d'=' -f2 || echo "8090")
-        TRAEFIK_DASHBOARD_PORT=$(grep "^TRAEFIK_DASHBOARD_PORT=" .env 2>/dev/null | cut -d'=' -f2 || echo "8080")
-        
+
         log_success "Deployment completed!"
         echo ""
         log_info "Access points:"
         log_info "  Application: http://localhost:${HTTP_PORT}"
-        
-        if [ "$ENVIRONMENT" = "development" ]; then
-            log_info "  Direct Backend: http://localhost:8081/api"
-            log_info "  Direct Frontend: http://localhost:8082"
-            log_info "  Mongo Express: http://localhost:8083 (admin/admin)"
-            log_info "  Adminer: http://localhost:8084"
-            log_info "  Traefik Dashboard: http://localhost:${TRAEFIK_DASHBOARD_PORT}"
-            log_info "  MongoDB: localhost:27017"
-        elif [ "$ENVIRONMENT" = "production" ]; then
+        log_info "  MongoDB: localhost:27017"
+        if [ "$ENVIRONMENT" = "production" ]; then
             log_info "  Only accessible through Traefik on port ${HTTP_PORT}"
-            log_warning "Direct service access disabled for security"
             log_info "  Configure your Nginx to proxy to http://localhost:${HTTP_PORT}"
+        else
+            log_info "  Traefik Dashboard: http://localhost:28080"
         fi
         
         echo ""
@@ -114,27 +97,27 @@ case "$ACTION" in
         ;;
     "down"|"stop")
         log_info "Stopping services..."
-        docker-compose down
+        docker compose down
         log_success "Services stopped"
         ;;
     "restart")
         log_info "Restarting services..."
-        docker-compose down
-        docker-compose up -d
+        docker compose down
+        docker compose up -d
         log_success "Services restarted"
         ;;
     "logs")
-        docker-compose logs -f
+        docker compose logs -f
         ;;
     "status")
-        docker-compose ps
+        docker compose ps
         ;;
     "clean")
         log_warning "This will remove all containers, images, and volumes!"
         read -p "Are you sure? (y/N): " -n 1 -r
         echo
         if [[ $REPLY =~ ^[Yy]$ ]]; then
-            docker-compose down -v --rmi all
+            docker compose down -v --rmi all
             docker system prune -f
             log_success "Cleanup completed"
         else

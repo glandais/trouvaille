@@ -120,7 +120,6 @@ L'application est conçue pour s'intégrer dans une infrastructure existante ave
 ### Configuration des ports
 
 - **HTTP_PORT** : Port d'exposition de Traefik (défaut: 8090)
-- **TRAEFIK_DASHBOARD_PORT** : Dashboard Traefik (défaut: 8080, localhost uniquement)
 
 ## Configuration
 
@@ -163,11 +162,11 @@ Les données sont stockées dans des volumes Docker :
 ### Logs
 ```bash
 # Tous les services
-docker-compose logs -f
+docker compose logs -f
 
 # Un service spécifique
-docker-compose logs -f backend
-docker-compose logs -f frontend
+docker compose logs -f backend
+docker compose logs -f frontend
 ```
 
 ### Métriques Traefik
@@ -177,7 +176,7 @@ docker-compose logs -f frontend
 ### Santé des services
 ```bash
 # Vérifier les containers
-docker-compose ps
+docker compose ps
 
 # Health check frontend
 curl http://localhost/health
@@ -224,7 +223,7 @@ docker volume inspect trouvaille_photos_data
 ### MongoDB connection issues
 ```bash
 # Vérifier que MongoDB est prêt
-docker-compose exec mongodb mongosh --eval "db.runCommand('ping')"
+docker compose exec mongodb mongosh --eval "db.runCommand('ping')"
 
 # Recréer les volumes si nécessaire
 ./deploy.sh down
@@ -271,7 +270,7 @@ services:
 
 ### Backup MongoDB
 ```bash
-docker-compose exec mongodb mongodump --out /backup
+docker compose exec mongodb mongodump --out /backup
 docker cp container_id:/backup ./backup-$(date +%Y%m%d)
 ```
 
@@ -283,7 +282,7 @@ docker run --rm -v trouvaille_photos_data:/data -v $(pwd):/backup alpine tar czf
 ### Restauration
 ```bash
 # MongoDB
-docker-compose exec mongodb mongorestore /backup
+docker compose exec mongodb mongorestore /backup
 
 # Photos
 docker run --rm -v trouvaille_photos_data:/data -v $(pwd):/backup alpine tar xzf /backup/photos-DATE.tar.gz -C /

@@ -22,9 +22,6 @@ public class UserService {
   final JsonWebToken jsonWebToken;
 
   public UserEntity getCurrentUser() {
-
-    log.info("Getting current user info from JWT");
-
     if (securityIdentity.isAnonymous()) {
       throw new IllegalStateException("User is not authenticated");
     }

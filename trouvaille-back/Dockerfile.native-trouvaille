@@ -6,19 +6,10 @@ FROM quay.io/quarkus/ubi9-quarkus-micro-image:2.0
 
 WORKDIR /work/
 
-# Create app directories with standard path
-RUN mkdir -p /app/data/photos /app/data/keys \
-    && chown -R 1001:root /work /app \
-    && chmod -R "g+rwX" /work /app
-
 # Copy the native executable
 COPY --chown=1001:root --chmod=0755 target/*-runner /work/application
 
 EXPOSE 8080
 USER 1001
-
-# Environment variables for Quarkus
-ENV PHOTOS_BASE_PATH=/app/data/photos
-ENV JWT_KEYS_PATH=/app/data/keys
 
 ENTRYPOINT ["./application", "-Dquarkus.http.host=0.0.0.0"]

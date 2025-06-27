@@ -168,7 +168,7 @@ log_info "  Backend:  $BACKEND_SIZE"
 log_info "  Frontend: $FRONTEND_SIZE"
 echo ""
 log_info "To start the application:"
-log_info "  docker-compose up -d"
+log_info "  docker compose up -d"
 echo ""
 log_info "To access the application:"
 log_info "  Frontend: http://localhost"
@@ -178,7 +178,7 @@ echo ""
 
 # Optional: Run basic health checks
 if command -v curl &> /dev/null; then
-    log_info "To verify the deployment after docker-compose up:"
+    log_info "To verify the deployment after docker compose up:"
     log_info "  curl http://localhost/health"
     log_info "  curl http://localhost/api/health"
 fi

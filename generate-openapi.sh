@@ -125,6 +125,8 @@ else
     log_warning "   Backend: Generated sources directory not found"
 fi
 
+./format.sh
+
 echo ""
 log_success "🎉 OpenAPI code generation completed successfully!"
 echo ""
