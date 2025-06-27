@@ -20,30 +20,11 @@ RUN npm run build
 ####
 # Runtime stage with Nginx
 ####
-FROM nginx:alpine
+FROM steebchen/nginx-spa:stable
 
 # Copy the built application
-COPY --from=build /app/dist /usr/share/nginx/html
-
-# Copy custom nginx configuration
-COPY nginx.conf /etc/nginx/nginx.conf
-
-# nginx user already exists in nginx:alpine base image
-# Just ensure proper user/group IDs and permissions
-
-# Set proper permissions
-RUN chown -R nginx:nginx /usr/share/nginx/html && \
-    chown -R nginx:nginx /var/cache/nginx && \
-    chown -R nginx:nginx /var/log/nginx && \
-    chown -R nginx:nginx /etc/nginx/conf.d
-
-# Create PID directory
-RUN mkdir -p /var/run/nginx && \
-    chown -R nginx:nginx /var/run/nginx
-
-# Switch to non-root user
-USER nginx
+COPY --from=build /app/dist/ /app
 
 EXPOSE 80
 
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["nginx"]

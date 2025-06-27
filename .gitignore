@@ -1,2 +1,4 @@
 data/
 .env
+
+trouvaille-front/.env.production

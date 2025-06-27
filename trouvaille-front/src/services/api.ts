@@ -5,7 +5,7 @@ import { useAuthStore } from '../stores/auth'
 
 // Create axios instance with base configuration
 const axiosInstance: AxiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080',
+  baseURL: import.meta.env.VITE_API_BASE_URL,
   timeout: 10000,
 })
 
@@ -37,7 +37,7 @@ axiosInstance.interceptors.response.use(
 
 // Create API configuration
 const apiConfiguration = new Configuration({
-  basePath: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080',
+  basePath: import.meta.env.VITE_API_BASE_URL,
 })
 
 // Export API instances

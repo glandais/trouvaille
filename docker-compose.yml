@@ -12,7 +12,7 @@ services:
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
       - "--entrypoints.web.address=:80"
-      - "--log.level=INFO"
+      - "--log.level=DEBUG"
       - "--accesslog=true"
     ports:
       - "${HTTP_PORT:-8090}:80"        # HTTP configurable (default 8090)
@@ -60,20 +60,13 @@ services:
     env_file:
       - .env
     volumes:
-      - "./data/photos:/opt/trouvaill/data/photos"
-      - "./data/keys:/opt/trouvaill/data/keys"
+      - "./data/photos:/opt/trouvaille/data/photos"
+      - "./data/keys:/opt/trouvaille/data/keys"
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.backend.rule=PathPrefix(`/api`)"
-      - "traefik.http.routers.backend.entrypoints=web"
-      - "traefik.http.services.backend.loadbalancer.server.port=8080"
-    # Health check
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/q/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 60s
+      - "traefik.http.routers.quarkus.rule=PathPrefix(`/api`)"
+      - "traefik.http.routers.quarkus.priority=100"
+      - "traefik.http.services.quarkus.loadbalancer.server.port=8080"
 
   # Frontend Vue.js
   frontend:
@@ -87,14 +80,5 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.frontend.rule=PathPrefix(`/`)"
-      - "traefik.http.routers.frontend.entrypoints=web"
       - "traefik.http.services.frontend.loadbalancer.server.port=80"
       - "traefik.http.routers.frontend.priority=1"
-    
-    # Health check
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 30s
