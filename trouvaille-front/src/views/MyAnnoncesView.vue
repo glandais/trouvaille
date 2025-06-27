@@ -4,10 +4,6 @@
       <!-- Header -->
       <div class="flex justify-between items-center mb-8">
         <h1 class="text-3xl font-bold text-gray-900">Mes annonces</h1>
-        <router-link to="/annonces/create" class="btn-primary">
-          <PlusIcon class="h-4 w-4 mr-2" />
-          Créer une annonce
-        </router-link>
       </div>
 
       <!-- Status Filter Tabs -->
@@ -147,11 +143,6 @@
                 </p>
               </div>
             </div>
-
-            <!-- Description -->
-            <p class="text-gray-600 text-sm line-clamp-2 mb-3">
-              {{ annonce.description }}
-            </p>
 
             <!-- Meta info -->
             <div class="flex items-center justify-between text-xs text-gray-500 mb-3">

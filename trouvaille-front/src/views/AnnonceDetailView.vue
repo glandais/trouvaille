@@ -144,10 +144,7 @@
           <!-- Description -->
           <div>
             <h3 class="text-lg font-medium text-gray-900 mb-3">Description</h3>
-            <div
-              class="prose max-w-none text-gray-600"
-              v-html="renderMarkdown(annonce.description)"
-            ></div>
+            <MarkdownViewer :model-value="annonce.description || ''" />
           </div>
 
           <!-- Location -->
@@ -252,7 +249,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import MarkdownIt from 'markdown-it'
 import { useAuthStore } from '../stores/auth'
 import { annoncesApi } from '../services/api'
 import {
@@ -264,6 +260,7 @@ import {
 } from '../types/extended-api'
 import AppLayout from '../components/AppLayout.vue'
 import PhotoViewer from '../components/PhotoViewer.vue'
+import MarkdownViewer from '../components/MarkdownViewer.vue'
 import {
   PhotoIcon,
   MapPinIcon,
@@ -292,11 +289,6 @@ const error = ref(false)
 const currentPhotoIndex = ref(0)
 const showPhotoModal = ref(false)
 
-const md = new MarkdownIt({
-  html: false,
-  linkify: true,
-  typographer: true,
-})
 
 const currentPhoto = computed(() => {
   if (!annonce.value?.photos || annonce.value.photos.length === 0) return null
@@ -427,10 +419,6 @@ const formatCoordinates = (coordinates: any) => {
   return `${coordinates.latitude.toFixed(4)}, ${coordinates.longitude.toFixed(4)}`
 }
 
-const renderMarkdown = (text?: string) => {
-  if (!text) return ''
-  return md.render(text)
-}
 
 const openPhotoModal = () => {
   showPhotoModal.value = true

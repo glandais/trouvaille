@@ -40,11 +40,6 @@
         </div>
       </div>
 
-      <!-- Description -->
-      <p class="text-gray-600 text-sm line-clamp-2 mb-3">
-        {{ annonce.description }}
-      </p>
-
       <!-- Meta info -->
       <div class="flex items-center justify-between text-xs text-gray-500">
         <div class="flex items-center space-x-4">

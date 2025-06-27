@@ -4,10 +4,6 @@
       <!-- Header -->
       <div class="flex justify-between items-center mb-8">
         <h1 class="text-3xl font-bold text-gray-900">Annonces</h1>
-        <router-link v-if="authStore.isAuthenticated" to="/annonces/create" class="btn-primary">
-          <PlusIcon class="h-4 w-4 mr-2" />
-          Créer une annonce
-        </router-link>
       </div>
 
       <!-- Filters -->
