@@ -34,7 +34,7 @@ services:
     volumes:
       - "${MONGO_HOST_DATA}:/data/db"
     ports:
-      - "127.0.0.1:27017:27017"    # MongoDB (localhost only)
+      - "127.0.0.1:${MONGO_HOST_PORT}:27017"    # MongoDB (localhost only)
     healthcheck:
       test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
       interval: 10s
