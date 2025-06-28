@@ -3,13 +3,13 @@
     <!-- Loading State -->
     <div v-if="loading" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div class="animate-pulse">
-        <div class="h-8 bg-gray-200 rounded w-1/4 mb-8"></div>
+        <div class="h-8 bg-gray-200 rounded-sm w-1/4 mb-8"></div>
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div class="h-96 bg-gray-200 rounded"></div>
+          <div class="h-96 bg-gray-200 rounded-sm"></div>
           <div class="space-y-4">
-            <div class="h-6 bg-gray-200 rounded"></div>
-            <div class="h-4 bg-gray-200 rounded w-3/4"></div>
-            <div class="h-20 bg-gray-200 rounded"></div>
+            <div class="h-6 bg-gray-200 rounded-sm"></div>
+            <div class="h-4 bg-gray-200 rounded-sm w-3/4"></div>
+            <div class="h-20 bg-gray-200 rounded-sm"></div>
           </div>
         </div>
       </div>
