@@ -89,16 +89,6 @@ jobs:
       run: |
         TAG=${{ steps.version.outputs.version }}
         
-        # Create backend archive
-        cd trouvaille-back
-        tar -czf ../trouvaille-backend-${TAG}.tar.gz target/*.jar
-        cd ..
-        
-        # Create frontend archive
-        cd trouvaille-front
-        tar -czf ../trouvaille-frontend-${TAG}.tar.gz dist/
-        cd ..
-        
         # Create source archive
         git archive --format=tar.gz --prefix=trouvaille-${TAG}/ HEAD > trouvaille-source-${TAG}.tar.gz
         
@@ -123,7 +113,5 @@ jobs:
         draft: false
         prerelease: ${{ contains(steps.version.outputs.version, '-') }}
         files: |
-          trouvaille-backend-${{ steps.version.outputs.version }}.tar.gz
-          trouvaille-frontend-${{ steps.version.outputs.version }}.tar.gz
           trouvaille-source-${{ steps.version.outputs.version }}.tar.gz
         token: ${{ secrets.GITHUB_TOKEN }}
