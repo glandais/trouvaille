@@ -12,7 +12,7 @@
   },
   "release": {
     "branches": [
-      "master"
+      "develop"
     ],
     "tagFormat": "v${version}",
     "plugins": [

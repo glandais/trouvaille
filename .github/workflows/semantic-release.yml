@@ -2,7 +2,7 @@ name: Semantic Release
 
 on:
   push:
-    branches: [ master ]
+    branches: [ develop ]
   workflow_dispatch:
 
 permissions:
@@ -38,32 +38,3 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: npx semantic-release
-      
-    - name: Create dev version commit
-      if: steps.semantic-release.outputs.new_release_published == 'true'
-      run: |
-        # Configure git
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
-        
-        # Get the released version and calculate next dev version
-        RELEASED_VERSION=$(git describe --tags --abbrev=0 | sed 's/^v//')
-        
-        # Parse version components
-        MAJOR=$(echo $RELEASED_VERSION | cut -d. -f1)
-        MINOR=$(echo $RELEASED_VERSION | cut -d. -f2)
-        PATCH=$(echo $RELEASED_VERSION | cut -d. -f3)
-        
-        # Increment minor version for next dev cycle
-        NEXT_MINOR=$((MINOR + 1))
-        DEV_VERSION="${MAJOR}.${NEXT_MINOR}.0-dev"
-        
-        # Update package.json with dev version
-        sed -i "s/\"version\": \".*\"/\"version\": \"$DEV_VERSION\"/" package.json
-        
-        # Commit the dev version
-        git add package.json
-        git commit -m "chore: bump version to $DEV_VERSION for next development cycle [skip ci]"
-        
-        # Push the commit
-        git push origin master
