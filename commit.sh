@@ -53,6 +53,7 @@ Description explaining what was changed and why.
 Additional context if needed.
 
 Return the complete commit message with subject and description.
+IMPORTANT: Return ONLY the raw commit message text, no markdown formatting, no code blocks, no backticks.
 EOF
     
     # Generate commit message
@@ -60,6 +61,9 @@ EOF
     
     # Clean up temporary file
     rm -f "$TEMP_PROMPT"
+    
+    # Strip markdown code blocks if present
+    COMMIT_MSG=$(echo "$COMMIT_MSG" | sed 's/^```.*$//' | sed '/^$/d' | sed 's/^```$//')
     
     if [ -z "$COMMIT_MSG" ]; then
         echo "Error: Could not generate commit message"
