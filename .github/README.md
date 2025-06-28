@@ -65,6 +65,26 @@ This directory contains the GitHub Actions workflows for the Trouvaille project.
 
 See [DEPENDABOT.md](DEPENDABOT.md) for detailed configuration.
 
+## Security Configuration
+
+### Workflow Permissions
+
+All workflows follow the principle of least privilege:
+
+- **CI:** `contents: read`, `actions: read`
+- **Release:** `contents: write`, `packages: write`, `actions: read`, `id-token: write`
+- **Security Scan:** `contents: read`, `security-events: write`, `actions: read`
+- **Dependency Review:** `contents: read`, `pull-requests: read`
+
+### Token Security
+
+- Uses built-in `GITHUB_TOKEN` (no personal access tokens)
+- Automatic token expiration after workflow completion
+- Scoped permissions per repository
+- Secure container registry authentication
+
+See [SECURITY-WORKFLOWS.md](SECURITY-WORKFLOWS.md) for detailed security configuration.
+
 ## Build Scripts
 
 ### `ci-build.sh`

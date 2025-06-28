@@ -18,6 +18,8 @@ jobs:
     permissions:
       contents: write
       packages: write
+      actions: read
+      id-token: write  # For GitHub OIDC if needed
       
     steps:
     - name: Checkout repository
@@ -124,5 +126,4 @@ jobs:
           trouvaille-backend-${{ steps.version.outputs.version }}.tar.gz
           trouvaille-frontend-${{ steps.version.outputs.version }}.tar.gz
           trouvaille-source-${{ steps.version.outputs.version }}.tar.gz
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        token: ${{ secrets.GITHUB_TOKEN }}
