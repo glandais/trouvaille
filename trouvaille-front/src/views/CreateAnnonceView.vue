@@ -3,11 +3,11 @@
     <!-- Loading State -->
     <div v-if="loading" class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div class="animate-pulse">
-        <div class="h-8 bg-gray-200 rounded w-1/4 mb-8"></div>
+        <div class="h-8 bg-gray-200 rounded-sm w-1/4 mb-8"></div>
         <div class="space-y-8">
-          <div class="h-32 bg-gray-200 rounded"></div>
-          <div class="h-32 bg-gray-200 rounded"></div>
-          <div class="h-32 bg-gray-200 rounded"></div>
+          <div class="h-32 bg-gray-200 rounded-sm"></div>
+          <div class="h-32 bg-gray-200 rounded-sm"></div>
+          <div class="h-32 bg-gray-200 rounded-sm"></div>
         </div>
       </div>
     </div>
@@ -26,7 +26,7 @@
       <!-- Form -->
       <form @submit.prevent="handleSubmit" class="space-y-8">
         <!-- Basic Information -->
-        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div class="bg-white rounded-lg shadow-xs border border-gray-200 p-6">
           <h2 class="text-xl font-semibold text-gray-900 mb-6">
             {{ $t('annonce.form.sections.general') }}
           </h2>
@@ -113,7 +113,7 @@
         </div>
 
         <!-- Price -->
-        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div class="bg-white rounded-lg shadow-xs border border-gray-200 p-6">
           <h2 class="text-xl font-semibold text-gray-900 mb-6">
             {{ $t('annonce.form.sections.price') }}
           </h2>
@@ -156,7 +156,7 @@
         </div>
 
         <!-- Status (only in edit mode) -->
-        <div v-if="isEditMode" class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div v-if="isEditMode" class="bg-white rounded-lg shadow-xs border border-gray-200 p-6">
           <h2 class="text-xl font-semibold text-gray-900 mb-6">
             {{ $t('annonce.form.sections.status') }}
           </h2>
@@ -184,7 +184,7 @@
         </div>
 
         <!-- Photos -->
-        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div class="bg-white rounded-lg shadow-xs border border-gray-200 p-6">
           <h2 class="text-xl font-semibold text-gray-900 mb-6">
             {{ $t('annonce.form.sections.photos') }}
           </h2>
@@ -236,7 +236,7 @@
 
               <!-- Photo Actions -->
               <div
-                class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all rounded-lg flex items-center justify-center"
+                class="absolute inset-0 bg-opacity-0 group-hover:bg-opacity-50 transition-all rounded-lg flex items-center justify-center"
               >
                 <div class="opacity-0 group-hover:opacity-100 transition-opacity space-x-2">
                   <button
@@ -303,7 +303,7 @@
         </div>
 
         <!-- Location -->
-        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div class="bg-white rounded-lg shadow-xs border border-gray-200 p-6">
           <h2 class="text-xl font-semibold text-gray-900 mb-6">
             {{ $t('annonce.form.sections.location') }}
           </h2>

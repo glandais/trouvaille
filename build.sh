@@ -13,8 +13,8 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Configuration
-BACKEND_IMAGE="trouvaille/backend"
-FRONTEND_IMAGE="trouvaille/frontend"
+BACKEND_IMAGE="ghcr.io/glandais/trouvaille-backend/backend"
+FRONTEND_IMAGE="ghcr.io/glandais/trouvaille-frontend"
 TAG="${1:-latest}"
 BUILD_TYPE="${2:-native}" # native or jvm
 

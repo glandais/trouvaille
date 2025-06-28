@@ -7,7 +7,7 @@
       </div>
 
       <!-- Filters -->
-      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
+      <div class="bg-white rounded-lg shadow-xs border border-gray-200 p-6 mb-8">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <!-- Search -->
           <div>
@@ -189,9 +189,9 @@
         <div v-for="i in 9" :key="i" class="card animate-pulse">
           <div class="h-48 bg-gray-200"></div>
           <div class="p-4 space-y-3">
-            <div class="h-4 bg-gray-200 rounded"></div>
-            <div class="h-4 bg-gray-200 rounded w-2/3"></div>
-            <div class="h-4 bg-gray-200 rounded w-1/3"></div>
+            <div class="h-4 bg-gray-200 rounded-sm"></div>
+            <div class="h-4 bg-gray-200 rounded-sm w-2/3"></div>
+            <div class="h-4 bg-gray-200 rounded-sm w-1/3"></div>
           </div>
         </div>
       </div>

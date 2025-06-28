@@ -3,7 +3,7 @@ version: '3.8'
 services:
   # Reverse proxy
   traefik:
-    image: traefik:v3.1
+    image: traefik:3.4
     container_name: trouvaille-traefik
     restart: unless-stopped
     command:
@@ -51,7 +51,7 @@ services:
 
   # Backend Quarkus
   backend:
-    image: trouvaille/backend:latest
+    image: ghcr.io/glandais/trouvaille-backend:latest
     container_name: trouvaille-backend
     restart: unless-stopped
     depends_on:
@@ -70,7 +70,7 @@ services:
 
   # Frontend Vue.js
   frontend:
-    image: trouvaille/frontend:latest
+    image: ghcr.io/glandais/trouvaille-frontend:latest
     container_name: trouvaille-frontend
     restart: unless-stopped
     depends_on:

@@ -72,7 +72,7 @@
         v-for="result in geocodingResults"
         :key="result.properties.id"
         @mousedown="selectLocation(result)"
-        class="w-full px-3 py-2 text-left hover:bg-gray-50 border-b border-gray-100 last:border-b-0 focus:outline-none focus:bg-gray-50"
+        class="w-full px-3 py-2 text-left hover:bg-gray-50 border-b border-gray-100 last:border-b-0 focus:outline-hidden focus:bg-gray-50"
         type="button"
       >
         <div class="text-sm text-gray-900">{{ result.properties.label }}</div>
