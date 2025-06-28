@@ -1,1 +1,576 @@
-../contract.yaml
+openapi: 3.0.3
+info:
+  title: API Petites Annonces
+  description: API pour une plateforme privée de petites annonces permettant la vente, location et demandes d'objets
+  version: 1.0.0
+
+paths:
+  /api/v1/annonces:
+    get:
+      summary: Récupérer toutes les annonces
+      description: Liste paginée des annonces avec filtres et tri possibles
+      tags:
+        - Annonces
+      operationId: listAnnonces
+      parameters:
+        - name: type
+          in: query
+          description: Type d'annonce
+          schema:
+            $ref: '#/components/schemas/AnnonceType'
+        - name: statut
+          in: query
+          description: Statut de l'annonce
+          schema:
+            $ref: '#/components/schemas/AnnonceStatut'
+        - name: nature
+          in: query
+          description: Nature de l'annonce
+          schema:
+            $ref: '#/components/schemas/AnnonceNature'
+        - name: page
+          in: query
+          description: Numéro de page
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: limit
+          in: query
+          description: Nombre d'éléments par page
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: search
+          in: query
+          description: Recherche textuelle dans titre et description
+          schema:
+            type: string
+        - name: user_id
+          in: query
+          description: Recherche par utilisateur
+          schema:
+            type: string
+        - name: prix_min
+          in: query
+          description: Prix minimum
+          schema:
+            type: number
+            format: decimal
+            minimum: 0
+        - name: prix_max
+          in: query
+          description: Prix maximum
+          schema:
+            type: number
+            format: decimal
+            minimum: 0
+        - name: latitude
+          in: query
+          description: Latitude pour le tri par distance
+          schema:
+            type: number
+            format: double
+            minimum: -90
+            maximum: 90
+        - name: longitude
+          in: query
+          description: Longitude pour le tri par distance
+          schema:
+            type: number
+            format: double
+            minimum: -180
+            maximum: 180
+        - name: distance_max
+          in: query
+          description: Distance maximale en kilomètres (nécessite lat/lon)
+          schema:
+            type: number
+            format: decimal
+            minimum: 0
+            maximum: 1000
+        - name: sort_by
+          in: query
+          description: Champ de tri
+          schema:
+            type: string
+            enum:
+              - date_creation
+              - date_modification
+              - prix
+              - titre
+              - distance
+            default: date_creation
+        - name: sort_order
+          in: query
+          description: Ordre de tri
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+            default: desc
+      responses:
+        '200':
+          description: Liste des annonces
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Annonces'
+
+    post:
+      summary: Créer une nouvelle annonce
+      description: Création d'une annonce
+      operationId: createAnnonce
+      tags:
+        - Annonces
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AnnonceBase'
+      responses:
+        '201':
+          description: Annonce créée avec succès
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Annonce'
+        '400':
+          description: Données invalides
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/v1/annonces/{id}:
+    get:
+      summary: Récupérer une annonce par son ID
+      operationId: getAnnonce
+      tags:
+        - Annonces
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Détails de l'annonce
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Annonce'
+        '404':
+          description: Annonce non trouvée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    put:
+      summary: Mettre à jour une annonce
+      operationId: putAnnonce
+      tags:
+        - Annonces
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AnnonceWithStatut'
+      responses:
+        '200':
+          description: Annonce mise à jour
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Annonce'
+        '404':
+          description: Annonce non trouvée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    delete:
+      summary: Supprimer une annonce
+      operationId: deleteAnnonce
+      tags:
+        - Annonces
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Annonce supprimée
+        '404':
+          description: Annonce non trouvée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/v1/annonces/photos:
+    post:
+      summary: Ajouter une photo
+      operationId: createPhoto
+      tags:
+        - Photos
+      requestBody:
+        required: true
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '200':
+          description: Photos ajoutées
+          content:
+            application/json:
+              schema:
+                type: string
+
+  /api/v1/annonces/photos/{photoId}:
+    delete:
+      summary: Supprimer une photo
+      operationId: deletePhoto
+      tags:
+        - Photos
+      parameters:
+        - name: photoId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Photo supprimée
+        '404':
+          description: Photo non trouvée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/v1/photos/{photoId}/full:
+    get:
+      summary: Récupérer le contenu d'une photo en taille réelle
+      operationId: getPhotoFull
+      tags:
+        - Photos
+      parameters:
+        - name: photoId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Contenu de la photo en taille réelle
+          content:
+            image/jpeg:
+              schema:
+                type: string
+                format: binary
+        '404':
+          description: Photo non trouvée
+
+  /api/v1/photos/{photoId}/thumb:
+    get:
+      summary: Récupérer le contenu d'une photo en miniature
+      operationId: getPhotoThumb
+      tags:
+        - Photos
+      parameters:
+        - name: photoId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Contenu de la photo en miniature
+          content:
+            image/jpeg:
+              schema:
+                type: string
+                format: binary
+        '404':
+          description: Photo non trouvée
+
+  /api/v1/auth/token:
+    post:
+      summary: Échanger le code OAuth pour un token
+      operationId: exchangeOAuthToken
+      tags:
+        - Authentification
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OAuthTokenRequest'
+      responses:
+        '200':
+          description: Token échangé avec succès
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OAuthTokenResponse'
+        '400':
+          description: Requête invalide
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    Utilisateur:
+      type: object
+      properties:
+        id:
+          type: string
+        username:
+          type: string
+        nickname:
+          type: string
+      required:
+        - id
+        - externalId
+
+    AnnonceType:
+      type: string
+      enum:
+        - vente
+        - location
+      description: Type de transaction
+
+    AnnonceNature:
+      type: string
+      enum:
+        - offre
+        - demande
+      description: Nature de l'annonce
+
+    PeriodeLocation:
+      type: string
+      enum:
+        - jour
+        - semaine
+        - mois
+      description: Période de location
+
+    Coordinates:
+      type: object
+      properties:
+        latitude:
+          type: number
+          format: double
+          minimum: -90
+          maximum: 90
+          example: 48.8566
+        longitude:
+          type: number
+          format: double
+          minimum: -180
+          maximum: 180
+          example: 2.3522
+      required:
+        - latitude
+        - longitude
+
+    AnnonceBase:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/AnnonceType'
+        nature:
+          $ref: '#/components/schemas/AnnonceNature'
+        titre:
+          type: string
+          minLength: 5
+          maxLength: 100
+          example: 'Vélo de course en excellent état'
+        description:
+          type: string
+          format: markdown
+          maxLength: 2000
+          example: 'Vélo de course **Trek** en parfait état, utilisé seulement 2 fois. Idéal pour débutant.'
+        prix:
+          type: number
+          format: decimal
+          minimum: 0
+          example: 350.00
+        periode_location:
+          $ref: '#/components/schemas/PeriodeLocation'
+        photos:
+          type: array
+          items:
+            type: string
+          maxItems: 10
+        coordinates:
+          $ref: '#/components/schemas/Coordinates'
+        ville:
+          type: string
+      required:
+        - type
+        - nature
+        - titre
+        - description
+        - coordinates
+        - ville
+
+    AnnonceStatut:
+      type: string
+      enum:
+        - active
+        - suspendue
+        - vendue
+
+    AnnonceWithStatut:
+      allOf:
+        - $ref: '#/components/schemas/AnnonceBase'
+        - type: object
+          properties:
+            statut:
+              $ref: '#/components/schemas/AnnonceStatut'
+
+    Annonce:
+      allOf:
+        - $ref: '#/components/schemas/AnnonceBase'
+        - type: object
+          properties:
+            id:
+              type: string
+            statut:
+              $ref: '#/components/schemas/AnnonceStatut'
+            utilisateur:
+              $ref: '#/components/schemas/Utilisateur'
+            date_creation:
+              type: string
+              format: date-time
+            date_modification:
+              type: string
+              format: date-time
+          required:
+            - id
+            - utilisateur
+            - date_creation
+            - statut
+
+    Annonces:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/AnnonceList'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    AnnonceList:
+      allOf:
+        - $ref: '#/components/schemas/Annonce'
+        - type: object
+          properties:
+            distance:
+              type: number
+              format: decimal
+              minimum: 0
+              description: Distance en kilomètres (présent uniquement si tri par distance)
+
+    Pagination:
+      type: object
+      properties:
+        page_courante:
+          type: integer
+          minimum: 1
+        total_pages:
+          type: integer
+          minimum: 10
+        total_elements:
+          type: integer
+          minimum: 97
+        elements_par_page:
+          type: integer
+          minimum: 10
+      required:
+        - page_courante
+        - total_pages
+        - total_elements
+        - elements_par_page
+
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+          example: 'VALIDATION_ERROR'
+        message:
+          type: string
+          example: 'Les données fournies sont invalides'
+        details:
+          type: array
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+              error:
+                type: string
+      required:
+        - code
+        - message
+
+    OAuthTokenRequest:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Code d'autorisation OAuth
+        state:
+          type: string
+          description: Paramètre state OAuth
+        redirectUri:
+          type: string
+          description: URI de redirection
+      required:
+        - code
+        - state
+        - redirectUri
+
+    OAuthTokenResponse:
+      type: object
+      properties:
+        access_token:
+          type: string
+          description: Token d'accès JWT
+      required:
+        - access_token
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - BearerAuth: []

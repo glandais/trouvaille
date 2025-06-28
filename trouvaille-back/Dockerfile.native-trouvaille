@@ -1,0 +1,18 @@
+####
+# Trouvaille-specific Dockerfile for native builds
+# Based on Quarkus native-micro Dockerfile with additional setup
+####
+FROM registry.access.redhat.com/ubi9/ubi-minimal:9.6
+
+RUN microdnf install -y freetype fontconfig \
+    && microdnf clean all
+
+WORKDIR /work/
+
+# Copy the native executable
+COPY --chown=1001:root --chmod=0755 target/*-runner /work/application
+
+EXPOSE 8080
+USER 1001
+
+ENTRYPOINT ["./application", "-Dquarkus.http.host=0.0.0.0"]

@@ -1,21 +1,22 @@
 package io.github.glandais.trouvaille.entity;
 
 import io.quarkus.mongodb.panache.common.MongoEntity;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.bson.types.ObjectId;
-
-import java.net.URI;
 
 @MongoEntity(collection = "User")
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class UserEntity {
 
-    public ObjectId id;
+  public ObjectId id;
 
-    public String pseudo;
+  public String externalId;
 
-    public URI avatarUrl;
+  public String username;
 
+  public String nickname;
 }

@@ -1,43 +1,45 @@
 package io.github.glandais.trouvaille.entity;
 
 import io.quarkus.mongodb.panache.common.MongoEntity;
-import lombok.Getter;
-import lombok.Setter;
-import org.bson.types.ObjectId;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import lombok.*;
+import org.bson.types.ObjectId;
 
 @MongoEntity(collection = "Annonce")
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class AnnonceEntity {
 
-    public ObjectId id;
+  public ObjectId id;
 
-    public ObjectId utilisateur;
+  public ObjectId utilisateur;
 
-    public AnnonceEntityStatut statut;
+  public AnnonceEntityStatut statut;
 
-    public AnnonceEntityType type;
+  public AnnonceEntityType type;
 
-    public AnnonceEntityNature nature;
+  public AnnonceEntityNature nature;
 
-    public String titre;
+  public String titre;
 
-    public String description;
+  public String description;
 
-    public Double prix;
+  public Double prix;
 
-    public PeriodeEntityLocation periodeLocation;
+  public PeriodeEntityLocation periodeLocation;
 
-    public CoordinatesEntity coordinates;
+  public CoordinatesEntity coordinates;
 
-    public List<ObjectId> photos = new ArrayList<>();
+  public String ville;
 
-    public Date dateCreation;
+  @Builder.Default public List<ObjectId> photos = new ArrayList<>();
 
-    public Date dateModification;
+  public Date dateCreation;
 
+  public Date dateModification;
 }

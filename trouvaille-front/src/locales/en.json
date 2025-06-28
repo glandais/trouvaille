@@ -1,0 +1,341 @@
+{
+  "app": {
+    "name": "Trouvaille",
+    "tagline": "Private marketplace platform",
+    "auth": {
+      "authenticating": "Authenticating...",
+      "login": "Log in",
+      "logout": "Log out",
+      "callback": {
+        "processing": "Processing authentication...",
+        "success": "Login successful! Redirecting...",
+        "error": "Login error",
+        "invalid_state": "Invalid OAuth state. Please try again.",
+        "retry": "Retry login"
+      }
+    }
+  },
+  "nav": {
+    "annonces": "Listings",
+    "my_annonces": "My listings",
+    "create": "Create listing",
+    "profile": "Profile",
+    "home": "Home"
+  },
+  "common": {
+    "actions": {
+      "save": "Save",
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "edit": "Edit",
+      "view": "View",
+      "create": "Create",
+      "update": "Update",
+      "publish": "Publish",
+      "search": "Search",
+      "clear": "Clear",
+      "close": "Close",
+      "confirm": "Confirm",
+      "loading": "Loading...",
+      "retry": "Retry",
+      "all": "All",
+      "browse": "Browse",
+      "uploading": "Uploading...",
+      "modifying": "Modifying...",
+      "publishing": "Publishing..."
+    },
+    "status": {
+      "success": "Success",
+      "error": "Error",
+      "warning": "Warning",
+      "info": "Information"
+    },
+    "navigation": {
+      "previous": "Previous",
+      "next": "Next",
+      "page": "Page",
+      "of": "of"
+    }
+  },
+  "annonce": {
+    "title": "Listing | Listings",
+    "types": {
+      "vente": "Sale",
+      "location": "Rental"
+    },
+    "natures": {
+      "offre": "Offer",
+      "demande": "Request"
+    },
+    "status": {
+      "active": "Active",
+      "suspendue": "Suspended",
+      "vendue": "Sold",
+      "expiree": "Expired"
+    },
+    "periode": {
+      "jour": "per day",
+      "semaine": "per week",
+      "mois": "per month",
+      "not_specified": "Not specified"
+    },
+    "fields": {
+      "titre": "Title",
+      "description": "Description",
+      "prix": "Price",
+      "type": "Type",
+      "nature": "Nature",
+      "status": "Status",
+      "ville": "City",
+      "location": "Location",
+      "periode_location": "Rental period",
+      "photos": "Photos",
+      "date_creation": "Creation date",
+      "date_modification": "Modification date",
+      "utilisateur": "User"
+    },
+    "placeholders": {
+      "titre": "e.g. Racing bike in excellent condition",
+      "description": "Describe your listing in detail...",
+      "prix": "0",
+      "search": "Title or description...",
+      "ville": "e.g. Paris, Lyon, Marseille..."
+    },
+    "create": {
+      "title": "Create listing",
+      "description": "Fill in the information below to publish your listing",
+      "success": "Listing created successfully!",
+      "error": "Error creating listing",
+      "first_listing": "Create my first listing"
+    },
+    "edit": {
+      "title": "Edit listing",
+      "description": "Modify your listing information",
+      "success": "Listing updated successfully!",
+      "error": "Error updating listing"
+    },
+    "delete": {
+      "title": "Delete listing",
+      "confirm": "Are you sure you want to delete \"{title}\"?",
+      "success": "Listing deleted successfully!",
+      "error": "Error deleting listing"
+    },
+    "search": {
+      "title": "Search listings",
+      "results": "No listings found | {count} listing found | {count} listings found",
+      "filters": {
+        "title": "Filters",
+        "search": "Search",
+        "type": "Type",
+        "nature": "Nature",
+        "prix_min": "Minimum price",
+        "prix_max": "Maximum price",
+        "location": "Location",
+        "distance_max": "Maximum distance",
+        "sort_by": "Sort by",
+        "active_filters": "Active filters",
+        "clear_all": "Clear all filters",
+        "clear_filter": "Clear this filter"
+      },
+      "sort": {
+        "date_creation_desc": "Most recent",
+        "date_creation_asc": "Oldest",
+        "prix_asc": "Price ascending",
+        "prix_desc": "Price descending",
+        "titre_asc": "Title A-Z",
+        "titre_desc": "Title Z-A",
+        "distance_asc": "Distance ascending"
+      },
+      "empty": {
+        "title": "No listings found",
+        "description": "Try modifying your search criteria",
+        "action": "Clear filters"
+      }
+    },
+    "my": {
+      "title": "My listings",
+      "empty": {
+        "title": "You don't have any listings yet",
+        "description": "Create your first listing to start selling or renting your items",
+        "action": "Create listing"
+      },
+      "stats": {
+        "total": "Total",
+        "active": "Active",
+        "suspendue": "Suspended",
+        "vendue": "Sold"
+      }
+    },
+    "card": {
+      "published": "Published {date}",
+      "modified": "Modified {date}",
+      "contact": "Contact",
+      "no_price": "Price not specified",
+      "negotiable": "Negotiable price",
+      "published_by": "Published by {user}",
+      "contact_seller": "Contact seller"
+    },
+    "not_found": {
+      "title": "Listing not found",
+      "description": "The listing you are looking for does not exist or has been deleted.",
+      "action": "Back to listings"
+    },
+    "form": {
+      "sections": {
+        "general": "General information",
+        "price": "Price",
+        "photos": "Photos",
+        "location": "Location",
+        "status": "Listing status"
+      },
+      "labels": {
+        "type_required": "Listing type *",
+        "nature_required": "Listing nature *",
+        "title_required": "Title *",
+        "description_required": "Description *",
+        "price_required": "Price (€) *",
+        "period": "Rental period",
+        "status_required": "Status *"
+      },
+      "placeholders": {
+        "select_type": "Select a type",
+        "select_nature": "Select a nature",
+        "title_help": "Your listing title (5-100 characters)",
+        "description_help": "Describe your item in detail...",
+        "editor_help": "Use the editor to format your text (bold, italic, lists, links...)"
+      },
+      "help": {
+        "status": "Change the status to temporarily suspend your listing or mark it as sold/rented"
+      }
+    }
+  },
+  "photos": {
+    "title": "Photo | Photos",
+    "loading": "Loading photo...",
+    "error": "Loading error",
+    "main": "Main photo",
+    "upload": {
+      "title": "Add photos",
+      "add_photos": "Add photos (max 10)",
+      "drag_drop": "Drag and drop your photos here or click to select",
+      "drag_drop_or": "Drag and drop your photos here or",
+      "browse_files": "browse your files",
+      "max_files": "Maximum {count} photos",
+      "supported_formats": "Supported formats: JPEG, PNG, WebP",
+      "accepted_formats": "Accepted formats: JPG, PNG, WebP (max 5MB per photo)",
+      "uploading": "Uploading...",
+      "success": "Photo uploaded successfully!",
+      "error": "Error uploading photo",
+      "max_files_exceeded": "You cannot add more than 10 photos",
+      "invalid_file": "{filename} is not a valid image",
+      "file_too_large": "{filename} is too large (max 5MB)",
+      "upload_failed": "Error uploading {filename}"
+    },
+    "actions": {
+      "move_left": "Move left",
+      "move_right": "Move right",
+      "delete": "Delete",
+      "delete_error": "Error deleting photo"
+    },
+    "delete": {
+      "confirm": "Are you sure you want to delete this photo?",
+      "success": "Photo deleted successfully!",
+      "error": "Error deleting photo"
+    },
+    "viewer": {
+      "close": "Close",
+      "previous": "Previous photo",
+      "next": "Next photo",
+      "counter": "{current} / {total}"
+    }
+  },
+  "location": {
+    "title": "Location",
+    "search": "Search for an address...",
+    "placeholder": "Address, city...",
+    "current": "Current position",
+    "no_results": "No results found",
+    "searching": "Searching...",
+    "error": "Geolocation error",
+    "permission_denied": "Geolocation denied",
+    "privacy_note": "Only coordinates and city will be stored in the listing, not the complete address.",
+    "unknown": "Unknown",
+    "defined": "Location defined",
+    "saved": "Position saved ({lat}, {lng})",
+    "actions": {
+      "remove": "Remove location",
+      "use_current": "Use my position"
+    },
+    "distance": {
+      "km": "km",
+      "unlimited": "Unlimited",
+      "label": "Max distance: {distance}",
+      "select_location": "Select a location to enable distance filter"
+    }
+  },
+  "validation": {
+    "required": "This field is required",
+    "min_length": "Minimum {min} characters",
+    "max_length": "Maximum {max} characters",
+    "min_value": "Minimum value: {min}",
+    "max_value": "Maximum value: {max}",
+    "invalid_email": "Invalid email address",
+    "invalid_url": "Invalid URL",
+    "invalid_number": "Invalid number",
+    "passwords_not_match": "Passwords do not match",
+    "type_required": "Type is required",
+    "nature_required": "Nature is required",
+    "title_min_length": "Title must contain at least 5 characters",
+    "title_max_length": "Title cannot exceed 100 characters",
+    "description_required": "Description is required",
+    "description_max_length": "Description cannot exceed 2000 characters",
+    "price_invalid": "Price must be a positive number",
+    "location_required": "Location is required"
+  },
+  "errors": {
+    "generic": "An unexpected error occurred",
+    "network": "Connection error. Please check your internet connection.",
+    "server": "Server error. Please try again later.",
+    "not_found": "Resource not found",
+    "unauthorized": "You are not authorized to perform this action",
+    "forbidden": "Access forbidden",
+    "timeout": "Request timeout",
+    "validation": "Data validation error",
+    "image_load": "Image error",
+    "load_error": "Loading error"
+  },
+  "dates": {
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "days_ago": "{count} day ago | {count} days ago",
+    "weeks_ago": "{count} week ago | {count} weeks ago",
+    "months_ago": "{count} month ago | {count} months ago",
+    "years_ago": "{count} year ago | {count} years ago",
+    "at": "at",
+    "published": "Published {date}",
+    "modified": "Modified {date}",
+    "created": "Created {date}"
+  },
+  "pages": {
+    "not_found": {
+      "title": "Page not found",
+      "description": "The page you are looking for does not exist or has been moved.",
+      "action": "Back to home"
+    }
+  },
+  "editor": {
+    "placeholder": "Write your description in markdown..."
+  },
+  "user": {
+    "unknown": "Unknown user"
+  },
+  "oauth": {
+    "processing": "Finalizing authentication...",
+    "debug": {
+      "processing": "Processing OAuth callback...",
+      "exchanging": "Exchanging code for token...",
+      "failed": "Authentication failed",
+      "invalid_params": "Invalid callback parameters"
+    }
+  }
+}

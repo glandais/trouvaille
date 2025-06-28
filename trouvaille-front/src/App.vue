@@ -1,85 +1,58 @@
-<script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
-</script>
-
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
+  <div id="app">
+    <!-- Always show router-view for OAuth callback -->
+    <router-view v-if="$route.name === 'oauth-callback'" />
 
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
+    <!-- Show loading while authenticating -->
+    <div
+      v-else-if="authStore.isAuthenticating"
+      class="min-h-screen flex items-center justify-center"
+    >
+      <div class="text-center">
+        <div
+          class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"
+        ></div>
+        <p class="text-gray-600">{{ $t('app.auth.authenticating') }}</p>
+      </div>
     </div>
-  </header>
 
-  <RouterView />
+    <!-- Show login if not authenticated -->
+    <div
+      v-else-if="!authStore.isAuthenticated"
+      class="min-h-screen flex items-center justify-center bg-gray-50"
+    >
+      <div class="max-w-md w-full space-y-8 p-8">
+        <div class="text-center">
+          <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ $t('app.name') }}</h1>
+          <p class="text-gray-600 mb-8">{{ $t('app.tagline') }}</p>
+          <button @click="authStore.login" class="btn-primary w-full py-3 text-lg">
+            {{ $t('app.auth.login') }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main app when authenticated -->
+    <div v-else class="min-h-screen">
+      <router-view />
+    </div>
+  </div>
 </template>
 
-<style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
-}
+<script setup lang="ts">
+import { onMounted } from 'vue'
+import { useAuthStore } from './stores/auth'
+import { useLocationStore } from './stores/location'
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
+const authStore = useAuthStore()
+const locationStore = useLocationStore()
 
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
-}
+onMounted(async () => {
+  await authStore.initializeAuth()
 
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
+  // Initialize user location once authenticated
+  if (authStore.isAuthenticated) {
+    locationStore.initializeUserLocation()
   }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
-}
-</style>
+})
+</script>
