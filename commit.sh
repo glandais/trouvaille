@@ -24,34 +24,42 @@ if ! git diff --cached --quiet; then
     # Generate commit message using Claude
     echo "Generating semantic commit message with Claude..."
     
-    COMMIT_MSG=$(claude "
-    Based on these staged git changes, generate a semantic commit message following conventional commits format.
+    # Create temporary file with prompt
+    TEMP_PROMPT=$(mktemp)
+    cat > "$TEMP_PROMPT" << EOF
+Based on these staged git changes, generate a semantic commit message following conventional commits format.
+
+Staged files:
+$STAGED_FILES
+
+Changes summary:
+$STAGED_STAT
+
+Full diff:
+$STAGED_DIFF
+
+Rules:
+- Use format: type(scope): subject
+- Types: feat, fix, docs, style, refactor, test, chore, ci, build
+- Subject: imperative mood, under 50 characters, lowercase, no period
+- Then add a blank line and a detailed description (2-3 sentences max)
+- Be specific about what was changed and why
+- Focus on the 'what' and 'why', not the 'how'
+
+Format:
+type(scope): subject
+
+Description explaining what was changed and why.
+Additional context if needed.
+
+Return the complete commit message with subject and description.
+EOF
     
-    Staged files:
-    $STAGED_FILES
+    # Generate commit message
+    COMMIT_MSG=$(claude < "$TEMP_PROMPT")
     
-    Changes summary:
-    $STAGED_STAT
-    
-    Full diff:
-    $STAGED_DIFF
-    
-    Rules:
-    - Use format: type(scope): subject
-    - Types: feat, fix, docs, style, refactor, test, chore, ci, build
-    - Subject: imperative mood, under 50 characters, lowercase, no period
-    - Then add a blank line and a detailed description (2-3 sentences max)
-    - Be specific about what was changed and why
-    - Focus on the 'what' and 'why', not the 'how'
-    
-    Format:
-    type(scope): subject
-    
-    Description explaining what was changed and why.
-    Additional context if needed.
-    
-    Return the complete commit message with subject and description.
-    ")
+    # Clean up temporary file
+    rm -f "$TEMP_PROMPT"
     
     if [ -z "$COMMIT_MSG" ]; then
         echo "Error: Could not generate commit message"
