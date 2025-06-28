@@ -18,11 +18,15 @@
     <!-- Error State -->
     <div v-else-if="error" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div class="text-center py-12">
-        <h2 class="text-2xl font-semibold text-gray-900 mb-2">{{ $t('annonce.not_found.title') }}</h2>
+        <h2 class="text-2xl font-semibold text-gray-900 mb-2">
+          {{ $t('annonce.not_found.title') }}
+        </h2>
         <p class="text-gray-600 mb-6">
           {{ $t('annonce.not_found.description') }}
         </p>
-        <router-link to="/annonces" class="btn-primary">{{ $t('annonce.not_found.action') }}</router-link>
+        <router-link to="/annonces" class="btn-primary">{{
+          $t('annonce.not_found.action')
+        }}</router-link>
       </div>
     </div>
 
@@ -32,7 +36,9 @@
       <nav class="flex mb-8" aria-label="Breadcrumb">
         <ol class="flex items-center space-x-4">
           <li>
-            <router-link to="/" class="text-gray-400 hover:text-gray-500">{{ $t('nav.home') }}</router-link>
+            <router-link to="/" class="text-gray-400 hover:text-gray-500">{{
+              $t('nav.home')
+            }}</router-link>
           </li>
           <li>
             <ChevronRightIcon class="h-4 w-4 text-gray-400" />
@@ -143,13 +149,17 @@
 
           <!-- Description -->
           <div>
-            <h3 class="text-lg font-medium text-gray-900 mb-3">{{ $t('annonce.fields.description') }}</h3>
+            <h3 class="text-lg font-medium text-gray-900 mb-3">
+              {{ $t('annonce.fields.description') }}
+            </h3>
             <MarkdownViewer :model-value="annonce.description || ''" />
           </div>
 
           <!-- Location -->
           <div v-if="annonce.ville || annonce.coordinates">
-            <h3 class="text-lg font-medium text-gray-900 mb-3">{{ $t('annonce.fields.location') }}</h3>
+            <h3 class="text-lg font-medium text-gray-900 mb-3">
+              {{ $t('annonce.fields.location') }}
+            </h3>
             <div class="flex items-center space-x-2 text-gray-600">
               <MapPinIcon class="h-5 w-5" />
               <span>{{ annonce.ville || $t('location.defined') }}</span>
@@ -162,7 +172,9 @@
 
           <!-- User Info -->
           <div>
-            <h3 class="text-lg font-medium text-gray-900 mb-3">{{ $t('annonce.fields.utilisateur') }}</h3>
+            <h3 class="text-lg font-medium text-gray-900 mb-3">
+              {{ $t('annonce.fields.utilisateur') }}
+            </h3>
             <div class="flex items-center space-x-3">
               <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
                 <span class="text-blue-600 font-medium">
@@ -189,7 +201,8 @@
                       annonce.date_modification !== annonce.date_creation
                     "
                   >
-                    • {{ $t('dates.modified', { date: formatSmartDate(annonce.date_modification) }) }}
+                    •
+                    {{ $t('dates.modified', { date: formatSmartDate(annonce.date_modification) }) }}
                   </span>
                 </p>
               </div>
@@ -295,10 +308,7 @@ const currentPhoto = computed(() => {
 
 // Utiliser les composables pour charger les photos
 const photoIds = computed(() => annonce.value?.photos || [])
-const {
-  urls: thumbUrls,
-  errors: thumbErrors,
-} = usePhotos(photoIds, 'thumb')
+const { urls: thumbUrls, errors: thumbErrors } = usePhotos(photoIds, 'thumb')
 const {
   url: fullPhotoUrl,
   loading: fullPhotoLoading,

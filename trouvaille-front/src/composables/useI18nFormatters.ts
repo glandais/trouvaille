@@ -85,9 +85,8 @@ export function useI18nFormatters() {
     }
 
     // Round to 1 decimal place for distances < 10km, otherwise to nearest km
-    const rounded = distanceInKm < 10 
-      ? Math.round(distanceInKm * 10) / 10 
-      : Math.round(distanceInKm)
+    const rounded =
+      distanceInKm < 10 ? Math.round(distanceInKm * 10) / 10 : Math.round(distanceInKm)
 
     const formattedNumber = rounded.toLocaleString(locale.value === 'fr' ? 'fr-FR' : 'en-US', {
       minimumFractionDigits: rounded < 10 && rounded % 1 !== 0 ? 1 : 0,
@@ -101,9 +100,9 @@ export function useI18nFormatters() {
    * Format price with proper currency and locale
    */
   const formatPrice = (
-    price: number | undefined, 
+    price: number | undefined,
     periode?: string | null,
-    showCurrency = true
+    showCurrency = true,
   ): string => {
     if (price === undefined || price === null) {
       return t('annonce.card.no_price')
@@ -161,15 +160,13 @@ export function useI18nFormatters() {
    */
   const formatFileSize = (bytes: number): string => {
     if (bytes === 0) return '0 B'
-    
+
     const k = 1024
-    const sizes = locale.value === 'fr' 
-      ? ['B', 'KB', 'MB', 'GB'] 
-      : ['B', 'KB', 'MB', 'GB']
-    
+    const sizes = locale.value === 'fr' ? ['B', 'KB', 'MB', 'GB'] : ['B', 'KB', 'MB', 'GB']
+
     const i = Math.floor(Math.log(bytes) / Math.log(k))
     const size = (bytes / Math.pow(k, i)).toFixed(1)
-    
+
     return `${size} ${sizes[i]}`
   }
 
@@ -184,22 +181,22 @@ export function useI18nFormatters() {
   return {
     // Date formatting
     formatRelativeDate,
-    formatAbsoluteDate, 
+    formatAbsoluteDate,
     formatDateTime,
     formatSmartDate,
-    
+
     // Distance and location
     formatDistance,
-    
+
     // Price formatting
     formatPrice,
     formatPriceRange,
-    
+
     // Label mapping
     getTypeLabel,
     getNatureLabel,
     getStatusLabel,
-    
+
     // Utility
     formatFileSize,
     pluralize,

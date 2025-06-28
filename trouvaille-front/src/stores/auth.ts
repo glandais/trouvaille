@@ -122,12 +122,12 @@ export const useAuthStore = defineStore('auth', () => {
     return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
   }
 
-interface JWTPayload {
-  exp: number;
-  sub: string;
-  username?: string;
-  nickname?: string;
-}
+  interface JWTPayload {
+    exp: number
+    sub: string
+    username?: string
+    nickname?: string
+  }
 
   const decodeJWT = (token: string): JWTPayload => {
     try {

@@ -86,7 +86,9 @@
                   <!-- User Info -->
                   <div class="px-4 py-3 border-b border-gray-100">
                     <p class="text-sm font-medium text-gray-900">
-                      {{ authStore.user?.nickname || authStore.user?.username || $t('nav.profile') }}
+                      {{
+                        authStore.user?.nickname || authStore.user?.username || $t('nav.profile')
+                      }}
                     </p>
                     <p class="text-xs text-gray-500">{{ $t('common.status.success') }}</p>
                   </div>

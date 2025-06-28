@@ -1,0 +1,226 @@
+version: 2
+updates:
+  # Maven dependencies (Backend)
+  - package-ecosystem: "maven"
+    directory: "/trouvaille-back"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Europe/Paris"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "glandais"
+    assignees:
+      - "glandais"
+    commit-message:
+      prefix: "deps(maven)"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "backend"
+      - "maven"
+    groups:
+      quarkus:
+        patterns:
+          - "io.quarkus*"
+          - "io.quarkus.platform*"
+        update-types:
+          - "minor"
+          - "patch"
+      mapstruct:
+        patterns:
+          - "org.mapstruct*"
+        update-types:
+          - "minor"
+          - "patch"
+      lombok:
+        patterns:
+          - "org.projectlombok*"
+        update-types:
+          - "minor"
+          - "patch"
+      testing:
+        patterns:
+          - "*junit*"
+          - "*rest-assured*"
+          - "*testcontainers*"
+        update-types:
+          - "minor"
+          - "patch"
+
+  # npm dependencies (Frontend)
+  - package-ecosystem: "npm"
+    directory: "/trouvaille-front"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:30"
+      timezone: "Europe/Paris"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "glandais"
+    assignees:
+      - "glandais"
+    commit-message:
+      prefix: "deps(npm)"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "frontend"
+      - "npm"
+    groups:
+      vue:
+        patterns:
+          - "vue*"
+          - "@vue/*"
+        update-types:
+          - "minor"
+          - "patch"
+      vite:
+        patterns:
+          - "vite*"
+          - "@vitejs/*"
+        update-types:
+          - "minor"
+          - "patch"
+      typescript:
+        patterns:
+          - "typescript*"
+          - "@types/*"
+        update-types:
+          - "minor"
+          - "patch"
+      eslint:
+        patterns:
+          - "eslint*"
+          - "@eslint/*"
+          - "eslint-*"
+        update-types:
+          - "minor"
+          - "patch"
+      tailwind:
+        patterns:
+          - "tailwindcss*"
+          - "@tailwindcss/*"
+        update-types:
+          - "minor"
+          - "patch"
+      build-tools:
+        patterns:
+          - "prettier*"
+          - "postcss*"
+          - "autoprefixer*"
+          - "@openapi-generator-cli/*"
+        update-types:
+          - "minor"
+          - "patch"
+
+  # Docker dependencies (Root)
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "tuesday"
+      time: "09:00"
+      timezone: "Europe/Paris"
+    open-pull-requests-limit: 3
+    reviewers:
+      - "glandais"
+    assignees:
+      - "glandais"
+    commit-message:
+      prefix: "deps(docker)"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "docker"
+      - "infrastructure"
+
+  # Docker dependencies (Backend)
+  - package-ecosystem: "docker"
+    directory: "/trouvaille-back"
+    schedule:
+      interval: "weekly"
+      day: "tuesday"
+      time: "09:15"
+      timezone: "Europe/Paris"
+    open-pull-requests-limit: 3
+    reviewers:
+      - "glandais"
+    assignees:
+      - "glandais"
+    commit-message:
+      prefix: "deps(docker-backend)"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "docker"
+      - "backend"
+
+  # Docker dependencies (Frontend)
+  - package-ecosystem: "docker"
+    directory: "/trouvaille-front"
+    schedule:
+      interval: "weekly"
+      day: "tuesday"
+      time: "09:30"
+      timezone: "Europe/Paris"
+    open-pull-requests-limit: 3
+    reviewers:
+      - "glandais"
+    assignees:
+      - "glandais"
+    commit-message:
+      prefix: "deps(docker-frontend)"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "docker"
+      - "frontend"
+
+  # GitHub Actions dependencies
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "wednesday"
+      time: "09:00"
+      timezone: "Europe/Paris"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "glandais"
+    assignees:
+      - "glandais"
+    commit-message:
+      prefix: "deps(actions)"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "github-actions"
+      - "ci-cd"
+    groups:
+      setup-actions:
+        patterns:
+          - "actions/checkout*"
+          - "actions/setup-*"
+          - "actions/cache*"
+          - "actions/upload-artifact*"
+        update-types:
+          - "minor"
+          - "patch"
+      docker-actions:
+        patterns:
+          - "docker/*"
+          - "*/docker-*"
+        update-types:
+          - "minor"
+          - "patch"
+      security-actions:
+        patterns:
+          - "github/codeql-action*"
+          - "aquasecurity/*"
+          - "actions/dependency-review-action*"
+        update-types:
+          - "minor"
+          - "patch"

@@ -1,0 +1,73 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        java-version: [21]
+        node-version: [20]
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Set up JDK ${{ matrix.java-version }}
+      uses: actions/setup-java@v4
+      with:
+        java-version: ${{ matrix.java-version }}
+        distribution: 'temurin'
+        
+    - name: Set up Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+        cache-dependency-path: trouvaille-front/package-lock.json
+        
+    - name: Cache Maven dependencies
+      uses: actions/cache@v4
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
+          
+    - name: Cache Node.js dependencies
+      uses: actions/cache@v4
+      with:
+        path: trouvaille-front/node_modules
+        key: ${{ runner.os }}-node-${{ hashFiles('trouvaille-front/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+          
+    - name: Run CI build script
+      run: ./ci-build.sh
+      
+    - name: Upload backend test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: backend-test-results
+        path: trouvaille-back/target/surefire-reports/
+        
+    - name: Upload frontend build artifacts
+      uses: actions/upload-artifact@v4
+      if: success()
+      with:
+        name: frontend-dist
+        path: trouvaille-front/dist/
+        
+    - name: Upload backend build artifacts
+      uses: actions/upload-artifact@v4
+      if: success()
+      with:
+        name: backend-jar
+        path: trouvaille-back/target/*.jar

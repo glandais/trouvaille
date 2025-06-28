@@ -51,14 +51,14 @@
           <button
             @click.stop="handleEdit"
             class="p-2 bg-white bg-opacity-90 rounded-full text-gray-600 hover:text-blue-600 transition-colors"
-:title="$t('common.actions.edit')"
+            :title="$t('common.actions.edit')"
           >
             <PencilIcon class="h-4 w-4" />
           </button>
           <button
             @click.stop="handleDelete"
             class="p-2 bg-white bg-opacity-90 rounded-full text-gray-600 hover:text-red-600 transition-colors"
-:title="$t('common.actions.delete')"
+            :title="$t('common.actions.delete')"
           >
             <TrashIcon class="h-4 w-4" />
           </button>
@@ -131,7 +131,7 @@
             v-if="annonce.statut === AnnonceStatut.Active"
             @click.stop="handleChangeStatus(AnnonceStatut.Suspendue)"
             class="text-xs text-yellow-600 hover:text-yellow-700 underline"
-:title="$t('annonce.status.suspendue')"
+            :title="$t('annonce.status.suspendue')"
           >
             {{ $t('annonce.status.suspendue') }}
           </button>
@@ -139,7 +139,7 @@
             v-if="annonce.statut === AnnonceStatut.Suspendue"
             @click.stop="handleChangeStatus(AnnonceStatut.Active)"
             class="text-xs text-green-600 hover:text-green-700 underline"
-:title="$t('common.actions.edit')"
+            :title="$t('common.actions.edit')"
           >
             {{ $t('annonce.status.active') }}
           </button>
@@ -147,7 +147,7 @@
             v-if="annonce.statut === AnnonceStatut.Active && annonce.type === AnnonceType.Vente"
             @click.stop="handleChangeStatus(AnnonceStatut.Vendue)"
             class="text-xs text-gray-600 hover:text-gray-700 underline"
-:title="$t('annonce.status.vendue')"
+            :title="$t('annonce.status.vendue')"
           >
             {{ $t('annonce.status.vendue') }}
           </button>
@@ -162,13 +162,7 @@ import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '../stores/auth'
-import {
-  AnnonceList,
-  AnnonceType,
-  AnnonceWithStatut,
-  AnnonceStatut,
-  PeriodeLocation,
-} from '../api'
+import { AnnonceList, AnnonceType, AnnonceWithStatut, AnnonceStatut, PeriodeLocation } from '../api'
 import { PhotoIcon, MapPinIcon, PencilIcon, TrashIcon } from '@heroicons/vue/24/outline'
 import { usePhoto } from '../composables/usePhoto'
 import { annoncesApi } from '../services/api'
@@ -218,7 +212,6 @@ const formatPrice = (prix?: number, periode?: PeriodeLocation) => {
 
 // Use i18n labels from composable
 
-
 const getStatutLabel = (statut?: AnnonceStatut) => {
   const labels = {
     [AnnonceStatut.Active]: 'Active',
@@ -244,9 +237,7 @@ const handleEdit = () => {
 const handleDelete = () => {
   if (!props.annonce.id) return
 
-  const confirmed = confirm(
-    t('annonce.delete.confirm', { title: props.annonce.titre })
-  )
+  const confirmed = confirm(t('annonce.delete.confirm', { title: props.annonce.titre }))
 
   if (confirmed) {
     deleteAnnonce()

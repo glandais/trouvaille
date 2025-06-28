@@ -19,11 +19,7 @@
           {{ isEditMode ? $t('annonce.edit.title') : $t('annonce.create.title') }}
         </h1>
         <p class="mt-2 text-gray-600">
-          {{
-            isEditMode
-              ? $t('annonce.edit.description')
-              : $t('annonce.create.description')
-          }}
+          {{ isEditMode ? $t('annonce.edit.description') : $t('annonce.create.description') }}
         </p>
       </div>
 
@@ -31,7 +27,9 @@
       <form @submit.prevent="handleSubmit" class="space-y-8">
         <!-- Basic Information -->
         <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <h2 class="text-xl font-semibold text-gray-900 mb-6">{{ $t('annonce.form.sections.general') }}</h2>
+          <h2 class="text-xl font-semibold text-gray-900 mb-6">
+            {{ $t('annonce.form.sections.general') }}
+          </h2>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Type -->
@@ -105,7 +103,9 @@
               :placeholder="$t('annonce.form.placeholders.description_help')"
               :class="{ 'border-red-500': errors.description }"
             />
-            <p v-if="errors.description" class="mt-1 text-sm text-red-600">{{ errors.description }}</p>
+            <p v-if="errors.description" class="mt-1 text-sm text-red-600">
+              {{ errors.description }}
+            </p>
             <p class="mt-1 text-sm text-gray-500">
               {{ $t('annonce.form.placeholders.editor_help') }}
             </p>
@@ -114,7 +114,9 @@
 
         <!-- Price -->
         <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <h2 class="text-xl font-semibold text-gray-900 mb-6">{{ $t('annonce.form.sections.price') }}</h2>
+          <h2 class="text-xl font-semibold text-gray-900 mb-6">
+            {{ $t('annonce.form.sections.price') }}
+          </h2>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Price -->
@@ -144,7 +146,9 @@
               <select id="periodeLocation" v-model="form.periode_location" class="form-input">
                 <option value="">{{ $t('annonce.periode.not_specified') }}</option>
                 <option :value="PeriodeLocation.Jour">{{ $t('annonce.periode.jour') }}</option>
-                <option :value="PeriodeLocation.Semaine">{{ $t('annonce.periode.semaine') }}</option>
+                <option :value="PeriodeLocation.Semaine">
+                  {{ $t('annonce.periode.semaine') }}
+                </option>
                 <option :value="PeriodeLocation.Mois">{{ $t('annonce.periode.mois') }}</option>
               </select>
             </div>
@@ -153,7 +157,9 @@
 
         <!-- Status (only in edit mode) -->
         <div v-if="isEditMode" class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <h2 class="text-xl font-semibold text-gray-900 mb-6">{{ $t('annonce.form.sections.status') }}</h2>
+          <h2 class="text-xl font-semibold text-gray-900 mb-6">
+            {{ $t('annonce.form.sections.status') }}
+          </h2>
 
           <div>
             <label for="statut" class="block text-sm font-medium text-gray-700 mb-2">
@@ -179,7 +185,9 @@
 
         <!-- Photos -->
         <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <h2 class="text-xl font-semibold text-gray-900 mb-6">{{ $t('annonce.form.sections.photos') }}</h2>
+          <h2 class="text-xl font-semibold text-gray-900 mb-6">
+            {{ $t('annonce.form.sections.photos') }}
+          </h2>
 
           <!-- Photo Upload -->
           <div class="mb-6">
@@ -273,7 +281,9 @@
 
           <!-- Upload Progress -->
           <div v-if="uploadingPhotos.length > 0" class="mt-4">
-            <p class="text-sm font-medium text-gray-700 mb-2">{{ $t('photos.upload.uploading') }}</p>
+            <p class="text-sm font-medium text-gray-700 mb-2">
+              {{ $t('photos.upload.uploading') }}
+            </p>
             <div class="space-y-2">
               <div
                 v-for="upload in uploadingPhotos"
@@ -294,7 +304,9 @@
 
         <!-- Location -->
         <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <h2 class="text-xl font-semibold text-gray-900 mb-6">{{ $t('annonce.form.sections.location') }}</h2>
+          <h2 class="text-xl font-semibold text-gray-900 mb-6">
+            {{ $t('annonce.form.sections.location') }}
+          </h2>
           {{ $t('location.privacy_note') }}
           <LocationField
             v-model="selectedLocation"
@@ -543,9 +555,9 @@ const loadExistingAnnonce = async () => {
     // Set selected location if coordinates exist
     if (response.data.coordinates?.latitude && response.data.coordinates?.longitude) {
       selectedLocation.value = {
-        label: t('location.saved', { 
-          lat: response.data.coordinates.latitude.toFixed(4), 
-          lng: response.data.coordinates.longitude.toFixed(4) 
+        label: t('location.saved', {
+          lat: response.data.coordinates.latitude.toFixed(4),
+          lng: response.data.coordinates.longitude.toFixed(4),
         }),
         city: response.data.ville,
         coordinates: [response.data.coordinates.longitude, response.data.coordinates.latitude],
