@@ -2,7 +2,10 @@
 # Trouvaille-specific Dockerfile for native builds
 # Based on Quarkus native-micro Dockerfile with additional setup
 ####
-FROM quay.io/quarkus/ubi9-quarkus-micro-image:2.0
+FROM registry.access.redhat.com/ubi9/ubi-minimal:9.5
+
+RUN microdnf install -y freetype fontconfig \
+    && microdnf clean all
 
 WORKDIR /work/
 
