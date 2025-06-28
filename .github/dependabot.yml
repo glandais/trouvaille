@@ -179,6 +179,27 @@ updates:
       - "docker"
       - "frontend"
 
+  # Docker Compose dependencies
+  - package-ecosystem: "docker-compose"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "tuesday"
+      time: "10:00"
+      timezone: "Europe/Paris"
+    open-pull-requests-limit: 3
+    reviewers:
+      - "glandais"
+    assignees:
+      - "glandais"
+    commit-message:
+      prefix: "deps(docker-compose)"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "docker-compose"
+      - "infrastructure"
+
   # GitHub Actions dependencies
   - package-ecosystem: "github-actions"
     directory: "/"
