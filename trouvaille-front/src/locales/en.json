@@ -17,7 +17,7 @@
   },
   "nav": {
     "annonces": "Listings",
-    "my_annonces": "My listings", 
+    "my_annonces": "My listings",
     "create": "Create listing",
     "profile": "Profile",
     "home": "Home"
@@ -75,7 +75,7 @@
     },
     "periode": {
       "jour": "per day",
-      "semaine": "per week", 
+      "semaine": "per week",
       "mois": "per month",
       "not_specified": "Not specified"
     },
@@ -245,7 +245,7 @@
     "viewer": {
       "close": "Close",
       "previous": "Previous photo",
-      "next": "Next photo", 
+      "next": "Next photo",
       "counter": "{current} / {total}"
     }
   },

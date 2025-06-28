@@ -69,13 +69,13 @@
     },
     "status": {
       "active": "Active",
-      "suspendue": "Suspendue", 
+      "suspendue": "Suspendue",
       "vendue": "Vendue",
       "expiree": "Expirée"
     },
     "periode": {
       "jour": "par jour",
-      "semaine": "par semaine", 
+      "semaine": "par semaine",
       "mois": "par mois",
       "not_specified": "Non spécifiée"
     },
@@ -139,7 +139,7 @@
       },
       "sort": {
         "date_creation_desc": "Plus récent",
-        "date_creation_asc": "Plus ancien", 
+        "date_creation_asc": "Plus ancien",
         "prix_asc": "Prix croissant",
         "prix_desc": "Prix décroissant",
         "titre_asc": "Titre A-Z",
@@ -161,7 +161,7 @@
       },
       "stats": {
         "total": "Total",
-        "active": "Actives", 
+        "active": "Actives",
         "suspendue": "Suspendues",
         "vendue": "Vendues"
       }
@@ -276,7 +276,7 @@
   "validation": {
     "required": "Ce champ est obligatoire",
     "min_length": "Minimum {min} caractères",
-    "max_length": "Maximum {max} caractères", 
+    "max_length": "Maximum {max} caractères",
     "min_value": "Valeur minimum : {min}",
     "max_value": "Valeur maximum : {max}",
     "invalid_email": "Adresse email invalide",
@@ -308,7 +308,7 @@
     "today": "Aujourd'hui",
     "yesterday": "Hier",
     "days_ago": "Il y a {count} jour | Il y a {count} jours",
-    "weeks_ago": "Il y a {count} semaine | Il y a {count} semaines", 
+    "weeks_ago": "Il y a {count} semaine | Il y a {count} semaines",
     "months_ago": "Il y a {count} mois",
     "years_ago": "Il y a {count} an | Il y a {count} ans",
     "at": "à",

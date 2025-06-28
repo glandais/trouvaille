@@ -239,6 +239,6 @@ watch(
       selectedLocation.value = newUserLocation
     }
   },
-  { immediate: true }
+  { immediate: true },
 )
 </script>

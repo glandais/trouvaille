@@ -8,7 +8,7 @@ const messages = {
 }
 
 export type MessageLanguages = keyof typeof messages
-export type MessageSchema = typeof messages['fr']
+export type MessageSchema = (typeof messages)['fr']
 
 // Get locale from localStorage or default to French
 const getLocale = (): MessageLanguages => {

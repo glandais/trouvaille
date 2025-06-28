@@ -65,7 +65,7 @@ public class PhotoService {
 
       return photoEntity.getId().toString();
     } catch (IOException e) {
-      throw new BadRequestException("Failed to process image: " + e.getMessage());
+      throw new BadRequestException("Failed to process image: " + e.getMessage(), e);
     }
   }
 
@@ -133,7 +133,7 @@ public class PhotoService {
     String dir3 = photoId.substring(2, 3);
     String dir4 = photoId.substring(3, 4);
 
-    return Paths.get(storageBasePath, dir1, dir2, dir3, dir4, photoId);
+    return Paths.get(storageBasePath, dir1, dir2, dir3, dir4, photoId).toAbsolutePath();
   }
 
   public Response getPhotoFull(String photoId) {

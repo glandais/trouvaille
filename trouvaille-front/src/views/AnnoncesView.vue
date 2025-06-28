@@ -18,7 +18,7 @@
               id="search"
               v-model="filters.search"
               type="text"
-:placeholder="$t('annonce.placeholders.search')"
+              :placeholder="$t('annonce.placeholders.search')"
               class="form-input"
               @input="debouncedSearch"
             />
@@ -26,7 +26,9 @@
 
           <!-- Type -->
           <div>
-            <label for="type" class="block text-sm font-medium text-gray-700 mb-1">{{ $t('annonce.fields.type') }}</label>
+            <label for="type" class="block text-sm font-medium text-gray-700 mb-1">{{
+              $t('annonce.fields.type')
+            }}</label>
             <select id="type" v-model="filters.type" class="form-input" @change="debouncedSearch">
               <option value="">{{ $t('common.actions.clear') }}</option>
               <option :value="AnnonceType.Vente">{{ $t('annonce.types.vente') }}</option>
