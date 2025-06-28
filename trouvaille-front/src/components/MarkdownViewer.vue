@@ -197,61 +197,59 @@ onUnmounted(() => {
   @apply line-through;
 }
 
-/* Dark mode support */
-@media (prefers-color-scheme: dark) {
-  .toastui-viewer-wrapper :deep(.toastui-editor-contents) {
-    @apply text-gray-100;
-  }
+/* Force light mode - dark mode disabled */
+.toastui-viewer-wrapper :deep(.toastui-editor-contents) {
+  @apply text-gray-900 bg-white !important;
+}
 
-  .toastui-viewer-wrapper :deep(.toastui-editor-contents h1),
-  .toastui-viewer-wrapper :deep(.toastui-editor-contents h2),
-  .toastui-viewer-wrapper :deep(.toastui-editor-contents h3),
-  .toastui-viewer-wrapper :deep(.toastui-editor-contents h4),
-  .toastui-viewer-wrapper :deep(.toastui-editor-contents h5),
-  .toastui-viewer-wrapper :deep(.toastui-editor-contents h6) {
-    @apply text-gray-100;
-  }
+.toastui-viewer-wrapper :deep(.toastui-editor-contents h1),
+.toastui-viewer-wrapper :deep(.toastui-editor-contents h2),
+.toastui-viewer-wrapper :deep(.toastui-editor-contents h3),
+.toastui-viewer-wrapper :deep(.toastui-editor-contents h4),
+.toastui-viewer-wrapper :deep(.toastui-editor-contents h5),
+.toastui-viewer-wrapper :deep(.toastui-editor-contents h6) {
+  @apply text-gray-900 !important;
+}
 
-  .toastui-viewer-wrapper :deep(.toastui-editor-contents h1) {
-    @apply border-gray-600;
-  }
+.toastui-viewer-wrapper :deep(.toastui-editor-contents h1) {
+  @apply border-gray-200 !important;
+}
 
-  .toastui-viewer-wrapper :deep(.toastui-editor-contents p),
-  .toastui-viewer-wrapper :deep(.toastui-editor-contents li) {
-    @apply text-gray-300;
-  }
+.toastui-viewer-wrapper :deep(.toastui-editor-contents p),
+.toastui-viewer-wrapper :deep(.toastui-editor-contents li) {
+  @apply text-gray-700 !important;
+}
 
-  .toastui-viewer-wrapper :deep(.toastui-editor-contents blockquote) {
-    @apply border-gray-600 text-gray-400 bg-gray-800;
-  }
+.toastui-viewer-wrapper :deep(.toastui-editor-contents blockquote) {
+  @apply border-gray-300 text-gray-600 bg-gray-50 !important;
+}
 
-  .toastui-viewer-wrapper :deep(.toastui-editor-contents code) {
-    @apply bg-gray-800 text-gray-200;
-  }
+.toastui-viewer-wrapper :deep(.toastui-editor-contents code) {
+  @apply bg-gray-100 text-gray-800 !important;
+}
 
-  .toastui-viewer-wrapper :deep(.toastui-editor-contents pre) {
-    @apply bg-gray-800;
-  }
+.toastui-viewer-wrapper :deep(.toastui-editor-contents pre) {
+  @apply bg-gray-100 !important;
+}
 
-  .toastui-viewer-wrapper :deep(.toastui-editor-contents a) {
-    @apply text-blue-400 hover:text-blue-300;
-  }
+.toastui-viewer-wrapper :deep(.toastui-editor-contents a) {
+  @apply text-blue-600 hover:text-blue-800 !important;
+}
 
-  .toastui-viewer-wrapper :deep(.toastui-editor-contents table) {
-    @apply border-gray-600;
-  }
+.toastui-viewer-wrapper :deep(.toastui-editor-contents table) {
+  @apply border-gray-300 !important;
+}
 
-  .toastui-viewer-wrapper :deep(.toastui-editor-contents th),
-  .toastui-viewer-wrapper :deep(.toastui-editor-contents td) {
-    @apply border-gray-600;
-  }
+.toastui-viewer-wrapper :deep(.toastui-editor-contents th),
+.toastui-viewer-wrapper :deep(.toastui-editor-contents td) {
+  @apply border-gray-300 !important;
+}
 
-  .toastui-viewer-wrapper :deep(.toastui-editor-contents th) {
-    @apply bg-gray-800;
-  }
+.toastui-viewer-wrapper :deep(.toastui-editor-contents th) {
+  @apply bg-gray-50 !important;
+}
 
-  .toastui-viewer-wrapper :deep(.toastui-editor-contents hr) {
-    @apply border-gray-600;
-  }
+.toastui-viewer-wrapper :deep(.toastui-editor-contents hr) {
+  @apply border-gray-300 !important;
 }
 </style>

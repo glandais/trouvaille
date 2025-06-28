@@ -1,10 +1,12 @@
 import { ref, onUnmounted, watch, type Ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { photoService, type PhotoSize } from '../services/photoService'
 
 /**
  * Composable pour gérer l'affichage des photos avec gestion d'état
  */
 export function usePhoto(photoId: string | Ref<string | null>, size: PhotoSize = 'thumb') {
+  const { t } = useI18n()
   const url = ref<string>('')
   const loading = ref(false)
   const error = ref<string>('')
@@ -22,7 +24,7 @@ export function usePhoto(photoId: string | Ref<string | null>, size: PhotoSize =
       const photoUrl = await photoService.getPhotoUrl(id, size)
       url.value = photoUrl
     } catch (err) {
-      error.value = 'Erreur lors du chargement de la photo'
+      error.value = t('photos.loading')
       console.error('Photo loading error:', err)
     } finally {
       loading.value = false
@@ -73,6 +75,7 @@ export function usePhoto(photoId: string | Ref<string | null>, size: PhotoSize =
  * Composable pour gérer plusieurs photos
  */
 export function usePhotos(photoIds: string[] | Ref<string[]>, size: PhotoSize = 'thumb') {
+  const { t } = useI18n()
   const urls = ref<Record<string, string>>({})
   const loading = ref(false)
   const errors = ref<Record<string, string>>({})
@@ -91,7 +94,7 @@ export function usePhotos(photoIds: string[] | Ref<string[]>, size: PhotoSize = 
         const url = await photoService.getPhotoUrl(photoId, size)
         urls.value[photoId] = url
       } catch (err) {
-        errors.value[photoId] = 'Erreur lors du chargement'
+        errors.value[photoId] = t('errors.load_error')
         console.error(`Photo loading error for ${photoId}:`, err)
       }
     })

@@ -122,7 +122,14 @@ export const useAuthStore = defineStore('auth', () => {
     return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
   }
 
-  const decodeJWT = (token: string): any => {
+interface JWTPayload {
+  exp: number;
+  sub: string;
+  username?: string;
+  nickname?: string;
+}
+
+  const decodeJWT = (token: string): JWTPayload => {
     try {
       // Split JWT into parts (header.payload.signature)
       const parts = token.split('.')

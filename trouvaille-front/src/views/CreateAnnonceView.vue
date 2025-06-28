@@ -16,13 +16,13 @@
       <!-- Header -->
       <div class="mb-8">
         <h1 class="text-3xl font-bold text-gray-900">
-          {{ isEditMode ? "Modifier l'annonce" : 'Créer une annonce' }}
+          {{ isEditMode ? $t('annonce.edit.title') : $t('annonce.create.title') }}
         </h1>
         <p class="mt-2 text-gray-600">
           {{
             isEditMode
-              ? 'Modifiez les informations de votre annonce'
-              : 'Remplissez les informations ci-dessous pour publier votre annonce'
+              ? $t('annonce.edit.description')
+              : $t('annonce.create.description')
           }}
         </p>
       </div>
@@ -31,13 +31,13 @@
       <form @submit.prevent="handleSubmit" class="space-y-8">
         <!-- Basic Information -->
         <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <h2 class="text-xl font-semibold text-gray-900 mb-6">Informations générales</h2>
+          <h2 class="text-xl font-semibold text-gray-900 mb-6">{{ $t('annonce.form.sections.general') }}</h2>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Type -->
             <div>
               <label for="type" class="block text-sm font-medium text-gray-700 mb-2">
-                Type d'annonce *
+                {{ $t('annonce.form.labels.type_required') }}
               </label>
               <select
                 id="type"
@@ -46,9 +46,9 @@
                 class="form-input"
                 :class="{ 'border-red-500': errors.type }"
               >
-                <option value="">Sélectionnez un type</option>
-                <option :value="AnnonceType.Vente">Vente</option>
-                <option :value="AnnonceType.Location">Location</option>
+                <option value="">{{ $t('annonce.form.placeholders.select_type') }}</option>
+                <option :value="AnnonceType.Vente">{{ $t('annonce.types.vente') }}</option>
+                <option :value="AnnonceType.Location">{{ $t('annonce.types.location') }}</option>
               </select>
               <p v-if="errors.type" class="mt-1 text-sm text-red-600">{{ errors.type }}</p>
             </div>
@@ -56,7 +56,7 @@
             <!-- Nature -->
             <div>
               <label for="nature" class="block text-sm font-medium text-gray-700 mb-2">
-                Nature de l'annonce *
+                {{ $t('annonce.form.labels.nature_required') }}
               </label>
               <select
                 id="nature"
@@ -65,9 +65,9 @@
                 class="form-input"
                 :class="{ 'border-red-500': errors.nature }"
               >
-                <option value="">Sélectionnez une nature</option>
-                <option :value="AnnonceNature.Offre">Offre</option>
-                <option :value="AnnonceNature.Demande">Demande</option>
+                <option value="">{{ $t('annonce.form.placeholders.select_nature') }}</option>
+                <option :value="AnnonceNature.Offre">{{ $t('annonce.natures.offre') }}</option>
+                <option :value="AnnonceNature.Demande">{{ $t('annonce.natures.demande') }}</option>
               </select>
               <p v-if="errors.nature" class="mt-1 text-sm text-red-600">{{ errors.nature }}</p>
             </div>
@@ -76,7 +76,7 @@
           <!-- Title -->
           <div class="mt-6">
             <label for="titre" class="block text-sm font-medium text-gray-700 mb-2">
-              Titre *
+              {{ $t('annonce.form.labels.title_required') }}
             </label>
             <input
               id="titre"
@@ -84,7 +84,7 @@
               type="text"
               required
               maxlength="100"
-              placeholder="Titre de votre annonce (5-100 caractères)"
+              :placeholder="$t('annonce.form.placeholders.title_help')"
               class="form-input"
               :class="{ 'border-red-500': errors.titre }"
             />
@@ -97,33 +97,30 @@
           <!-- Description -->
           <div class="mt-6">
             <label for="description" class="block text-sm font-medium text-gray-700 mb-2">
-              Description *
+              {{ $t('annonce.form.labels.description_required') }}
             </label>
             <MarkdownEditor
               v-model="form.description"
               :max-length="2000"
-              placeholder="Décrivez votre objet en détail..."
+              :placeholder="$t('annonce.form.placeholders.description_help')"
               :class="{ 'border-red-500': errors.description }"
             />
-            <div class="flex justify-between mt-1">
-              <p v-if="errors.description" class="text-sm text-red-600">{{ errors.description }}</p>
-              <p class="text-sm text-gray-500">{{ form.description.length }}/2000</p>
-            </div>
+            <p v-if="errors.description" class="mt-1 text-sm text-red-600">{{ errors.description }}</p>
             <p class="mt-1 text-sm text-gray-500">
-              Utilisez l'éditeur pour formater votre texte (gras, italique, listes, liens...)
+              {{ $t('annonce.form.placeholders.editor_help') }}
             </p>
           </div>
         </div>
 
         <!-- Price -->
         <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <h2 class="text-xl font-semibold text-gray-900 mb-6">Prix</h2>
+          <h2 class="text-xl font-semibold text-gray-900 mb-6">{{ $t('annonce.form.sections.price') }}</h2>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Price -->
             <div>
               <label for="prix" class="block text-sm font-medium text-gray-700 mb-2">
-                Prix (€) *
+                {{ $t('annonce.form.labels.price_required') }}
               </label>
               <input
                 id="prix"
@@ -142,13 +139,13 @@
             <!-- Period (for rentals) -->
             <div v-if="form.type === AnnonceType.Location">
               <label for="periodeLocation" class="block text-sm font-medium text-gray-700 mb-2">
-                Période de location
+                {{ $t('annonce.form.labels.period') }}
               </label>
               <select id="periodeLocation" v-model="form.periode_location" class="form-input">
-                <option value="">Non spécifiée</option>
-                <option :value="PeriodeLocation.Jour">Par jour</option>
-                <option :value="PeriodeLocation.Semaine">Par semaine</option>
-                <option :value="PeriodeLocation.Mois">Par mois</option>
+                <option value="">{{ $t('annonce.periode.not_specified') }}</option>
+                <option :value="PeriodeLocation.Jour">{{ $t('annonce.periode.jour') }}</option>
+                <option :value="PeriodeLocation.Semaine">{{ $t('annonce.periode.semaine') }}</option>
+                <option :value="PeriodeLocation.Mois">{{ $t('annonce.periode.mois') }}</option>
               </select>
             </div>
           </div>
@@ -156,11 +153,11 @@
 
         <!-- Status (only in edit mode) -->
         <div v-if="isEditMode" class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <h2 class="text-xl font-semibold text-gray-900 mb-6">Statut de l'annonce</h2>
+          <h2 class="text-xl font-semibold text-gray-900 mb-6">{{ $t('annonce.form.sections.status') }}</h2>
 
           <div>
             <label for="statut" class="block text-sm font-medium text-gray-700 mb-2">
-              Statut *
+              {{ $t('annonce.form.labels.status_required') }}
             </label>
             <select
               id="statut"
@@ -169,26 +166,25 @@
               class="form-input"
               :class="{ 'border-red-500': errors.statut }"
             >
-              <option :value="AnnonceStatut.Active">Active</option>
-              <option :value="AnnonceStatut.Suspendue">Suspendue</option>
-              <option :value="AnnonceStatut.Vendue">Vendue/Louée</option>
+              <option :value="AnnonceStatut.Active">{{ $t('annonce.status.active') }}</option>
+              <option :value="AnnonceStatut.Suspendue">{{ $t('annonce.status.suspendue') }}</option>
+              <option :value="AnnonceStatut.Vendue">{{ $t('annonce.status.vendue') }}</option>
             </select>
             <p v-if="errors.statut" class="mt-1 text-sm text-red-600">{{ errors.statut }}</p>
             <p class="mt-1 text-sm text-gray-500">
-              Changez le statut pour suspendre temporairement votre annonce ou la marquer comme
-              vendue/louée
+              {{ $t('annonce.form.help.status') }}
             </p>
           </div>
         </div>
 
         <!-- Photos -->
         <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <h2 class="text-xl font-semibold text-gray-900 mb-6">Photos</h2>
+          <h2 class="text-xl font-semibold text-gray-900 mb-6">{{ $t('annonce.form.sections.photos') }}</h2>
 
           <!-- Photo Upload -->
           <div class="mb-6">
             <label class="block text-sm font-medium text-gray-700 mb-2">
-              Ajouter des photos (max 10)
+              {{ $t('photos.upload.add_photos') }}
             </label>
             <div
               @drop="handleDrop"
@@ -206,17 +202,17 @@
               />
               <PhotoIcon class="h-12 w-12 text-gray-400 mx-auto mb-4" />
               <p class="text-gray-600 mb-2">
-                Glissez-déposez vos photos ici ou
+                {{ $t('photos.upload.drag_drop_or') }}
                 <button
                   type="button"
                   @click="($refs.fileInput as HTMLInputElement)?.click()"
                   class="text-blue-600 hover:text-blue-700 underline"
                 >
-                  parcourez vos fichiers
+                  {{ $t('photos.upload.browse_files') }}
                 </button>
               </p>
               <p class="text-sm text-gray-500">
-                Formats acceptés: JPG, PNG, WebP (max 5MB par photo)
+                {{ $t('photos.upload.accepted_formats') }}
               </p>
             </div>
           </div>
@@ -240,7 +236,7 @@
                     type="button"
                     @click="movePhoto(index, index - 1)"
                     class="p-2 bg-white text-gray-600 rounded-full hover:text-gray-900"
-                    title="Déplacer vers la gauche"
+                    :title="$t('photos.actions.move_left')"
                   >
                     <ChevronLeftIcon class="h-4 w-4" />
                   </button>
@@ -249,7 +245,7 @@
                     type="button"
                     @click="movePhoto(index, index + 1)"
                     class="p-2 bg-white text-gray-600 rounded-full hover:text-gray-900"
-                    title="Déplacer vers la droite"
+                    :title="$t('photos.actions.move_right')"
                   >
                     <ChevronRightIcon class="h-4 w-4" />
                   </button>
@@ -257,7 +253,7 @@
                     type="button"
                     @click="removePhoto(index)"
                     class="p-2 bg-white text-red-600 rounded-full hover:text-red-700"
-                    title="Supprimer"
+                    :title="$t('photos.actions.delete')"
                   >
                     <TrashIcon class="h-4 w-4" />
                   </button>
@@ -269,7 +265,7 @@
                 <span
                   class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
                 >
-                  Photo principale
+                  {{ $t('photos.main') }}
                 </span>
               </div>
             </div>
@@ -277,7 +273,7 @@
 
           <!-- Upload Progress -->
           <div v-if="uploadingPhotos.length > 0" class="mt-4">
-            <p class="text-sm font-medium text-gray-700 mb-2">Upload en cours...</p>
+            <p class="text-sm font-medium text-gray-700 mb-2">{{ $t('photos.upload.uploading') }}</p>
             <div class="space-y-2">
               <div
                 v-for="upload in uploadingPhotos"
@@ -298,8 +294,8 @@
 
         <!-- Location -->
         <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <h2 class="text-xl font-semibold text-gray-900 mb-6">Localisation</h2>
-          Seules les coordonnées seront stockées dans l'annonce, pas l'adresse.
+          <h2 class="text-xl font-semibold text-gray-900 mb-6">{{ $t('annonce.form.sections.location') }}</h2>
+          {{ $t('location.privacy_note') }}
           <LocationField
             v-model="selectedLocation"
             :auto-detect="!isEditMode"
@@ -313,17 +309,17 @@
             :to="isEditMode ? `/annonces/${props.id}` : '/annonces'"
             class="btn-secondary"
           >
-            Annuler
+            {{ $t('common.actions.cancel') }}
           </router-link>
           <button type="submit" :disabled="submitting" class="btn-primary">
             {{
               submitting
                 ? isEditMode
-                  ? 'Modification...'
-                  : 'Publication...'
+                  ? $t('common.actions.modifying')
+                  : $t('common.actions.publishing')
                 : isEditMode
-                  ? "Modifier l'annonce"
-                  : "Publier l'annonce"
+                  ? $t('annonce.edit.title')
+                  : $t('annonce.create.title')
             }}
           </button>
         </div>
@@ -334,8 +330,8 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
-import { useDebounceFn } from '@vueuse/core'
+import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { annoncesApi, photosApi } from '../services/api'
 import {
   AnnonceBase,
@@ -344,7 +340,6 @@ import {
   AnnonceNature,
   AnnonceStatut,
   PeriodeLocation,
-  Coordinates,
   Annonce,
 } from '../api'
 import AppLayout from '../components/AppLayout.vue'
@@ -360,7 +355,7 @@ interface Props {
 
 const props = defineProps<Props>()
 const router = useRouter()
-const route = useRoute()
+const { t } = useI18n()
 
 const form = reactive<AnnonceBase & { statut?: AnnonceStatut }>({
   type: AnnonceType.Vente,
@@ -388,16 +383,16 @@ const existingAnnonce = ref<Annonce>()
 const validateForm = () => {
   errors.value = {}
 
-  if (!form.type) errors.value.type = 'Le type est requis'
-  if (!form.nature) errors.value.nature = 'La nature est requise'
+  if (!form.type) errors.value.type = t('validation.type_required')
+  if (!form.nature) errors.value.nature = t('validation.nature_required')
   if (!form.titre || form.titre.length < 5) {
-    errors.value.titre = 'Le titre doit contenir au moins 5 caractères'
+    errors.value.titre = t('validation.title_min_length')
   }
   if (!form.description || form.description.length < 10) {
-    errors.value.description = 'La description doit contenir au moins 10 caractères'
+    errors.value.description = t('validation.description_required')
   }
   if (!form.prix || form.prix <= 0) {
-    errors.value.prix = 'Le prix doit être supérieur à 0'
+    errors.value.prix = t('validation.price_invalid')
   }
 
   return Object.keys(errors.value).length === 0
@@ -419,18 +414,18 @@ const handleDrop = (event: DragEvent) => {
 
 const handleFiles = async (files: File[]) => {
   if (uploadedPhotos.value.length + files.length > 10) {
-    alert('Vous ne pouvez pas ajouter plus de 10 photos')
+    alert(t('photos.upload.max_files_exceeded'))
     return
   }
 
   for (const file of files) {
     if (!file.type.startsWith('image/')) {
-      alert(`${file.name} n'est pas une image valide`)
+      alert(t('photos.upload.invalid_file', { filename: file.name }))
       continue
     }
 
     if (file.size > 5 * 1024 * 1024) {
-      alert(`${file.name} est trop volumineux (max 5MB)`)
+      alert(t('photos.upload.file_too_large', { filename: file.name }))
       continue
     }
 
@@ -464,7 +459,7 @@ const uploadPhoto = async (file: File) => {
     form.photos?.push(photoId)
   } catch (error) {
     console.error('Failed to upload photo:', error)
-    alert(`Erreur lors de l'upload de ${file.name}`)
+    alert(t('photos.upload.upload_failed', { filename: file.name }))
   } finally {
     // Remove from uploading list
     const index = uploadingPhotos.value.findIndex((up) => up.name === file.name)
@@ -491,7 +486,7 @@ const removePhoto = async (index: number) => {
     URL.revokeObjectURL(photo.url)
   } catch (error) {
     console.error('Failed to delete photo:', error)
-    alert('Erreur lors de la suppression de la photo')
+    alert(t('photos.actions.delete_error'))
   }
 }
 
@@ -522,7 +517,7 @@ const handleLocationChange = (location: SelectedLocation | null) => {
     form.ville = location.city
   } else {
     form.coordinates = { latitude: 0, longitude: 0 }
-    form.ville = 'Inconnue'
+    form.ville = t('location.unknown')
   }
 }
 
@@ -548,7 +543,10 @@ const loadExistingAnnonce = async () => {
     // Set selected location if coordinates exist
     if (response.data.coordinates?.latitude && response.data.coordinates?.longitude) {
       selectedLocation.value = {
-        label: `Position sauvegardée (${response.data.coordinates.latitude.toFixed(4)}, ${response.data.coordinates.longitude.toFixed(4)})`,
+        label: t('location.saved', { 
+          lat: response.data.coordinates.latitude.toFixed(4), 
+          lng: response.data.coordinates.longitude.toFixed(4) 
+        }),
         city: response.data.ville,
         coordinates: [response.data.coordinates.longitude, response.data.coordinates.latitude],
       }
@@ -576,7 +574,7 @@ const loadExistingAnnonce = async () => {
     }
   } catch (error) {
     console.error('Failed to load annonce:', error)
-    alert("Erreur lors du chargement de l'annonce")
+    alert(t('annonce.edit.error'))
     router.push('/annonces')
   } finally {
     loading.value = false
@@ -613,7 +611,7 @@ const handleSubmit = async () => {
     router.push(`/annonces/${response.data.id}`)
   } catch (error) {
     console.error('Failed to save annonce:', error)
-    alert(`Erreur lors de la ${isEditMode.value ? 'modification' : 'création'} de l'annonce`)
+    alert(isEditMode.value ? t('annonce.edit.error') : t('annonce.create.error'))
   } finally {
     submitting.value = false
   }

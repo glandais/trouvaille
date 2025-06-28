@@ -50,6 +50,7 @@ const initEditor = () => {
 
   const options: EditorOptions = {
     el: editorElement.value,
+    language: 'fr-FR',
     height: props.height,
     initialEditType: props.initialEditType,
     previewStyle: props.previewStyle,
@@ -224,31 +225,25 @@ onUnmounted(() => {
   @apply bg-gray-50;
 }
 
-/* Dark mode support */
-@media (prefers-color-scheme: dark) {
-  .character-count {
-    @apply bg-gray-800 border-gray-700 text-gray-300;
-  }
+/* Force light mode - dark mode disabled */
+.toastui-editor-wrapper :deep(.toastui-editor-toolbar) {
+  @apply bg-gray-50 border-gray-200 !important;
+}
 
-  .toastui-editor-wrapper :deep(.toastui-editor-toolbar) {
-    @apply bg-gray-800 border-gray-700;
-  }
+.toastui-editor-wrapper :deep(.toastui-editor-toolbar-item) {
+  @apply text-gray-600 hover:text-gray-900 !important;
+}
 
-  .toastui-editor-wrapper :deep(.toastui-editor-toolbar-item) {
-    @apply text-gray-300 hover:text-gray-100;
-  }
+.toastui-editor-wrapper :deep(.toastui-editor-md-container),
+.toastui-editor-wrapper :deep(.toastui-editor-ww-container) {
+  @apply bg-white text-gray-900 !important;
+}
 
-  .toastui-editor-wrapper :deep(.toastui-editor-md-container),
-  .toastui-editor-wrapper :deep(.toastui-editor-ww-container) {
-    @apply bg-gray-900 text-gray-100;
-  }
+.toastui-editor-wrapper :deep(.toastui-editor-md-preview) {
+  @apply bg-gray-50 text-gray-900 !important;
+}
 
-  .toastui-editor-wrapper :deep(.toastui-editor-md-preview) {
-    @apply bg-gray-800 text-gray-100;
-  }
-
-  .toastui-editor-wrapper :deep(.toastui-editor) {
-    @apply border-gray-600;
-  }
+.toastui-editor-wrapper :deep(.toastui-editor) {
+  @apply border-gray-300 !important;
 }
 </style>

@@ -4,7 +4,7 @@
       <div
         class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"
       ></div>
-      <p class="text-gray-600">Finalisation de l'authentification...</p>
+      <p class="text-gray-600">{{ $t('oauth.processing') }}</p>
       <p v-if="debugInfo" class="text-xs text-gray-400 mt-4">{{ debugInfo }}</p>
     </div>
   </div>
@@ -13,7 +13,10 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '../stores/auth'
+
+const { t } = useI18n()
 
 const route = useRoute()
 const router = useRouter()
@@ -21,23 +24,23 @@ const authStore = useAuthStore()
 const debugInfo = ref('')
 
 onMounted(async () => {
-  debugInfo.value = 'Processing OAuth callback...'
+  debugInfo.value = t('oauth.debug.processing')
 
   const code = route.query.code as string
   const state = route.query.state as string
 
   if (code && state) {
-    debugInfo.value = 'Exchanging code for token...'
+    debugInfo.value = t('oauth.debug.exchanging')
     const success = await authStore.handleOAuthCallback(code, state)
     if (success) {
       debugInfo.value = 'Success! Redirecting...'
       router.push('/')
     } else {
-      debugInfo.value = 'Authentication failed'
+      debugInfo.value = t('oauth.debug.failed')
       router.push('/?error=auth_failed')
     }
   } else {
-    debugInfo.value = 'Invalid callback parameters'
+    debugInfo.value = t('oauth.debug.invalid_params')
     router.push('/?error=invalid_callback')
   }
 })

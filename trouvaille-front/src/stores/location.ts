@@ -1,8 +1,10 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { SelectedLocation } from '../types/location'
 
 export const useLocationStore = defineStore('location', () => {
+  const { t } = useI18n()
   const userLocation = ref<SelectedLocation | null>(null)
   const isDetecting = ref(false)
   const hasAttemptedDetection = ref(false)
@@ -21,7 +23,7 @@ export const useLocationStore = defineStore('location', () => {
     hasAttemptedDetection.value = true
 
     if (!navigator.geolocation) {
-      detectionError.value = 'Géolocalisation non supportée'
+      detectionError.value = t('location.error')
       return
     }
 
@@ -94,7 +96,7 @@ export const useLocationStore = defineStore('location', () => {
       if (feature) {
         return {
           label: feature.properties.label || `Position (${lat.toFixed(4)}, ${lon.toFixed(4)})`,
-          city: feature.properties.city || 'Inconnue',
+          city: feature.properties.city || t('location.unknown'),
         }
       }
     } catch (error) {
@@ -104,7 +106,7 @@ export const useLocationStore = defineStore('location', () => {
     // Fallback to coordinates
     return {
       label: `Position (${lat.toFixed(4)}, ${lon.toFixed(4)})`,
-      city: 'Inconnue',
+      city: t('location.unknown'),
     }
   }
 
@@ -112,13 +114,13 @@ export const useLocationStore = defineStore('location', () => {
   const getGeolocationErrorMessage = (error: GeolocationPositionError): string => {
     switch (error.code) {
       case error.PERMISSION_DENIED:
-        return 'Accès à la géolocalisation refusé'
+        return t('location.permission_denied')
       case error.POSITION_UNAVAILABLE:
-        return 'Position non disponible'
+        return t('location.error')
       case error.TIMEOUT:
-        return 'Délai de géolocalisation dépassé'
+        return t('errors.timeout')
       default:
-        return 'Erreur de géolocalisation'
+        return t('location.error')
     }
   }
 

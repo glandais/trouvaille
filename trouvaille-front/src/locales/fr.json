@@ -1,0 +1,341 @@
+{
+  "app": {
+    "name": "Trouvaille",
+    "tagline": "Plateforme de petites annonces privée",
+    "auth": {
+      "authenticating": "Authentification en cours...",
+      "login": "Se connecter",
+      "logout": "Se déconnecter",
+      "callback": {
+        "processing": "Traitement de l'authentification...",
+        "success": "Connexion réussie ! Redirection...",
+        "error": "Erreur lors de la connexion",
+        "invalid_state": "État OAuth invalide. Veuillez réessayer.",
+        "retry": "Réessayer la connexion"
+      }
+    }
+  },
+  "nav": {
+    "annonces": "Annonces",
+    "my_annonces": "Mes annonces",
+    "create": "Créer une annonce",
+    "profile": "Profil",
+    "home": "Accueil"
+  },
+  "common": {
+    "actions": {
+      "save": "Enregistrer",
+      "cancel": "Annuler",
+      "delete": "Supprimer",
+      "edit": "Modifier",
+      "view": "Voir",
+      "create": "Créer",
+      "update": "Mettre à jour",
+      "publish": "Publier",
+      "search": "Rechercher",
+      "clear": "Effacer",
+      "close": "Fermer",
+      "confirm": "Confirmer",
+      "loading": "Chargement...",
+      "retry": "Réessayer",
+      "all": "Tous",
+      "browse": "Parcourir",
+      "uploading": "Upload en cours...",
+      "modifying": "Modification...",
+      "publishing": "Publication..."
+    },
+    "status": {
+      "success": "Succès",
+      "error": "Erreur",
+      "warning": "Attention",
+      "info": "Information"
+    },
+    "navigation": {
+      "previous": "Précédent",
+      "next": "Suivant",
+      "page": "Page",
+      "of": "sur"
+    }
+  },
+  "annonce": {
+    "title": "Annonce | Annonces",
+    "types": {
+      "vente": "Vente",
+      "location": "Location"
+    },
+    "natures": {
+      "offre": "Offre",
+      "demande": "Demande"
+    },
+    "status": {
+      "active": "Active",
+      "suspendue": "Suspendue", 
+      "vendue": "Vendue",
+      "expiree": "Expirée"
+    },
+    "periode": {
+      "jour": "par jour",
+      "semaine": "par semaine", 
+      "mois": "par mois",
+      "not_specified": "Non spécifiée"
+    },
+    "fields": {
+      "titre": "Titre",
+      "description": "Description",
+      "prix": "Prix",
+      "type": "Type",
+      "nature": "Nature",
+      "status": "Statut",
+      "ville": "Ville",
+      "location": "Localisation",
+      "periode_location": "Période de location",
+      "photos": "Photos",
+      "date_creation": "Date de création",
+      "date_modification": "Date de modification",
+      "utilisateur": "Utilisateur"
+    },
+    "placeholders": {
+      "titre": "Ex: Vélo de course en excellent état",
+      "description": "Décrivez votre annonce en détail...",
+      "prix": "0",
+      "search": "Titre ou description...",
+      "ville": "Ex: Paris, Lyon, Marseille..."
+    },
+    "create": {
+      "title": "Créer une annonce",
+      "description": "Remplissez les informations ci-dessous pour publier votre annonce",
+      "success": "Annonce créée avec succès !",
+      "error": "Erreur lors de la création de l'annonce",
+      "first_listing": "Créer ma première annonce"
+    },
+    "edit": {
+      "title": "Modifier l'annonce",
+      "description": "Modifiez les informations de votre annonce",
+      "success": "Annonce modifiée avec succès !",
+      "error": "Erreur lors de la modification de l'annonce"
+    },
+    "delete": {
+      "title": "Supprimer l'annonce",
+      "confirm": "Êtes-vous sûr de vouloir supprimer \"{title}\" ?",
+      "success": "Annonce supprimée avec succès !",
+      "error": "Erreur lors de la suppression de l'annonce"
+    },
+    "search": {
+      "title": "Rechercher des annonces",
+      "results": "Aucune annonce trouvée | {count} annonce trouvée | {count} annonces trouvées",
+      "filters": {
+        "title": "Filtres",
+        "search": "Recherche",
+        "type": "Type",
+        "nature": "Nature",
+        "prix_min": "Prix minimum",
+        "prix_max": "Prix maximum",
+        "location": "Localisation",
+        "distance_max": "Distance maximale",
+        "sort_by": "Trier par",
+        "active_filters": "Filtres actifs",
+        "clear_all": "Effacer tous les filtres",
+        "clear_filter": "Effacer ce filtre"
+      },
+      "sort": {
+        "date_creation_desc": "Plus récent",
+        "date_creation_asc": "Plus ancien", 
+        "prix_asc": "Prix croissant",
+        "prix_desc": "Prix décroissant",
+        "titre_asc": "Titre A-Z",
+        "titre_desc": "Titre Z-A",
+        "distance_asc": "Distance croissante"
+      },
+      "empty": {
+        "title": "Aucune annonce trouvée",
+        "description": "Essayez de modifier vos critères de recherche",
+        "action": "Effacer les filtres"
+      }
+    },
+    "my": {
+      "title": "Mes annonces",
+      "empty": {
+        "title": "Vous n'avez pas encore d'annonces",
+        "description": "Créez votre première annonce pour commencer à vendre ou louer vos objets",
+        "action": "Créer une annonce"
+      },
+      "stats": {
+        "total": "Total",
+        "active": "Actives", 
+        "suspendue": "Suspendues",
+        "vendue": "Vendues"
+      }
+    },
+    "card": {
+      "published": "Publié {date}",
+      "modified": "Modifié {date}",
+      "contact": "Contacter",
+      "no_price": "Prix non renseigné",
+      "negotiable": "Prix négociable",
+      "published_by": "Publié par {user}",
+      "contact_seller": "Contacter le vendeur"
+    },
+    "not_found": {
+      "title": "Annonce non trouvée",
+      "description": "L'annonce que vous cherchez n'existe pas ou a été supprimée.",
+      "action": "Retour aux annonces"
+    },
+    "form": {
+      "sections": {
+        "general": "Informations générales",
+        "price": "Prix",
+        "photos": "Photos",
+        "location": "Localisation",
+        "status": "Statut de l'annonce"
+      },
+      "labels": {
+        "type_required": "Type d'annonce *",
+        "nature_required": "Nature de l'annonce *",
+        "title_required": "Titre *",
+        "description_required": "Description *",
+        "price_required": "Prix (€) *",
+        "period": "Période de location",
+        "status_required": "Statut *"
+      },
+      "placeholders": {
+        "select_type": "Sélectionnez un type",
+        "select_nature": "Sélectionnez une nature",
+        "title_help": "Titre de votre annonce (5-100 caractères)",
+        "description_help": "Décrivez votre objet en détail...",
+        "editor_help": "Utilisez l'éditeur pour formater votre texte (gras, italique, listes, liens...)"
+      },
+      "help": {
+        "status": "Changez le statut pour suspendre temporairement votre annonce ou la marquer comme vendue/louée"
+      }
+    }
+  },
+  "photos": {
+    "title": "Photo | Photos",
+    "loading": "Chargement de la photo...",
+    "error": "Erreur de chargement",
+    "main": "Photo principale",
+    "upload": {
+      "title": "Ajouter des photos",
+      "add_photos": "Ajouter des photos (max 10)",
+      "drag_drop": "Glissez-déposez vos photos ici ou cliquez pour sélectionner",
+      "drag_drop_or": "Glissez-déposez vos photos ici ou",
+      "browse_files": "parcourez vos fichiers",
+      "max_files": "Maximum {count} photos",
+      "supported_formats": "Formats supportés : JPEG, PNG, WebP",
+      "accepted_formats": "Formats acceptés: JPG, PNG, WebP (max 5MB par photo)",
+      "uploading": "Upload en cours...",
+      "success": "Photo uploadée avec succès !",
+      "error": "Erreur lors de l'upload de la photo",
+      "max_files_exceeded": "Vous ne pouvez pas ajouter plus de 10 photos",
+      "invalid_file": "{filename} n'est pas une image valide",
+      "file_too_large": "{filename} est trop volumineux (max 5MB)",
+      "upload_failed": "Erreur lors de l'upload de {filename}"
+    },
+    "actions": {
+      "move_left": "Déplacer vers la gauche",
+      "move_right": "Déplacer vers la droite",
+      "delete": "Supprimer",
+      "delete_error": "Erreur lors de la suppression de la photo"
+    },
+    "delete": {
+      "confirm": "Êtes-vous sûr de vouloir supprimer cette photo ?",
+      "success": "Photo supprimée avec succès !",
+      "error": "Erreur lors de la suppression de la photo"
+    },
+    "viewer": {
+      "close": "Fermer",
+      "previous": "Photo précédente",
+      "next": "Photo suivante",
+      "counter": "{current} / {total}"
+    }
+  },
+  "location": {
+    "title": "Localisation",
+    "search": "Rechercher une adresse...",
+    "placeholder": "Adresse, ville...",
+    "current": "Position actuelle",
+    "no_results": "Aucun résultat trouvé",
+    "searching": "Recherche...",
+    "error": "Erreur lors de la géolocalisation",
+    "permission_denied": "Géolocalisation refusée",
+    "privacy_note": "Seules les coordonnées et la ville seront stockées dans l'annonce, pas l'adresse complète.",
+    "unknown": "Inconnue",
+    "defined": "Localisation définie",
+    "saved": "Position sauvegardée ({lat}, {lng})",
+    "actions": {
+      "remove": "Supprimer la localisation",
+      "use_current": "Utiliser ma position"
+    },
+    "distance": {
+      "km": "km",
+      "unlimited": "Illimitée",
+      "label": "Distance max: {distance}",
+      "select_location": "Sélectionnez une localisation pour activer le filtre distance"
+    }
+  },
+  "validation": {
+    "required": "Ce champ est obligatoire",
+    "min_length": "Minimum {min} caractères",
+    "max_length": "Maximum {max} caractères", 
+    "min_value": "Valeur minimum : {min}",
+    "max_value": "Valeur maximum : {max}",
+    "invalid_email": "Adresse email invalide",
+    "invalid_url": "URL invalide",
+    "invalid_number": "Nombre invalide",
+    "passwords_not_match": "Les mots de passe ne correspondent pas",
+    "type_required": "Le type est requis",
+    "nature_required": "La nature est requise",
+    "title_min_length": "Le titre doit contenir au moins 5 caractères",
+    "title_max_length": "Le titre ne peut pas dépasser 100 caractères",
+    "description_required": "La description est requise",
+    "description_max_length": "La description ne peut pas dépasser 2000 caractères",
+    "price_invalid": "Le prix doit être un nombre positif",
+    "location_required": "La localisation est requise"
+  },
+  "errors": {
+    "generic": "Une erreur inattendue s'est produite",
+    "network": "Erreur de connexion. Vérifiez votre connexion internet.",
+    "server": "Erreur serveur. Veuillez réessayer plus tard.",
+    "not_found": "Ressource non trouvée",
+    "unauthorized": "Vous n'êtes pas autorisé à effectuer cette action",
+    "forbidden": "Accès interdit",
+    "timeout": "Délai d'attente dépassé",
+    "validation": "Erreur de validation des données",
+    "image_load": "Erreur image",
+    "load_error": "Erreur de chargement"
+  },
+  "dates": {
+    "today": "Aujourd'hui",
+    "yesterday": "Hier",
+    "days_ago": "Il y a {count} jour | Il y a {count} jours",
+    "weeks_ago": "Il y a {count} semaine | Il y a {count} semaines", 
+    "months_ago": "Il y a {count} mois",
+    "years_ago": "Il y a {count} an | Il y a {count} ans",
+    "at": "à",
+    "published": "Publié {date}",
+    "modified": "Modifié {date}",
+    "created": "Créé {date}"
+  },
+  "pages": {
+    "not_found": {
+      "title": "Page non trouvée",
+      "description": "La page que vous recherchez n'existe pas ou a été déplacée.",
+      "action": "Retour à l'accueil"
+    }
+  },
+  "editor": {
+    "placeholder": "Écrivez votre description en markdown..."
+  },
+  "user": {
+    "unknown": "Utilisateur inconnu"
+  },
+  "oauth": {
+    "processing": "Finalisation de l'authentification...",
+    "debug": {
+      "processing": "Processing OAuth callback...",
+      "exchanging": "Exchanging code for token...",
+      "failed": "Authentication failed",
+      "invalid_params": "Invalid callback parameters"
+    }
+  }
+}

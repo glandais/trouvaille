@@ -7,6 +7,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useLocationStore } from '../stores/location'
+import { useI18nFormatters } from '@/composables/useI18nFormatters'
 
 interface Props {
   // Either provide a pre-calculated distance in kilometers
@@ -20,6 +21,7 @@ interface Props {
 
 const props = defineProps<Props>()
 const locationStore = useLocationStore()
+const { formatDistance } = useI18nFormatters()
 
 // Calculate distance using Haversine formula
 const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
@@ -41,29 +43,7 @@ const toRadians = (degrees: number): number => {
   return degrees * (Math.PI / 180)
 }
 
-// Round distance to nearest hundred meters
-const roundToHundredMeters = (distanceKm: number): number => {
-  const meters = distanceKm * 1000
-  const roundedMeters = Math.round(meters / 100) * 100
-  return roundedMeters / 1000 // Convert back to kilometers
-}
-
-// Format distance for display
-const formatDistance = (distanceKm: number): string => {
-  const roundedKm = roundToHundredMeters(distanceKm)
-
-  if (roundedKm < 1) {
-    // Show in meters for distances less than 1km
-    const meters = Math.round(roundedKm * 1000)
-    return `${meters}m`
-  } else if (roundedKm < 10) {
-    // Show one decimal place for distances less than 10km
-    return `${roundedKm.toFixed(1)}km`
-  } else {
-    // Show whole kilometers for longer distances
-    return `${Math.round(roundedKm)}km`
-  }
-}
+// Using i18n formatDistance from composable instead of local function
 
 const formattedDistance = computed(() => {
   // If distance is provided directly, use it

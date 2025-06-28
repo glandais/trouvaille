@@ -18,11 +18,11 @@
     <!-- Error State -->
     <div v-else-if="error" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div class="text-center py-12">
-        <h2 class="text-2xl font-semibold text-gray-900 mb-2">Annonce non trouvée</h2>
+        <h2 class="text-2xl font-semibold text-gray-900 mb-2">{{ $t('annonce.not_found.title') }}</h2>
         <p class="text-gray-600 mb-6">
-          L'annonce que vous cherchez n'existe pas ou a été supprimée.
+          {{ $t('annonce.not_found.description') }}
         </p>
-        <router-link to="/annonces" class="btn-primary"> Retour aux annonces </router-link>
+        <router-link to="/annonces" class="btn-primary">{{ $t('annonce.not_found.action') }}</router-link>
       </div>
     </div>
 
@@ -32,14 +32,14 @@
       <nav class="flex mb-8" aria-label="Breadcrumb">
         <ol class="flex items-center space-x-4">
           <li>
-            <router-link to="/" class="text-gray-400 hover:text-gray-500"> Accueil </router-link>
+            <router-link to="/" class="text-gray-400 hover:text-gray-500">{{ $t('nav.home') }}</router-link>
           </li>
           <li>
             <ChevronRightIcon class="h-4 w-4 text-gray-400" />
           </li>
           <li>
             <router-link to="/annonces" class="text-gray-400 hover:text-gray-500">
-              Annonces
+              {{ $t('nav.annonces') }}
             </router-link>
           </li>
           <li>
@@ -67,7 +67,7 @@
               class="w-full h-96 flex items-center justify-center bg-gray-100"
             >
               <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-              <span class="ml-2 text-sm text-gray-600">Chargement de la photo...</span>
+              <span class="ml-2 text-sm text-gray-600">{{ $t('photos.loading') }}</span>
             </div>
             <div
               v-else-if="fullPhotoError"
@@ -75,7 +75,7 @@
             >
               <div class="text-center">
                 <PhotoIcon class="h-16 w-16 text-red-400 mx-auto mb-2" />
-                <p class="text-sm text-red-600">Erreur de chargement</p>
+                <p class="text-sm text-red-600">{{ $t('errors.load_error') }}</p>
               </div>
             </div>
             <div v-else class="w-full h-96 flex items-center justify-center bg-gray-100">
@@ -129,7 +129,7 @@
                   {{ getNatureLabel(annonce.nature) }}
                 </span>
                 <span :class="getStatutBadgeClass(annonce.statut)">
-                  {{ getStatutLabel(annonce.statut) }}
+                  {{ getStatusLabel(annonce.statut) }}
                 </span>
               </div>
             </div>
@@ -143,16 +143,16 @@
 
           <!-- Description -->
           <div>
-            <h3 class="text-lg font-medium text-gray-900 mb-3">Description</h3>
+            <h3 class="text-lg font-medium text-gray-900 mb-3">{{ $t('annonce.fields.description') }}</h3>
             <MarkdownViewer :model-value="annonce.description || ''" />
           </div>
 
           <!-- Location -->
           <div v-if="annonce.ville || annonce.coordinates">
-            <h3 class="text-lg font-medium text-gray-900 mb-3">Localisation</h3>
+            <h3 class="text-lg font-medium text-gray-900 mb-3">{{ $t('annonce.fields.location') }}</h3>
             <div class="flex items-center space-x-2 text-gray-600">
               <MapPinIcon class="h-5 w-5" />
-              <span>{{ annonce.ville || 'Localisation définie' }}</span>
+              <span>{{ annonce.ville || $t('location.defined') }}</span>
               <DistanceDisplay
                 :distance="(annonce as any).distance"
                 :coordinates="annonce.coordinates"
@@ -162,7 +162,7 @@
 
           <!-- User Info -->
           <div>
-            <h3 class="text-lg font-medium text-gray-900 mb-3">Publié par</h3>
+            <h3 class="text-lg font-medium text-gray-900 mb-3">{{ $t('annonce.fields.utilisateur') }}</h3>
             <div class="flex items-center space-x-3">
               <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
                 <span class="text-blue-600 font-medium">
@@ -178,18 +178,18 @@
                   {{
                     annonce.utilisateur?.nickname ||
                     annonce.utilisateur?.username ||
-                    'Utilisateur inconnu'
+                    $t('user.unknown')
                   }}
                 </p>
                 <p class="text-sm text-gray-500">
-                  Publié {{ formatDate(annonce.date_creation) }}
+                  {{ $t('dates.published', { date: formatSmartDate(annonce.date_creation) }) }}
                   <span
                     v-if="
                       annonce.date_modification &&
                       annonce.date_modification !== annonce.date_creation
                     "
                   >
-                    • Modifié {{ formatDate(annonce.date_modification) }}
+                    • {{ $t('dates.modified', { date: formatSmartDate(annonce.date_modification) }) }}
                   </span>
                 </p>
               </div>
@@ -204,14 +204,14 @@
                 class="btn-primary w-full text-center block"
               >
                 <PencilIcon class="h-4 w-4 mr-2 inline" />
-                Modifier l'annonce
+                {{ $t('common.actions.edit') }}
               </router-link>
               <button
                 @click="confirmDelete"
                 class="w-full px-4 py-2 text-red-600 border border-red-300 rounded-lg hover:bg-red-50 transition-colors"
               >
                 <TrashIcon class="h-4 w-4 mr-2 inline" />
-                Supprimer l'annonce
+                {{ $t('common.actions.delete') }}
               </button>
             </div>
             <div v-else class="space-y-3">
@@ -222,7 +222,7 @@
                 class="btn-primary w-full text-center block"
               >
                 <ChatBubbleLeftIcon class="h-4 w-4 mr-2 inline" />
-                Contacter le vendeur
+                {{ $t('annonce.card.contact_seller') }}
               </a>
             </div>
           </div>
@@ -250,10 +250,11 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '../stores/auth'
 import { annoncesApi } from '../services/api'
-import { Annonce, AnnonceType, AnnonceNature, AnnonceStatut, PeriodeLocation } from '../api'
+import { Annonce, AnnonceStatut } from '../api'
 import AppLayout from '../components/AppLayout.vue'
 import PhotoViewer from '../components/PhotoViewer.vue'
 import MarkdownViewer from '../components/MarkdownViewer.vue'
@@ -264,21 +265,22 @@ import {
   PencilIcon,
   TrashIcon,
   ChatBubbleLeftIcon,
-  HeartIcon,
   ChevronRightIcon,
-  ChevronLeftIcon,
-  XMarkIcon,
 } from '@heroicons/vue/24/outline'
 import { usePhotos, usePhoto } from '../composables/usePhoto'
+import { useI18nFormatters } from '../composables/useI18nFormatters'
+import { useAnnonceLabels } from '../composables/useAnnonceLabels'
 
 interface Props {
   id: string
 }
 
 const props = defineProps<Props>()
-const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
+const { t } = useI18n()
+const { formatSmartDate, formatPrice } = useI18nFormatters()
+const { getTypeLabel, getNatureLabel, getStatusLabel } = useAnnonceLabels()
 
 const annonce = ref<Annonce>()
 const loading = ref(true)
@@ -295,7 +297,6 @@ const currentPhoto = computed(() => {
 const photoIds = computed(() => annonce.value?.photos || [])
 const {
   urls: thumbUrls,
-  loading: thumbsLoading,
   errors: thumbErrors,
 } = usePhotos(photoIds, 'thumb')
 const {
@@ -341,50 +342,7 @@ const onImageError = (event: Event) => {
   })
 }
 
-const formatPrice = (prix?: number, periode?: PeriodeLocation) => {
-  if (!prix) return 'Prix non spécifié'
-
-  const formattedPrice = new Intl.NumberFormat('fr-FR', {
-    style: 'currency',
-    currency: 'EUR',
-  }).format(prix)
-
-  if (periode) {
-    const periodLabels = {
-      [PeriodeLocation.Jour]: '/jour',
-      [PeriodeLocation.Semaine]: '/semaine',
-      [PeriodeLocation.Mois]: '/mois',
-    }
-    return `${formattedPrice}${periodLabels[periode] || ''}`
-  }
-
-  return formattedPrice
-}
-
-const getTypeLabel = (type?: AnnonceType) => {
-  const labels = {
-    [AnnonceType.Vente]: 'Vente',
-    [AnnonceType.Location]: 'Location',
-  }
-  return type ? labels[type] : 'N/A'
-}
-
-const getNatureLabel = (nature?: AnnonceNature) => {
-  const labels = {
-    [AnnonceNature.Offre]: 'Offre',
-    [AnnonceNature.Demande]: 'Demande',
-  }
-  return nature ? labels[nature] : 'N/A'
-}
-
-const getStatutLabel = (statut?: AnnonceStatut) => {
-  const labels = {
-    [AnnonceStatut.Active]: 'Active',
-    [AnnonceStatut.Suspendue]: 'Suspendue',
-    [AnnonceStatut.Vendue]: 'Vendue',
-  }
-  return statut ? labels[statut] : 'N/A'
-}
+// Using formatPrice from useI18nFormatters composable
 
 const getStatutBadgeClass = (statut?: AnnonceStatut) => {
   const classes = {
@@ -395,20 +353,7 @@ const getStatutBadgeClass = (statut?: AnnonceStatut) => {
   return statut ? classes[statut] : 'badge'
 }
 
-const formatDate = (dateString?: string) => {
-  if (!dateString) return ''
-
-  const date = new Date(dateString)
-  const now = new Date()
-  const diffTime = now.getTime() - date.getTime()
-  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
-
-  if (diffDays === 0) return "aujourd'hui"
-  if (diffDays === 1) return 'hier'
-  if (diffDays < 7) return `il y a ${diffDays} jours`
-
-  return `le ${date.toLocaleDateString('fr-FR')}`
-}
+// Using formatSmartDate from useI18nFormatters composable
 
 const openPhotoModal = () => {
   showPhotoModal.value = true
@@ -435,9 +380,7 @@ const onPhotoViewerError = () => {
 }
 
 const confirmDelete = () => {
-  if (
-    confirm('Êtes-vous sûr de vouloir supprimer cette annonce ? Cette action est irréversible.')
-  ) {
+  if (confirm(t('annonce.delete.confirm', { title: annonce.value?.titre || '' }))) {
     deleteAnnonce()
   }
 }
@@ -448,7 +391,7 @@ const deleteAnnonce = async () => {
     router.push('/my-annonces')
   } catch (error) {
     console.error('Failed to delete annonce:', error)
-    alert("Erreur lors de la suppression de l'annonce")
+    alert(t('annonce.delete.error'))
   }
 }
 

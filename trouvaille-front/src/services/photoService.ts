@@ -2,6 +2,11 @@ import { photosApi } from './api'
 
 export type PhotoSize = 'full' | 'thumb'
 
+/**
+ * PhotoService - Internal service for photo management
+ * Note: Error messages in this service are for debugging and are not shown to users.
+ * User-facing error messages are handled by the usePhoto composable with i18n.
+ */
 class PhotoService {
   private cache = new Map<string, string>()
 
@@ -81,6 +86,7 @@ class PhotoService {
     try {
       await this.getPhotoUrl(photoId, size)
     } catch (error) {
+      console.error('Failed to preload photo', error)
       // Ignorer les erreurs de préchargement
     }
   }

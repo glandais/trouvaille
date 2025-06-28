@@ -58,7 +58,7 @@
           :key="annonce.id"
           :annonce="annonce"
           :show-status="true"
-          @updated="fetchMyAnnonces"
+          @updated="handleAnnonceUpdated"
           @deleted="handleAnnonceDeleted"
         />
       </div>
@@ -121,13 +121,10 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
-import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 import { annoncesApi } from '../services/api'
 import {
   AnnonceList,
-  AnnonceType,
-  AnnonceNature,
   AnnonceStatut,
   Pagination,
   ListAnnoncesSortByEnum,
@@ -135,9 +132,8 @@ import {
 } from '../api'
 import AppLayout from '../components/AppLayout.vue'
 import AnnonceCard from '../components/AnnonceCard.vue'
-import { PlusIcon, DocumentTextIcon } from '@heroicons/vue/24/outline'
+import { DocumentTextIcon } from '@heroicons/vue/24/outline'
 
-const router = useRouter()
 const authStore = useAuthStore()
 
 const annonces = ref<AnnonceList[]>([])
@@ -205,10 +201,6 @@ const changePage = (page: number) => {
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
-const goToDetail = (id: string) => {
-  router.push(`/annonces/${id}`)
-}
-
 const handleAnnonceDeleted = (annonceId: string) => {
   // Remove from local state
   const index = annonces.value.findIndex((a) => a.id === annonceId)
@@ -217,24 +209,36 @@ const handleAnnonceDeleted = (annonceId: string) => {
   }
 }
 
+const handleAnnonceUpdated = (updatedAnnonce?: AnnonceList) => {
+  if (updatedAnnonce) {
+    // Update the annonce in local state
+    const index = annonces.value.findIndex((a) => a.id === updatedAnnonce.id)
+    if (index > -1) {
+      annonces.value[index] = { ...annonces.value[index], ...updatedAnnonce }
+    }
+  }
+  // Optionally refresh the data
+  fetchMyAnnonces()
+}
+
 const getEmptyStateTitle = () => {
-  const titles = {
+  const titles: Record<string, string> = {
     '': 'Aucune annonce',
     [AnnonceStatut.Active]: 'Aucune annonce active',
     [AnnonceStatut.Suspendue]: 'Aucune annonce suspendue',
     [AnnonceStatut.Vendue]: 'Aucune annonce vendue',
   }
-  return (titles as any)[selectedStatus.value] || 'Aucune annonce'
+  return titles[selectedStatus.value] || 'Aucune annonce'
 }
 
 const getEmptyStateMessage = () => {
-  const messages = {
+  const messages: Record<string, string> = {
     '': "Vous n'avez pas encore créé d'annonce. Commencez dès maintenant !",
     [AnnonceStatut.Active]: "Vous n'avez pas d'annonce active actuellement.",
     [AnnonceStatut.Suspendue]: "Vous n'avez pas d'annonce suspendue.",
     [AnnonceStatut.Vendue]: "Vous n'avez pas encore vendu d'objets.",
   }
-  return (messages as any)[selectedStatus.value] || 'Aucune annonce trouvée.'
+  return messages[selectedStatus.value] || 'Aucune annonce trouvée.'
 }
 
 const getVisiblePages = () => {

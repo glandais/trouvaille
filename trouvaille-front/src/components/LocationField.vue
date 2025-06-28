@@ -1,7 +1,7 @@
 <template>
   <div class="relative">
-    <label v-if="label" :for="id" class="block text-sm font-medium text-gray-700 mb-1">
-      {{ label }}
+    <label v-if="computedLabel" :for="id" class="block text-sm font-medium text-gray-700 mb-1">
+      {{ computedLabel }}
     </label>
 
     <!-- Selected Location Display -->
@@ -14,7 +14,7 @@
         <button
           @click="clearLocation"
           class="text-green-600 hover:text-green-800"
-          title="Supprimer la localisation"
+          :title="$t('location.actions.remove')"
           type="button"
         >
           <XMarkIcon class="h-4 w-4" />
@@ -27,12 +27,12 @@
     </div>
 
     <!-- Location Search Input -->
-    <div class="relative">
+    <div v-if="!selectedLocation" class="relative">
       <input
         :id="id"
         v-model="locationSearch"
         type="text"
-        :placeholder="placeholder"
+        :placeholder="computedPlaceholder"
         :disabled="!!selectedLocation || disabled"
         :class="[
           'form-input pr-10',
@@ -48,7 +48,7 @@
         @click="getCurrentLocation"
         :disabled="!!selectedLocation || geolocationLoading || disabled"
         class="absolute right-2 top-1/2 transform -translate-y-1/2 p-1 text-gray-400 hover:text-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
-        title="Utiliser ma position"
+        :title="$t('location.actions.use_current')"
         type="button"
       >
         <GlobeAltIcon v-if="!geolocationLoading" class="h-5 w-5" />
@@ -64,7 +64,7 @@
       <!-- Loading -->
       <div v-if="geocodingLoading" class="p-3 text-center">
         <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mx-auto"></div>
-        <span class="text-sm text-gray-500 mt-2 block">Recherche...</span>
+        <span class="text-sm text-gray-500 mt-2 block">{{ $t('location.searching') }}</span>
       </div>
 
       <!-- Results -->
@@ -84,7 +84,7 @@
         v-if="!geocodingLoading && geocodingResults.length === 0 && locationSearch"
         class="p-3 text-center text-sm text-gray-500"
       >
-        Aucun résultat trouvé
+        {{ $t('location.no_results') }}
       </div>
     </div>
   </div>
@@ -93,6 +93,7 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue'
 import { useDebounceFn } from '@vueuse/core'
+import { useI18n } from 'vue-i18n'
 import { MapPinIcon, XMarkIcon, GlobeAltIcon } from '@heroicons/vue/24/outline'
 import { SelectedLocation } from '@/types/location'
 import { useLocationStore } from '../stores/location'
@@ -125,14 +126,19 @@ interface Emits {
 
 const props = withDefaults(defineProps<Props>(), {
   id: 'location',
-  label: 'Localisation',
-  placeholder: 'Adresse, ville...',
+  label: undefined, // Will use $t('location.title') if not provided
+  placeholder: undefined, // Will use $t('location.placeholder') if not provided
   disabled: false,
   autoDetect: true,
 })
 
 const emit = defineEmits<Emits>()
 const locationStore = useLocationStore()
+const { t } = useI18n()
+
+// Computed properties for default values
+const computedLabel = computed(() => props.label || t('location.title'))
+const computedPlaceholder = computed(() => props.placeholder || t('location.placeholder'))
 
 const locationSearch = ref('')
 const geocodingResults = ref<GeocodingResult[]>([])
@@ -143,6 +149,7 @@ const geolocationLoading = ref(false)
 const selectedLocation = computed({
   get: () => props.modelValue || null,
   set: (value: SelectedLocation | null) => {
+    locationSearch.value = ''
     emit('update:modelValue', value)
     emit('change', value)
   },
@@ -190,14 +197,12 @@ const selectLocation = (result: GeocodingResult) => {
   selectedLocation.value = location
 
   // Clear search and hide dropdown
-  locationSearch.value = ''
   showGeocoding.value = false
   geocodingResults.value = []
 }
 
 const clearLocation = () => {
   selectedLocation.value = null
-  locationSearch.value = ''
 }
 
 const getCurrentLocation = async () => {
@@ -205,6 +210,7 @@ const getCurrentLocation = async () => {
   if (locationStore.hasUserLocation) {
     selectedLocation.value = locationStore.userLocation
   } else {
+    // Trigger location detection - this will update the store and the watcher will handle updating selectedLocation
     await locationStore.initializeUserLocation()
   }
 }
@@ -217,25 +223,22 @@ const hideGeocodingWithDelay = () => {
 
 // Auto-detect location on component mount
 onMounted(() => {
-  // If auto-detect is enabled and no location is selected, use store's location or trigger detection
-  if (props.autoDetect && !selectedLocation.value) {
-    if (locationStore.userLocation) {
-      // Use existing location from store
-      selectedLocation.value = locationStore.userLocation
-    } else if (!locationStore.hasAttemptedDetection) {
-      // Trigger location detection if not attempted yet
-      locationStore.initializeUserLocation()
-    }
+  // If auto-detect is enabled and no location is selected, trigger detection if not attempted yet
+  if (props.autoDetect && !selectedLocation.value && !locationStore.hasAttemptedDetection) {
+    // Trigger location detection - the watcher will handle updating selectedLocation
+    locationStore.initializeUserLocation()
   }
 })
 
-// Watch for external changes to clear the search input
+// Watch for changes in store's userLocation when autoDetect is enabled
 watch(
-  () => props.modelValue,
-  (newValue) => {
-    if (!newValue) {
-      locationSearch.value = ''
+  () => locationStore.userLocation,
+  (newUserLocation) => {
+    // Only auto-update if autoDetect is enabled and no location is currently selected
+    if (props.autoDetect && !selectedLocation.value && newUserLocation) {
+      selectedLocation.value = newUserLocation
     }
   },
+  { immediate: true }
 )
 </script>

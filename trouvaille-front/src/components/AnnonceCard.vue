@@ -51,14 +51,14 @@
           <button
             @click.stop="handleEdit"
             class="p-2 bg-white bg-opacity-90 rounded-full text-gray-600 hover:text-blue-600 transition-colors"
-            title="Modifier"
+:title="$t('common.actions.edit')"
           >
             <PencilIcon class="h-4 w-4" />
           </button>
           <button
             @click.stop="handleDelete"
             class="p-2 bg-white bg-opacity-90 rounded-full text-gray-600 hover:text-red-600 transition-colors"
-            title="Supprimer"
+:title="$t('common.actions.delete')"
           >
             <TrashIcon class="h-4 w-4" />
           </button>
@@ -106,7 +106,7 @@
         <!-- Distance (if available and not in owner mode) -->
         <div v-if="annonce.distance || annonce.coordinates" class="flex items-center">
           <MapPinIcon class="h-3 w-3 mr-1" />
-          <span>{{ annonce.ville || 'Localisation définie' }}</span>
+          <span>{{ annonce.ville || $t('location.title') }}</span>
           <DistanceDisplay :distance="annonce.distance" :coordinates="annonce.coordinates" />
         </div>
       </div>
@@ -114,11 +114,11 @@
       <!-- Date and Actions -->
       <div :class="[isOwner ? 'flex items-center justify-between' : 'mt-2']">
         <div class="text-xs text-gray-400">
-          {{ formatDate(annonce.date_creation) }}
+          {{ formatSmartDate(annonce.date_creation) }}
           <span
             v-if="annonce.date_modification && annonce.date_modification !== annonce.date_creation"
           >
-            • Modifié {{ formatDate(annonce.date_modification) }}
+            • {{ $t('dates.modified', { date: formatSmartDate(annonce.date_modification) }) }}
           </span>
         </div>
         <div class="text-xs text-gray-400">
@@ -131,25 +131,25 @@
             v-if="annonce.statut === AnnonceStatut.Active"
             @click.stop="handleChangeStatus(AnnonceStatut.Suspendue)"
             class="text-xs text-yellow-600 hover:text-yellow-700 underline"
-            title="Suspendre"
+:title="$t('annonce.status.suspendue')"
           >
-            Suspendre
+            {{ $t('annonce.status.suspendue') }}
           </button>
           <button
             v-if="annonce.statut === AnnonceStatut.Suspendue"
             @click.stop="handleChangeStatus(AnnonceStatut.Active)"
             class="text-xs text-green-600 hover:text-green-700 underline"
-            title="Réactiver"
+:title="$t('common.actions.edit')"
           >
-            Réactiver
+            {{ $t('annonce.status.active') }}
           </button>
           <button
             v-if="annonce.statut === AnnonceStatut.Active && annonce.type === AnnonceType.Vente"
             @click.stop="handleChangeStatus(AnnonceStatut.Vendue)"
             class="text-xs text-gray-600 hover:text-gray-700 underline"
-            title="Marquer comme vendu"
+:title="$t('annonce.status.vendue')"
           >
-            Vendu
+            {{ $t('annonce.status.vendue') }}
           </button>
         </div>
       </div>
@@ -160,27 +160,32 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '../stores/auth'
 import {
   AnnonceList,
   AnnonceType,
   AnnonceWithStatut,
-  AnnonceNature,
   AnnonceStatut,
   PeriodeLocation,
 } from '../api'
 import { PhotoIcon, MapPinIcon, PencilIcon, TrashIcon } from '@heroicons/vue/24/outline'
 import { usePhoto } from '../composables/usePhoto'
 import { annoncesApi } from '../services/api'
+import { useI18nFormatters } from '@/composables/useI18nFormatters'
+import { useAnnonceLabels } from '@/composables/useAnnonceLabels'
 import DistanceDisplay from './DistanceDisplay.vue'
 const authStore = useAuthStore()
+const { t } = useI18n()
+const { formatSmartDate, formatPrice: formatPriceI18n } = useI18nFormatters()
+const { getTypeLabel, getNatureLabel } = useAnnonceLabels()
 
 interface Props {
   annonce: AnnonceList
 }
 
 interface Emits {
-  (e: 'updated'): void
+  (e: 'updated', updatedAnnonce?: AnnonceList): void
   (e: 'deleted', annonceId: string): void
 }
 
@@ -206,41 +211,13 @@ const onImageError = () => {
   // L'erreur sera gérée par le composable usePhoto
 }
 
+// Use i18n formatter for price
 const formatPrice = (prix?: number, periode?: PeriodeLocation) => {
-  if (!prix) return 'Prix non spécifié'
-
-  const formattedPrice = new Intl.NumberFormat('fr-FR', {
-    style: 'currency',
-    currency: 'EUR',
-  }).format(prix)
-
-  if (periode) {
-    const periodLabels = {
-      [PeriodeLocation.Jour]: '/jour',
-      [PeriodeLocation.Semaine]: '/semaine',
-      [PeriodeLocation.Mois]: '/mois',
-    }
-    return `${formattedPrice}${periodLabels[periode] || ''}`
-  }
-
-  return formattedPrice
+  return formatPriceI18n(prix, periode)
 }
 
-const getTypeLabel = (type?: AnnonceType) => {
-  const labels = {
-    [AnnonceType.Vente]: 'Vente',
-    [AnnonceType.Location]: 'Location',
-  }
-  return type ? labels[type] : 'N/A'
-}
+// Use i18n labels from composable
 
-const getNatureLabel = (nature?: AnnonceNature) => {
-  const labels = {
-    [AnnonceNature.Offre]: 'Offre',
-    [AnnonceNature.Demande]: 'Demande',
-  }
-  return nature ? labels[nature] : 'N/A'
-}
 
 const getStatutLabel = (statut?: AnnonceStatut) => {
   const labels = {
@@ -268,7 +245,7 @@ const handleDelete = () => {
   if (!props.annonce.id) return
 
   const confirmed = confirm(
-    `Êtes-vous sûr de vouloir supprimer "${props.annonce.titre}" ? Cette action est irréversible.`,
+    t('annonce.delete.confirm', { title: props.annonce.titre })
   )
 
   if (confirmed) {
@@ -284,7 +261,7 @@ const deleteAnnonce = async () => {
     emit('deleted', props.annonce.id)
   } catch (error) {
     console.error('Failed to delete annonce:', error)
-    alert("Erreur lors de la suppression de l'annonce")
+    alert(t('annonce.delete.error'))
   }
 }
 
@@ -300,29 +277,19 @@ const handleChangeStatus = async (newStatut: AnnonceStatut) => {
 
     await annoncesApi.putAnnonce(props.annonce.id, updateData)
 
-    // Update local annonce object
-    props.annonce.statut = newStatut
-    emit('updated')
+    // Emit updated event with updated annonce
+    const updatedAnnonce: AnnonceList = {
+      ...props.annonce,
+      statut: newStatut,
+    }
+    emit('updated', updatedAnnonce)
   } catch (error) {
     console.error('Failed to update annonce status:', error)
-    alert('Erreur lors de la mise à jour du statut')
+    alert(t('errors.generic'))
   }
 }
 
-const formatDate = (dateString?: string) => {
-  if (!dateString) return ''
-
-  const date = new Date(dateString)
-  const now = new Date()
-  const diffTime = now.getTime() - date.getTime()
-  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
-
-  if (diffDays === 0) return "Aujourd'hui"
-  if (diffDays === 1) return 'Hier'
-  if (diffDays < 7) return `Il y a ${diffDays} jours`
-
-  return date.toLocaleDateString('fr-FR')
-}
+// formatDate removed - using formatSmartDate from i18n composable
 </script>
 
 <style scoped>

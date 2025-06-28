@@ -7,7 +7,7 @@
           <div class="flex items-center">
             <!-- Logo -->
             <router-link to="/annonces" class="flex-shrink-0 flex items-center">
-              <h1 class="text-xl font-bold text-blue-600">Trouvaille</h1>
+              <h1 class="text-xl font-bold text-blue-600">{{ $t('app.name') }}</h1>
             </router-link>
 
             <!-- Navigation Links (Desktop) -->
@@ -17,7 +17,7 @@
                 class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm transition-colors"
                 active-class="border-blue-500 text-blue-600"
               >
-                Annonces
+                {{ $t('nav.annonces') }}
               </router-link>
               <router-link
                 v-if="authStore.isAuthenticated"
@@ -25,7 +25,7 @@
                 class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm transition-colors"
                 active-class="border-blue-500 text-blue-600"
               >
-                Mes annonces
+                {{ $t('nav.my_annonces') }}
               </router-link>
             </div>
           </div>
@@ -38,7 +38,7 @@
               class="btn-primary hidden sm:inline-flex items-center"
             >
               <PlusIcon class="h-4 w-4 mr-2" />
-              Créer une annonce
+              {{ $t('nav.create') }}
             </router-link>
 
             <!-- Mobile Create Button -->
@@ -86,9 +86,9 @@
                   <!-- User Info -->
                   <div class="px-4 py-3 border-b border-gray-100">
                     <p class="text-sm font-medium text-gray-900">
-                      {{ authStore.user?.nickname || authStore.user?.username || 'Utilisateur' }}
+                      {{ authStore.user?.nickname || authStore.user?.username || $t('nav.profile') }}
                     </p>
-                    <p class="text-xs text-gray-500">Connecté</p>
+                    <p class="text-xs text-gray-500">{{ $t('common.status.success') }}</p>
                   </div>
 
                   <!-- Menu Items -->
@@ -110,7 +110,7 @@
                         d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                       />
                     </svg>
-                    Mes annonces
+                    {{ $t('nav.my_annonces') }}
                   </router-link>
 
                   <button
@@ -130,7 +130,7 @@
                         d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
                       />
                     </svg>
-                    Se déconnecter
+                    {{ $t('app.auth.logout') }}
                   </button>
                 </div>
               </Transition>

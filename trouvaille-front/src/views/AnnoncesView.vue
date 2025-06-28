@@ -3,7 +3,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <!-- Header -->
       <div class="flex justify-between items-center mb-8">
-        <h1 class="text-3xl font-bold text-gray-900">Annonces</h1>
+        <h1 class="text-3xl font-bold text-gray-900">{{ $t('nav.annonces') }}</h1>
       </div>
 
       <!-- Filters -->
@@ -12,13 +12,13 @@
           <!-- Search -->
           <div>
             <label for="search" class="block text-sm font-medium text-gray-700 mb-1">
-              Recherche
+              {{ $t('annonce.search.filters.search') }}
             </label>
             <input
               id="search"
               v-model="filters.search"
               type="text"
-              placeholder="Titre ou description..."
+:placeholder="$t('annonce.placeholders.search')"
               class="form-input"
               @input="debouncedSearch"
             />
@@ -26,11 +26,11 @@
 
           <!-- Type -->
           <div>
-            <label for="type" class="block text-sm font-medium text-gray-700 mb-1"> Type </label>
+            <label for="type" class="block text-sm font-medium text-gray-700 mb-1">{{ $t('annonce.fields.type') }}</label>
             <select id="type" v-model="filters.type" class="form-input" @change="debouncedSearch">
-              <option value="">Tous</option>
-              <option :value="AnnonceType.Vente">Vente</option>
-              <option :value="AnnonceType.Location">Location</option>
+              <option value="">{{ $t('common.actions.clear') }}</option>
+              <option :value="AnnonceType.Vente">{{ $t('annonce.types.vente') }}</option>
+              <option :value="AnnonceType.Location">{{ $t('annonce.types.location') }}</option>
             </select>
           </div>
 
@@ -272,7 +272,6 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useDebounceFn } from '@vueuse/core'
-import { useAuthStore } from '../stores/auth'
 import { annoncesApi } from '../services/api'
 import {
   AnnonceList,
@@ -282,14 +281,15 @@ import {
   ListAnnoncesSortByEnum,
   ListAnnoncesSortOrderEnum,
 } from '../api'
+import { useAnnonceLabels } from '@/composables/useAnnonceLabels'
 import AppLayout from '../components/AppLayout.vue'
 import AnnonceCard from '../components/AnnonceCard.vue'
 import LocationField from '../components/LocationField.vue'
-import { PlusIcon, XMarkIcon, MagnifyingGlassIcon } from '@heroicons/vue/24/outline'
+import { XMarkIcon, MagnifyingGlassIcon } from '@heroicons/vue/24/outline'
 import { SelectedLocation } from '@/types/location'
 
 const route = useRoute()
-const authStore = useAuthStore()
+const { getTypeLabel, getNatureLabel } = useAnnonceLabels()
 
 const annonces = ref<AnnonceList[]>([])
 const pagination = ref<Pagination>()
@@ -429,15 +429,7 @@ const handleLocationChange = (location: SelectedLocation | null) => {
   debouncedSearch()
 }
 
-const getTypeLabel = (type: string) => {
-  const labels: Record<string, string> = { vente: 'Vente', location: 'Location' }
-  return labels[type] || type
-}
-
-const getNatureLabel = (nature: string) => {
-  const labels: Record<string, string> = { offre: 'Offre', demande: 'Demande' }
-  return labels[nature] || nature
-}
+// getTypeLabel and getNatureLabel now imported from useAnnonceLabels composable
 
 const getVisiblePages = () => {
   if (!pagination.value) return []
