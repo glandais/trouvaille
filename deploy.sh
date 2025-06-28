@@ -58,6 +58,8 @@ case "$ACTION" in
             log_info "Using production configuration with enhanced security"
         fi
         
+        log_info "Running docker compose $COMPOSE_FILES up -d"
+
         # Start services
         docker compose $COMPOSE_FILES up -d
         
