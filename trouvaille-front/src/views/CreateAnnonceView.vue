@@ -308,10 +308,7 @@
             {{ $t('annonce.form.sections.location') }}
           </h2>
           {{ $t('location.privacy_note') }}
-          <LocationField
-            v-model="selectedLocation"
-            @change="handleLocationChange"
-          />
+          <LocationField v-model="selectedLocation" @change="handleLocationChange" />
         </div>
 
         <!-- Actions -->

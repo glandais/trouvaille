@@ -91,7 +91,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed } from 'vue'
 import { useDebounceFn } from '@vueuse/core'
 import { useI18n } from 'vue-i18n'
 import { MapPinIcon, XMarkIcon, GlobeAltIcon } from '@heroicons/vue/24/outline'
@@ -221,5 +221,4 @@ const hideGeocodingWithDelay = () => {
     showGeocoding.value = false
   }, 200)
 }
-
 </script>

@@ -134,12 +134,12 @@
 
           <!-- Owner Status Actions -->
           <div v-if="isOwner" class="flex gap-2">
-              <router-link
-                :to="`/annonces/${annonce.id}/edit`"
-                class="text-xs font-medium text-amber-600 hover:text-amber-700 px-2 py-1 rounded hover:bg-amber-50 transition-colors"
-              >
-                {{ $t('common.actions.edit') }}
-              </router-link>
+            <router-link
+              :to="`/annonces/${annonce.id}/edit`"
+              class="text-xs font-medium text-amber-600 hover:text-amber-700 px-2 py-1 rounded hover:bg-amber-50 transition-colors"
+            >
+              {{ $t('common.actions.edit') }}
+            </router-link>
             <button
               v-if="annonce.statut === AnnonceStatut.Active"
               @click.stop="handleChangeStatus(AnnonceStatut.Suspendue)"
