@@ -32,6 +32,7 @@ jobs:
       run: npm ci
       
     - name: Run semantic-release
+      id: release
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GIT_AUTHOR_NAME: semantic-release-bot
@@ -39,3 +40,11 @@ jobs:
         GIT_COMMITTER_NAME: semantic-release-bot
         GIT_COMMITTER_EMAIL: semantic-release-bot@martynus.net
       run: npx semantic-release
+      
+    - name: Trigger release workflow
+      if: steps.release.outputs.new_release_published == 'true'
+      run: |
+        echo "New release published: ${{ steps.release.outputs.new_release_version }}"
+        gh workflow run release.yml -f tag=v${{ steps.release.outputs.new_release_version }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

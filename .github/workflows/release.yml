@@ -59,31 +59,14 @@ jobs:
           echo "version=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
         fi
 
-    - name: Frontend
-      run: |
-        cd trouvaille-front
-        npm ci
-        npm run format:check
-        npm run lint:check
-        npm run type-check
-        npm run test:unit 2>/dev/null || echo "No unit tests configured yet"
-        npm run build
-
-    - name: Backend
-      run: |
-        cd trouvaille-back
-        ./mvnw clean package
-
     - name: Build and push Docker images
       run: |
         TAG=${{ steps.version.outputs.version }}
         ./build.sh ${TAG} jvm
         
         # Tag images for GitHub Container Registry
-        docker tag trouvaille/backend:${TAG} ghcr.io/${{ github.repository_owner }}/trouvaille-backend:${TAG}
-        docker tag trouvaille/frontend:${TAG} ghcr.io/${{ github.repository_owner }}/trouvaille-frontend:${TAG}
-        docker tag trouvaille/backend:${TAG} ghcr.io/${{ github.repository_owner }}/trouvaille-backend:latest
-        docker tag trouvaille/frontend:${TAG} ghcr.io/${{ github.repository_owner }}/trouvaille-frontend:latest
+        docker tag ghcr.io/${{ github.repository_owner }}/trouvaille-backend:${TAG} ghcr.io/${{ github.repository_owner }}/trouvaille-backend:latest
+        docker tag ghcr.io/${{ github.repository_owner }}/trouvaille-frontend:${TAG} ghcr.io/${{ github.repository_owner }}/trouvaille-frontend:latest
         
         # Push images
         docker push ghcr.io/${{ github.repository_owner }}/trouvaille-backend:${TAG}
