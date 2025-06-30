@@ -1,6 +1,6 @@
 {
   "name": "trouvaille",
-  "version": "1.0.1",
+  "version": "1.1.0-dev",
   "private": true,
   "description": "Plateforme de petites annonces privée",
   "scripts": {
@@ -14,7 +14,6 @@
     "branches": [
       "develop"
     ],
-    "tagFormat": "v${version}",
     "plugins": [
       "@semantic-release/commit-analyzer",
       "@semantic-release/release-notes-generator",
