@@ -12,6 +12,7 @@ export function useAnnonceLabels() {
    * Type labels mapping
    */
   const typeLabels = computed(() => ({
+    undefined: 'Tous',
     vente: t('annonce.types.vente'),
     location: t('annonce.types.location'),
   }))
@@ -20,6 +21,7 @@ export function useAnnonceLabels() {
    * Nature labels mapping
    */
   const natureLabels = computed(() => ({
+    undefined: 'Toutes',
     offre: t('annonce.natures.offre'),
     demande: t('annonce.natures.demande'),
   }))
@@ -28,6 +30,7 @@ export function useAnnonceLabels() {
    * Status labels mapping
    */
   const statusLabels = computed(() => ({
+    undefined: 'Tous',
     active: t('annonce.status.active'),
     suspendue: t('annonce.status.suspendue'),
     vendue: t('annonce.status.vendue'),
@@ -38,6 +41,7 @@ export function useAnnonceLabels() {
    * Period labels mapping for rentals
    */
   const periodLabels = computed(() => ({
+    undefined: 'Toutes',
     jour: t('annonce.periode.jour'),
     semaine: t('annonce.periode.semaine'),
     mois: t('annonce.periode.mois'),

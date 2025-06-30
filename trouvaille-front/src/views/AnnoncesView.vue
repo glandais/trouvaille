@@ -30,7 +30,7 @@
               $t('annonce.fields.type')
             }}</label>
             <select id="type" v-model="filters.type" class="form-input" @change="debouncedSearch">
-              <option value="">{{ $t('common.actions.clear') }}</option>
+              <option :value="undefined">Tous</option>
               <option :value="AnnonceType.Vente">{{ $t('annonce.types.vente') }}</option>
               <option :value="AnnonceType.Location">{{ $t('annonce.types.location') }}</option>
             </select>
@@ -47,7 +47,7 @@
               class="form-input"
               @change="debouncedSearch"
             >
-              <option value="">Toutes</option>
+              <option :value="undefined">Toutes</option>
               <option :value="AnnonceNature.Offre">Offre</option>
               <option :value="AnnonceNature.Demande">Demande</option>
             </select>
@@ -77,12 +77,11 @@
             </label>
             <input
               id="prixMin"
-              v-model="filters.prixMin"
+              v-model="filters.prix_min"
               type="number"
-              step="0.01"
               min="0"
               placeholder="0"
-              class="form-input"
+              class="form-input no-spinners"
               @input="debouncedSearch"
             />
           </div>
@@ -92,12 +91,11 @@
             </label>
             <input
               id="prixMax"
-              v-model="filters.prixMax"
+              v-model="filters.prix_max"
               type="number"
-              step="0.01"
               min="0"
               placeholder="Aucune limite"
-              class="form-input"
+              class="form-input no-spinners"
               @input="debouncedSearch"
             />
           </div>
@@ -107,14 +105,14 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
           <LocationField v-model="selectedLocation" @change="handleLocationChange" />
 
-          <div>
+          <div class="relative">
             <label for="distance" class="block text-sm font-medium text-gray-700 mb-1">
               Distance max: {{ distanceLabel }}
             </label>
             <div class="space-y-2">
               <input
                 id="distance-slider"
-                v-model="distanceSlider"
+                v-model="filters.distance_max"
                 type="range"
                 min="1"
                 max="100"
@@ -124,23 +122,35 @@
                   'w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider',
                   !hasCoordinates && 'opacity-50 cursor-not-allowed',
                 ]"
-                @input="handleDistanceSliderChange"
+                @input="debouncedSearch"
               />
-              <input
-                id="distance-input"
-                v-model="distanceInput"
-                type="number"
-                min="1"
-                max="100"
-                step="1"
-                placeholder="Illimitée"
-                :disabled="!hasCoordinates"
-                :class="[
-                  'form-input w-full text-center',
-                  !hasCoordinates && 'opacity-50 cursor-not-allowed',
-                ]"
-                @input="handleDistanceInputChange"
-              />
+              <div class="relative">
+                <input
+                  id="distance-input"
+                  v-model="filters.distance_max"
+                  type="number"
+                  min="1"
+                  max="100"
+                  step="1"
+                  placeholder="Illimitée"
+                  :disabled="!hasCoordinates"
+                  :class="[
+                    'form-input w-full text-center no-spinners',
+                    !hasCoordinates && 'opacity-50 cursor-not-allowed',
+                    hasDistanceFilter && 'pr-8',
+                  ]"
+                  @input="debouncedSearch"
+                />
+                <button
+                  v-if="hasDistanceFilter && hasCoordinates"
+                  @click="clearDistanceFilter"
+                  type="button"
+                  class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  title="Supprimer le filtre distance"
+                >
+                  <XMarkIcon class="h-4 w-4" />
+                </button>
+              </div>
               <p v-if="!hasCoordinates" class="text-xs text-gray-500 text-center">
                 Sélectionnez une localisation pour activer le filtre distance
               </p>
@@ -272,9 +282,10 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { LocationQueryRaw, useRoute } from 'vue-router'
 import { useDebounceFn } from '@vueuse/core'
 import { annoncesApi } from '../services/api'
+import router from '../router'
 import {
   AnnonceList,
   AnnonceType,
@@ -298,24 +309,179 @@ const annonces = ref<AnnonceList[]>([])
 const pagination = ref<Pagination>()
 const loading = ref(false)
 const sortOption = ref('date_creation!desc')
-const distanceSlider = ref(50)
-const distanceInput = ref('')
+const currentPage = ref<number>(1)
 const selectedLocation = ref<SelectedLocation | null>(null)
+const updatingRoute = ref(false)
 
-const filters = ref({
-  search: '',
-  type: '',
-  nature: '',
-  prixMin: '',
-  prixMax: '',
-  distanceMax: '50',
-  latitude: null as number | null,
-  longitude: null as number | null,
+const filterInitial: AnnonceSearch = {
+  search: undefined,
+  type: undefined,
+  nature: undefined,
+  prix_min: undefined,
+  prix_max: undefined,
+  distance_max: undefined,
+  latitude: undefined,
+  longitude: undefined,
+}
+
+const filters = ref<AnnonceSearch>({
+  ...filterInitial,
 })
 
+interface ApplyFromRoute {
+  (input: string): void
+}
+
+interface GetRouteValue {
+  (): string | undefined
+}
+
+class RouterParam<T> {
+  paramName: string
+  defaultValue: T
+  applyFromRoute: ApplyFromRoute
+  getRouteValue: GetRouteValue
+  constructor(
+    paramName: string,
+    defaultValue: T,
+    applyFromRoute: ApplyFromRoute,
+    getRouteValue: GetRouteValue,
+  ) {
+    this.paramName = paramName
+    this.defaultValue = defaultValue
+    this.applyFromRoute = applyFromRoute
+    this.getRouteValue = getRouteValue
+  }
+}
+
+const getOrInitSelectedLocation = () => {
+  if (selectedLocation.value) {
+    return selectedLocation.value
+  } else {
+    selectedLocation.value = { label: '', city: '', coordinates: [0, 0] }
+    return selectedLocation.value
+  }
+}
+
+const asString = (t: number | undefined) => {
+  if (t === null || t === undefined) {
+    return undefined
+  }
+  return t.toString()
+}
+
+const routerParams = [
+  new RouterParam<number>(
+    'page',
+    1,
+    (s) => (currentPage.value = parseInt(s)),
+    () => asString(currentPage.value),
+  ),
+  new RouterParam<string | undefined>(
+    'search',
+    undefined,
+    (s) => (filters.value.search = s),
+    () => filters.value.search,
+  ),
+  new RouterParam<string | undefined>(
+    'type',
+    undefined,
+    (s) => (filters.value.type = s as AnnonceType),
+    () => filters.value.type,
+  ),
+  new RouterParam<string | undefined>(
+    'nature',
+    undefined,
+    (s) => (filters.value.nature = s as AnnonceNature),
+    () => filters.value.nature,
+  ),
+  new RouterParam<string | undefined>(
+    'prix_min',
+    undefined,
+    (s) => (filters.value.prix_min = parseInt(s)),
+    () => asString(filters.value.prix_min),
+  ),
+  new RouterParam<string | undefined>(
+    'prix_max',
+    undefined,
+    (s) => (filters.value.prix_max = parseInt(s)),
+    () => asString(filters.value.prix_max),
+  ),
+  new RouterParam<string | undefined>(
+    'location',
+    undefined,
+    (s) => {
+      const sl = getOrInitSelectedLocation()
+      sl.label = s
+      sl.city = s
+    },
+    () => (selectedLocation.value ? selectedLocation.value.city : undefined),
+  ),
+  new RouterParam<string | undefined>(
+    'longitude',
+    undefined,
+    (s) => {
+      const sl = getOrInitSelectedLocation()
+      sl.coordinates[0] = parseFloat(s)
+    },
+    () => (selectedLocation.value ? asString(selectedLocation.value.coordinates[0]) : undefined),
+  ),
+  new RouterParam<string | undefined>(
+    'latitude',
+    undefined,
+    (s) => {
+      const sl = getOrInitSelectedLocation()
+      sl.coordinates[1] = parseFloat(s)
+    },
+    () => (selectedLocation.value ? asString(selectedLocation.value.coordinates[1]) : undefined),
+  ),
+  new RouterParam<string | undefined>(
+    'distance_max',
+    undefined,
+    (s) => (filters.value.distance_max = parseInt(s)),
+    () => (selectedLocation.value ? asString(filters.value.distance_max) : undefined),
+  ),
+  new RouterParam<string | undefined>(
+    'sortOption',
+    undefined,
+    (s) => (sortOption.value = s),
+    () => sortOption.value,
+  ),
+]
+
+const applyFiltersToRouter = async () => {
+  updatingRoute.value = true
+  const query: LocationQueryRaw = {}
+  routerParams.forEach((routerParam) => {
+    const value = routerParam.getRouteValue()
+    if (value !== undefined && value.length > 0) {
+      query[routerParam.paramName] = value
+    }
+  })
+  await router.push({ name: 'annonces', query })
+  updatingRoute.value = false
+}
+
+const initFromQuery = () => {
+  if (!updatingRoute.value) {
+    filters.value = {
+      ...filterInitial,
+    }
+    selectedLocation.value = null
+    sortOption.value = 'date_creation!desc'
+
+    routerParams.forEach((routerParam) => {
+      const value = route.query[routerParam.paramName]
+      if (value !== null && value !== undefined) {
+        routerParam.applyFromRoute(value.toString())
+      }
+    })
+    fetchAnnonces()
+  }
+}
+
 const distanceLabel = computed(() => {
-  const distance = distanceInput.value || distanceSlider.value
-  return distance ? `${distance} km` : 'Illimitée'
+  return filters.value.distance_max ? `${filters.value.distance_max} km` : 'Illimitée'
 })
 
 const hasActiveFilters = computed(() => {
@@ -323,43 +489,37 @@ const hasActiveFilters = computed(() => {
     filters.value.search ||
     filters.value.type ||
     filters.value.nature ||
-    filters.value.prixMin ||
-    filters.value.prixMax ||
-    filters.value.distanceMax
+    filters.value.prix_min ||
+    filters.value.prix_max ||
+    filters.value.distance_max
   )
+})
+
+const hasDistanceFilter = computed(() => {
+  return filters.value.distance_max && hasCoordinates.value
 })
 
 const hasCoordinates = computed(() => {
   return filters.value.latitude !== null && filters.value.longitude !== null
 })
 
-const fetchAnnonces = async (page = 1) => {
+const fetchAnnonces = async () => {
   loading.value = true
   try {
     const [sortBy, sortOrder] = sortOption.value.split('!')
 
-    const typeParam = (filters.value.type as AnnonceType | undefined) || undefined
-    const natureParam = filters.value.nature || undefined
-
     const annonceSearch: AnnonceSearch = {
-      type: typeParam,
+      ...filters.value,
       statut: undefined, // statut
-      nature: natureParam as AnnonceNature | undefined,
-      page: page,
+      user_id: undefined,
+      page: currentPage.value,
       limit: 12, // limit
-      search: filters.value.search || undefined,
-      user_id: undefined, // userId
-      prix_min: filters.value.prixMin ? parseFloat(filters.value.prixMin) : undefined,
-      prix_max: filters.value.prixMax ? parseFloat(filters.value.prixMax) : undefined,
-      latitude: filters.value.latitude || undefined,
-      longitude: filters.value.longitude || undefined,
-      distance_max: filters.value.distanceMax
-        ? Math.round(parseFloat(filters.value.distanceMax))
-        : undefined,
       sort_by: sortBy as AnnonceSearchSortBy,
       sort_order: sortOrder === 'desc' ? AnnonceSearchSortOrder.Desc : AnnonceSearchSortOrder.Asc,
     }
+
     const response = await annoncesApi.listAnnonces(annonceSearch)
+    await applyFiltersToRouter()
 
     annonces.value = response.data.data || []
     pagination.value = response.data.pagination
@@ -371,65 +531,46 @@ const fetchAnnonces = async (page = 1) => {
 }
 
 const debouncedSearch = useDebounceFn(() => {
+  currentPage.value = 1
   fetchAnnonces()
 }, 500)
 
-const handleDistanceSliderChange = () => {
-  distanceInput.value = distanceSlider.value.toString()
-  filters.value.distanceMax = distanceSlider.value.toString()
-  debouncedSearch()
-}
-
-const handleDistanceInputChange = () => {
-  const value = parseInt(distanceInput.value)
-  if (!isNaN(value) && value >= 1 && value <= 100) {
-    distanceSlider.value = value
-    filters.value.distanceMax = value.toString()
-    debouncedSearch()
-  } else if (distanceInput.value === '') {
-    filters.value.distanceMax = ''
-    debouncedSearch()
-  }
-}
-
 const changePage = (page: number) => {
-  fetchAnnonces(page)
+  currentPage.value = page
+  fetchAnnonces()
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
 const clearFilter = (filterKey: keyof typeof filters.value) => {
   ;(filters.value[filterKey] as string) = ''
+  currentPage.value = 1
   fetchAnnonces()
 }
 
 const clearAllFilters = () => {
   filters.value = {
-    search: '',
-    type: '',
-    nature: '',
-    prixMin: '',
-    prixMax: '',
-    distanceMax: '',
-    latitude: null,
-    longitude: null,
+    ...filterInitial,
   }
   selectedLocation.value = null
-  distanceSlider.value = 50
-  distanceInput.value = ''
   sortOption.value = 'date_creation!desc'
+  currentPage.value = 1
   fetchAnnonces()
+}
+
+const clearDistanceFilter = () => {
+  filters.value.distance_max = undefined
+  debouncedSearch()
 }
 
 const handleLocationChange = (location: SelectedLocation | null) => {
   if (location) {
     filters.value.longitude = location.coordinates[0]
     filters.value.latitude = location.coordinates[1]
+    filters.value.distance_max = 50
   } else {
-    filters.value.longitude = null
-    filters.value.latitude = null
-    filters.value.distanceMax = ''
-    distanceSlider.value = 50
-    distanceInput.value = ''
+    filters.value.longitude = undefined
+    filters.value.latitude = undefined
+    filters.value.distance_max = undefined
   }
   debouncedSearch()
 }
@@ -468,13 +609,7 @@ const getVisiblePages = () => {
 }
 
 onMounted(() => {
-  // Initialize filters from URL query params
-  const query = route.query
-  if (query.search) filters.value.search = query.search as string
-  if (query.type) filters.value.type = query.type as string
-  if (query.nature) filters.value.nature = query.nature as string
-
-  fetchAnnonces()
+  initFromQuery()
 })
 
 // Watch for route changes
@@ -482,7 +617,7 @@ watch(
   () => route.query,
   () => {
     if (route.name === 'annonces') {
-      fetchAnnonces()
+      initFromQuery()
     }
   },
 )
@@ -520,5 +655,16 @@ watch(
   height: 8px;
   border-radius: 4px;
   background: #e5e7eb;
+}
+
+/* Hide number input spinners */
+.no-spinners::-webkit-outer-spin-button,
+.no-spinners::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.no-spinners[type='number'] {
+  -moz-appearance: textfield;
 }
 </style>
