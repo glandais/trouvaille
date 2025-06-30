@@ -1,3 +1,11 @@
+# [1.3.0](https://github.com/glandais/trouvaille/compare/v1.2.2...v1.3.0) (2025-06-30)
+
+
+### Features
+
+* **frontend:** enhance search filters with URL persistence and improved UX ([98bb2af](https://github.com/glandais/trouvaille/commit/98bb2afd76aa3291c0ae63e343fa0fa8711b22d5))
+* UI ([4c9de21](https://github.com/glandais/trouvaille/commit/4c9de21cf116b704f5bc0bc00ea14bd4908a4729))
+
 ## [1.2.2](https://github.com/glandais/trouvaille/compare/v1.2.1...v1.2.2) (2025-06-30)
 
 
