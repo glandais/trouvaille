@@ -8,9 +8,8 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.NotFoundException;
-import jakarta.ws.rs.core.Response;
+import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -32,10 +31,10 @@ public class PhotoService {
   @ConfigProperty(name = "trouvaille.photos.storage-path")
   String storageBasePath;
 
-  public String createPhoto(InputStream data) {
+  public String createPhoto(File data) {
     try {
       // Read image data
-      byte[] imageData = data.readAllBytes();
+      byte[] imageData = Files.readAllBytes(data.toPath());
 
       if (imageData.length == 0) {
         throw new BadRequestException("Empty image data");
@@ -136,36 +135,29 @@ public class PhotoService {
     return Paths.get(storageBasePath, dir1, dir2, dir3, dir4, photoId).toAbsolutePath();
   }
 
-  public Response getPhotoFull(String photoId) {
+  public File getPhotoFull(String photoId) {
     return getPhotoFile(photoId, "full.jpg");
   }
 
-  public Response getPhotoThumb(String photoId) {
+  public File getPhotoThumb(String photoId) {
     return getPhotoFile(photoId, "thumb.jpg");
   }
 
-  private Response getPhotoFile(String photoId, String filename) {
-    try {
-      ObjectId objectId = new ObjectId(photoId);
-      PhotoEntity photoEntity = photoRepository.findById(objectId);
+  private File getPhotoFile(String photoId, String filename) {
+    ObjectId objectId = new ObjectId(photoId);
+    PhotoEntity photoEntity = photoRepository.findById(objectId);
 
-      if (photoEntity == null) {
-        throw new NotFoundException("Photo not found");
-      }
-
-      Path photoFile = getPhotoDirectory(photoId).resolve(filename);
-
-      if (!Files.exists(photoFile)) {
-        throw new NotFoundException("Photo file not found");
-      }
-
-      byte[] fileBytes = Files.readAllBytes(photoFile);
-
-      return Response.ok(fileBytes).header("Content-Type", "image/jpeg").build();
-
-    } catch (IOException e) {
-      throw new RuntimeException("Failed to read photo file: " + e.getMessage());
+    if (photoEntity == null) {
+      throw new NotFoundException("Photo not found");
     }
+
+    Path photoFile = getPhotoDirectory(photoId).resolve(filename);
+
+    if (!Files.exists(photoFile)) {
+      throw new NotFoundException("Photo file not found");
+    }
+
+    return photoFile.toFile();
   }
 
   private void removePhotoFromAnnonces(ObjectId photoId) {

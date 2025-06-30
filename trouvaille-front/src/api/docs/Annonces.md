@@ -2,10 +2,10 @@
 
 ## Properties
 
-| Name           | Type                                           | Description | Notes                             |
-| -------------- | ---------------------------------------------- | ----------- | --------------------------------- |
-| **data**       | [**Array&lt;AnnonceList&gt;**](AnnonceList.md) |             | [optional] [default to undefined] |
-| **pagination** | [**Pagination**](Pagination.md)                |             | [optional] [default to undefined] |
+| Name           | Type                                           | Description | Notes                  |
+| -------------- | ---------------------------------------------- | ----------- | ---------------------- |
+| **data**       | [**Array&lt;AnnonceList&gt;**](AnnonceList.md) |             | [default to undefined] |
+| **pagination** | [**Pagination**](Pagination.md)                |             | [default to undefined] |
 
 ## Example
 

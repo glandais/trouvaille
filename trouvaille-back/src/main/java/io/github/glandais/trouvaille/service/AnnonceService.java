@@ -1,11 +1,11 @@
 package io.github.glandais.trouvaille.service;
 
 import com.mongodb.client.model.Aggregates;
+import io.github.glandais.trouvaille.api.model.*;
 import io.github.glandais.trouvaille.entity.AnnonceEntity;
 import io.github.glandais.trouvaille.entity.AnnonceEntityStatut;
 import io.github.glandais.trouvaille.entity.AnnonceEntityWithDistance;
 import io.github.glandais.trouvaille.entity.UserEntity;
-import io.github.glandais.trouvaille.openapi.beans.*;
 import io.github.glandais.trouvaille.repository.AnnonceRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.ForbiddenException;
@@ -175,7 +175,7 @@ public class AnnonceService {
 
     // Add sort stage
     Document sortStage;
-    if (hasGeoQuery && AnnonceSearchSortBy.distance.equals(data.getSortBy())) {
+    if (hasGeoQuery && AnnonceSearchSortBy.DISTANCE.equals(data.getSortBy())) {
       // Distance sorting is already handled by geoNear, no additional sort needed
       sortStage = null;
     } else {
@@ -268,17 +268,17 @@ public class AnnonceService {
     Document sortStage = new Document();
 
     if (sortBy == null) {
-      sortBy = AnnonceSearchSortBy.date_creation;
+      sortBy = AnnonceSearchSortBy.DATE_CREATION;
     }
 
-    int direction = AnnonceSearchSortOrder.asc.equals(sortOrder) ? 1 : -1;
+    int direction = AnnonceSearchSortOrder.ASC.equals(sortOrder) ? 1 : -1;
 
     String sortField =
         switch (sortBy) {
-          case date_creation -> "dateCreation";
-          case date_modification -> "dateModification";
-          case prix -> "prix";
-          case titre -> "titre";
+          case DATE_CREATION -> "dateCreation";
+          case DATE_MODIFICATION -> "dateModification";
+          case PRIX -> "prix";
+          case TITRE -> "titre";
           default -> "dateCreation";
         };
 

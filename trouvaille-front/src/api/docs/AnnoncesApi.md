@@ -98,7 +98,6 @@ const { status, data } = await apiInstance.createAnnonce(annonceBase)
 | Status code | Description               | Response headers |
 | ----------- | ------------------------- | ---------------- |
 | **201**     | Annonce créée avec succès | -                |
-| **400**     | Données invalides         | -                |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
@@ -136,14 +135,13 @@ void (empty response body)
 ### HTTP request headers
 
 - **Content-Type**: Not defined
-- **Accept**: application/json
+- **Accept**: Not defined
 
 ### HTTP response details
 
-| Status code | Description         | Response headers |
-| ----------- | ------------------- | ---------------- |
-| **204**     | Annonce supprimée   | -                |
-| **404**     | Annonce non trouvée | -                |
+| Status code | Description       | Response headers |
+| ----------- | ----------------- | ---------------- |
+| **204**     | Annonce supprimée | -                |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
@@ -188,7 +186,6 @@ const { status, data } = await apiInstance.getAnnonce(id)
 | Status code | Description               | Response headers |
 | ----------- | ------------------------- | ---------------- |
 | **200**     | Détails de l\&#39;annonce | -                |
-| **404**     | Annonce non trouvée       | -                |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
@@ -281,6 +278,5 @@ const { status, data } = await apiInstance.putAnnonce(id, annonceWithStatut)
 | Status code | Description         | Response headers |
 | ----------- | ------------------- | ---------------- |
 | **200**     | Annonce mise à jour | -                |
-| **404**     | Annonce non trouvée | -                |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)

@@ -365,17 +365,17 @@ const props = defineProps<Props>()
 const router = useRouter()
 const { t } = useI18n()
 
-const form = reactive<AnnonceBase & { statut?: AnnonceStatut }>({
+const form = reactive<AnnonceBase & { statut: AnnonceStatut }>({
   type: AnnonceType.Vente,
   nature: AnnonceNature.Offre,
   titre: '',
   description: '',
-  prix: undefined,
+  prix: 0,
   periode_location: undefined,
   coordinates: { latitude: 0, longitude: 0 },
   ville: '',
   photos: [],
-  statut: undefined,
+  statut: AnnonceStatut.Active,
 })
 
 const errors = ref<Record<string, string>>({})
@@ -395,9 +395,6 @@ const validateForm = () => {
   if (!form.nature) errors.value.nature = t('validation.nature_required')
   if (!form.titre || form.titre.length < 5) {
     errors.value.titre = t('validation.title_min_length')
-  }
-  if (!form.description || form.description.length < 10) {
-    errors.value.description = t('validation.description_required')
   }
   if (!form.prix || form.prix <= 0) {
     errors.value.prix = t('validation.price_invalid')

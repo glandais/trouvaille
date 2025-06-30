@@ -44,8 +44,7 @@ paths:
           content:
             application/json:
               schema:
-                type: number
-                format: int32
+                type: integer
 
   /api/v1/annonces:
     post:
@@ -67,12 +66,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Annonce'
-        '400':
-          description: Données invalides
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
 
   /api/v1/annonces/{id}:
     get:
@@ -93,12 +86,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Annonce'
-        '404':
-          description: Annonce non trouvée
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
 
     put:
       summary: Mettre à jour une annonce
@@ -124,12 +111,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Annonce'
-        '404':
-          description: Annonce non trouvée
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
 
     delete:
       summary: Supprimer une annonce
@@ -145,12 +126,6 @@ paths:
       responses:
         '204':
           description: Annonce supprimée
-        '404':
-          description: Annonce non trouvée
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
 
   /api/v1/annonces/photos:
     post:
@@ -185,16 +160,9 @@ paths:
           required: true
           schema:
             type: string
-            format: uuid
       responses:
         '204':
           description: Photo supprimée
-        '404':
-          description: Photo non trouvée
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
 
   /api/v1/photos/{photoId}/full:
     get:
@@ -216,8 +184,6 @@ paths:
               schema:
                 type: string
                 format: binary
-        '404':
-          description: Photo non trouvée
 
   /api/v1/photos/{photoId}/thumb:
     get:
@@ -239,8 +205,6 @@ paths:
               schema:
                 type: string
                 format: binary
-        '404':
-          description: Photo non trouvée
 
   /api/v1/auth/token:
     post:
@@ -262,12 +226,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/OAuthTokenResponse'
-        '400':
-          description: Requête invalide
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
 
   /api/v1/config:
     get:
@@ -307,7 +265,6 @@ components:
           type: string
       required:
         - id
-        - externalId
 
     AnnonceType:
       type: string
@@ -382,12 +339,12 @@ components:
         prix_min:
           description: Prix minimum
           type: number
-          format: decimal
+          format: double
           minimum: 0
         prix_max:
           description: Prix maximum
           type: number
-          format: decimal
+          format: double
           minimum: 0
         latitude:
           description: Latitude pour le tri par distance
@@ -404,7 +361,7 @@ components:
         distance_max:
           description: Distance maximale en kilomètres (nécessite lat/lon)
           type: number
-          format: decimal
+          format: double
           minimum: 0
           maximum: 1000
         sort_by:
@@ -449,7 +406,7 @@ components:
           example: "Vélo de course **Trek** en parfait état, utilisé seulement 2 fois. Idéal pour débutant."
         prix:
           type: number
-          format: decimal
+          format: double
           minimum: 0
           example: 350.00
         periode_location:
@@ -468,6 +425,7 @@ components:
         - nature
         - titre
         - description
+        - prix
         - coordinates
         - ville
 
@@ -485,6 +443,8 @@ components:
           properties:
             statut:
               $ref: '#/components/schemas/AnnonceStatut'
+          required:
+            - statut
 
     Annonce:
       allOf:
@@ -505,9 +465,9 @@ components:
               format: date-time
           required:
             - id
+            - statut
             - utilisateur
             - date_creation
-            - statut
 
     Annonces:
       type: object
@@ -518,6 +478,9 @@ components:
             $ref: '#/components/schemas/AnnonceList'
         pagination:
           $ref: '#/components/schemas/Pagination'
+      required:
+        - data
+        - pagination
 
 
     AnnonceList:
@@ -527,9 +490,9 @@ components:
           properties:
             distance:
               type: number
-              format: decimal
+              format: double
               minimum: 0
-              description: Distance en kilomètres (présent uniquement si tri par distance)
+              description: Distance en kilomètres
 
     Pagination:
       type: object
@@ -551,28 +514,6 @@ components:
         - total_pages
         - total_elements
         - elements_par_page
-
-    Error:
-      type: object
-      properties:
-        code:
-          type: string
-          example: "VALIDATION_ERROR"
-        message:
-          type: string
-          example: "Les données fournies sont invalides"
-        details:
-          type: array
-          items:
-            type: object
-            properties:
-              field:
-                type: string
-              error:
-                type: string
-      required:
-        - code
-        - message
 
     OAuthTokenRequest:
       type: object

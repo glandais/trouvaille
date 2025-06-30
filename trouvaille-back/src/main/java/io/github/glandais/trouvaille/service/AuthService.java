@@ -1,12 +1,12 @@
 package io.github.glandais.trouvaille.service;
 
+import io.github.glandais.trouvaille.api.model.OAuthTokenRequest;
+import io.github.glandais.trouvaille.api.model.OAuthTokenResponse;
 import io.github.glandais.trouvaille.client.OAuth2Client;
 import io.github.glandais.trouvaille.client.dto.TokenResponse;
 import io.github.glandais.trouvaille.client.dto.User;
 import io.github.glandais.trouvaille.config.OAuthConfig;
 import io.github.glandais.trouvaille.entity.UserEntity;
-import io.github.glandais.trouvaille.openapi.beans.OAuthTokenRequest;
-import io.github.glandais.trouvaille.openapi.beans.OAuthTokenResponse;
 import io.smallrye.jwt.build.Jwt;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;

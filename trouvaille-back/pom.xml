@@ -13,12 +13,13 @@
         <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
         <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
         <quarkus.platform.version>3.24.1</quarkus.platform.version>
-        <quarkus-openapi-generator-server.version>2.11.0-lts</quarkus-openapi-generator-server.version>
+        <spotless-maven-plugin.version>2.44.5</spotless-maven-plugin.version>
+        <openapi-generator-maven-plugin.version>7.14.0</openapi-generator-maven-plugin.version>
+        <build-helper-maven-plugin.version>3.6.0</build-helper-maven-plugin.version>
+        <surefire-plugin.version>3.5.3</surefire-plugin.version>
+        <skipITs>true</skipITs>
         <mapstruct.version>1.6.3</mapstruct.version>
         <lombok.version>1.18.38</lombok.version>
-        <spotless-maven-plugin.version>2.44.5</spotless-maven-plugin.version>
-        <skipITs>true</skipITs>
-        <surefire-plugin.version>3.5.3</surefire-plugin.version>
         <lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
     </properties>
 
@@ -50,11 +51,6 @@
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-mongodb-panache</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.quarkiverse.openapi.generator</groupId>
-            <artifactId>quarkus-openapi-generator-server</artifactId>
-            <version>${quarkus-openapi-generator-server.version}</version>
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
@@ -97,6 +93,10 @@
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-hibernate-validator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
             <artifactId>quarkus-junit5</artifactId>
             <scope>test</scope>
         </dependency>
@@ -114,12 +114,6 @@
                 <artifactId>quarkus-maven-plugin</artifactId>
                 <version>${quarkus.platform.version}</version>
                 <extensions>true</extensions>
-                <configuration>
-                    <properties>
-                        <quarkus.openapi.generator.spec>openapi/contract.yaml</quarkus.openapi.generator.spec>
-                        <quarkus.openapi.generator.base-package>io.github.glandais.trouvaille.openapi</quarkus.openapi.generator.base-package>
-                    </properties>
-                </configuration>
                 <executions>
                     <execution>
                         <goals>
@@ -203,9 +197,6 @@
                             <reflowLongStrings>true</reflowLongStrings>
                             <formatJavadoc>false</formatJavadoc>
                         </googleJavaFormat>
-                        <removeUnusedImports></removeUnusedImports>
-                        <trimTrailingWhitespace></trimTrailingWhitespace>
-                        <endWithNewline></endWithNewline>
                     </java>
                     <pom>
                         <includes>
@@ -229,6 +220,53 @@
                             <goal>check</goal>
                         </goals>
                         <phase>compile</phase>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <version>${openapi-generator-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.basedir}/src/main/resources/openapi/contract.yaml</inputSpec>
+                            <generatorName>jaxrs-spec</generatorName>
+                            <output>${project.build.directory}/generated-sources/openapi</output>
+                            <configOptions>
+                                <library>quarkus</library>
+                                <interfaceOnly>true</interfaceOnly>
+                                <useJakartaEe>true</useJakartaEe>
+                                <apiPackage>io.github.glandais.trouvaille.api</apiPackage>
+                                <modelPackage>io.github.glandais.trouvaille.api.model</modelPackage>
+                                <useSwaggerAnnotations>false</useSwaggerAnnotations>
+                                <hideGenerationTimestamp>true</hideGenerationTimestamp>
+                                <disallowAdditionalPropertiesIfNotPresent>false</disallowAdditionalPropertiesIfNotPresent>
+                                <dateLibrary>java8</dateLibrary>
+                            </configOptions>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>${build-helper-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>add-generated-source</id>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <sources>
+                                <source>${project.build.directory}/generated-sources/openapi/src/gen/java</source>
+                            </sources>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

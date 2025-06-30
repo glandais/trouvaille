@@ -87,14 +87,13 @@ void (empty response body)
 ### HTTP request headers
 
 - **Content-Type**: Not defined
-- **Accept**: application/json
+- **Accept**: Not defined
 
 ### HTTP response details
 
-| Status code | Description       | Response headers |
-| ----------- | ----------------- | ---------------- |
-| **204**     | Photo supprimée   | -                |
-| **404**     | Photo non trouvée | -                |
+| Status code | Description     | Response headers |
+| ----------- | --------------- | ---------------- |
+| **204**     | Photo supprimée | -                |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
@@ -139,7 +138,6 @@ const { status, data } = await apiInstance.getPhotoFull(photoId)
 | Status code | Description                          | Response headers |
 | ----------- | ------------------------------------ | ---------------- |
 | **200**     | Contenu de la photo en taille réelle | -                |
-| **404**     | Photo non trouvée                    | -                |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
@@ -184,6 +182,5 @@ const { status, data } = await apiInstance.getPhotoThumb(photoId)
 | Status code | Description                      | Response headers |
 | ----------- | -------------------------------- | ---------------- |
 | **200**     | Contenu de la photo en miniature | -                |
-| **404**     | Photo non trouvée                | -                |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)

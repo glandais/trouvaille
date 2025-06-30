@@ -1,18 +1,9 @@
 package io.github.glandais.trouvaille.service;
 
-import io.github.glandais.trouvaille.entity.AnnonceEntity;
-import io.github.glandais.trouvaille.entity.AnnonceEntityNature;
-import io.github.glandais.trouvaille.entity.AnnonceEntityStatut;
-import io.github.glandais.trouvaille.entity.AnnonceEntityType;
-import io.github.glandais.trouvaille.openapi.beans.AnnonceBase;
-import io.github.glandais.trouvaille.openapi.beans.AnnonceNature;
-import io.github.glandais.trouvaille.openapi.beans.AnnonceStatut;
-import io.github.glandais.trouvaille.openapi.beans.AnnonceType;
-import io.github.glandais.trouvaille.openapi.beans.AnnonceWithStatut;
+import io.github.glandais.trouvaille.api.model.*;
+import io.github.glandais.trouvaille.entity.*;
 import org.bson.types.ObjectId;
-import org.mapstruct.Mapper;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.ReportingPolicy;
+import org.mapstruct.*;
 
 @Mapper(componentModel = "cdi", unmappedSourcePolicy = ReportingPolicy.ERROR)
 public abstract class AnnonceMapper {
@@ -26,9 +17,23 @@ public abstract class AnnonceMapper {
   public abstract void updateAnnonceEntity(
       @MappingTarget AnnonceEntity annonceEntity, AnnonceWithStatut data);
 
+  @EnumMapping(
+      nameTransformationStrategy = MappingConstants.CASE_TRANSFORMATION,
+      configuration = "lower")
   public abstract AnnonceEntityType mapAnnonceType(AnnonceType type);
 
+  @EnumMapping(
+      nameTransformationStrategy = MappingConstants.CASE_TRANSFORMATION,
+      configuration = "lower")
   public abstract AnnonceEntityNature mapAnnonceNature(AnnonceNature nature);
 
+  @EnumMapping(
+      nameTransformationStrategy = MappingConstants.CASE_TRANSFORMATION,
+      configuration = "lower")
   public abstract AnnonceEntityStatut mapAnnonceStatut(AnnonceStatut statut);
+
+  @EnumMapping(
+      nameTransformationStrategy = MappingConstants.CASE_TRANSFORMATION,
+      configuration = "lower")
+  public abstract PeriodeEntityLocation mapPeriodeLocation(PeriodeLocation periodeLocation);
 }

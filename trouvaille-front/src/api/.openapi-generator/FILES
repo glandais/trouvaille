@@ -21,8 +21,6 @@ docs/AnnoncesApi.md
 docs/AuthentificationApi.md
 docs/ConfigApi.md
 docs/Coordinates.md
-docs/Error.md
-docs/ErrorDetailsInner.md
 docs/FrontConfiguration.md
 docs/OAuthTokenRequest.md
 docs/OAuthTokenResponse.md

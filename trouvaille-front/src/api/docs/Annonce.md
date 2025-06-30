@@ -8,7 +8,7 @@
 | **nature**            | [**AnnonceNature**](AnnonceNature.md)     |             | [default to undefined]            |
 | **titre**             | **string**                                |             | [default to undefined]            |
 | **description**       | **string**                                |             | [default to undefined]            |
-| **prix**              | **number**                                |             | [optional] [default to undefined] |
+| **prix**              | **number**                                |             | [default to undefined]            |
 | **periode_location**  | [**PeriodeLocation**](PeriodeLocation.md) |             | [optional] [default to undefined] |
 | **photos**            | **Array&lt;string&gt;**                   |             | [optional] [default to undefined] |
 | **coordinates**       | [**Coordinates**](Coordinates.md)         |             | [default to undefined]            |

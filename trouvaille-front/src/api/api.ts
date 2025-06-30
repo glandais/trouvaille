@@ -68,7 +68,7 @@ export interface Annonce {
    * @type {number}
    * @memberof Annonce
    */
-  prix?: number
+  prix: number
   /**
    *
    * @type {PeriodeLocation}
@@ -160,7 +160,7 @@ export interface AnnonceBase {
    * @type {number}
    * @memberof AnnonceBase
    */
-  prix?: number
+  prix: number
   /**
    *
    * @type {PeriodeLocation}
@@ -222,7 +222,7 @@ export interface AnnonceList {
    * @type {number}
    * @memberof AnnonceList
    */
-  prix?: number
+  prix: number
   /**
    *
    * @type {PeriodeLocation}
@@ -278,7 +278,7 @@ export interface AnnonceList {
    */
   date_modification?: string
   /**
-   * Distance en kilomètres (présent uniquement si tri par distance)
+   * Distance en kilomètres
    * @type {number}
    * @memberof AnnonceList
    */
@@ -471,7 +471,7 @@ export interface AnnonceWithStatut {
    * @type {number}
    * @memberof AnnonceWithStatut
    */
-  prix?: number
+  prix: number
   /**
    *
    * @type {PeriodeLocation}
@@ -501,7 +501,7 @@ export interface AnnonceWithStatut {
    * @type {AnnonceStatut}
    * @memberof AnnonceWithStatut
    */
-  statut?: AnnonceStatut
+  statut: AnnonceStatut
 }
 
 /**
@@ -515,13 +515,13 @@ export interface Annonces {
    * @type {Array<AnnonceList>}
    * @memberof Annonces
    */
-  data?: Array<AnnonceList>
+  data: Array<AnnonceList>
   /**
    *
    * @type {Pagination}
    * @memberof Annonces
    */
-  pagination?: Pagination
+  pagination: Pagination
 }
 /**
  *
@@ -545,25 +545,6 @@ export interface Coordinates {
 /**
  *
  * @export
- * @interface ErrorDetailsInner
- */
-export interface ErrorDetailsInner {
-  /**
-   *
-   * @type {string}
-   * @memberof ErrorDetailsInner
-   */
-  field?: string
-  /**
-   *
-   * @type {string}
-   * @memberof ErrorDetailsInner
-   */
-  error?: string
-}
-/**
- *
- * @export
  * @interface FrontConfiguration
  */
 export interface FrontConfiguration {
@@ -579,31 +560,6 @@ export interface FrontConfiguration {
    * @memberof FrontConfiguration
    */
   clientId: string
-}
-/**
- *
- * @export
- * @interface ModelError
- */
-export interface ModelError {
-  /**
-   *
-   * @type {string}
-   * @memberof ModelError
-   */
-  code: string
-  /**
-   *
-   * @type {string}
-   * @memberof ModelError
-   */
-  message: string
-  /**
-   *
-   * @type {Array<ErrorDetailsInner>}
-   * @memberof ModelError
-   */
-  details?: Array<ErrorDetailsInner>
 }
 /**
  *

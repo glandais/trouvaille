@@ -1,21 +1,19 @@
 package io.github.glandais.trouvaille.resource;
 
+import io.github.glandais.trouvaille.api.ApiApi;
+import io.github.glandais.trouvaille.api.model.*;
 import io.github.glandais.trouvaille.config.FrontConfig;
-import io.github.glandais.trouvaille.openapi.ApiResource;
-import io.github.glandais.trouvaille.openapi.beans.*;
 import io.github.glandais.trouvaille.service.AnnonceService;
 import io.github.glandais.trouvaille.service.AuthService;
 import io.github.glandais.trouvaille.service.PhotoService;
 import io.quarkus.security.Authenticated;
 import jakarta.annotation.security.PermitAll;
-import jakarta.ws.rs.core.Response;
-import java.io.InputStream;
-import java.math.BigDecimal;
+import java.io.File;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Authenticated
-public class ApiResourcempl implements ApiResource {
+public class ApiResourcempl implements ApiApi {
 
   final AnnonceService annonceService;
   final PhotoService photoService;
@@ -28,8 +26,8 @@ public class ApiResourcempl implements ApiResource {
   }
 
   @Override
-  public BigDecimal countAnnonces(AnnonceSearch data) {
-    return BigDecimal.valueOf(annonceService.countAnnonces(data));
+  public Integer countAnnonces(AnnonceSearch data) {
+    return annonceService.countAnnonces(data);
   }
 
   @Override
@@ -53,7 +51,7 @@ public class ApiResourcempl implements ApiResource {
   }
 
   @Override
-  public String createPhoto(InputStream data) {
+  public String createPhoto(File data) {
     return photoService.createPhoto(data);
   }
 
@@ -63,12 +61,12 @@ public class ApiResourcempl implements ApiResource {
   }
 
   @Override
-  public Response getPhotoFull(String photoId) {
+  public File getPhotoFull(String photoId) {
     return photoService.getPhotoFull(photoId);
   }
 
   @Override
-  public Response getPhotoThumb(String photoId) {
+  public File getPhotoThumb(String photoId) {
     return photoService.getPhotoThumb(photoId);
   }
 
