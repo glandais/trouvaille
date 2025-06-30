@@ -53,7 +53,7 @@ Description explaining what was changed and why.
 Additional context if needed.
 
 Return the complete commit message with subject and description.
-IMPORTANT: Return ONLY the raw commit message text, no markdown formatting, no code blocks, no backticks.
+IMPORTANT: Return ONLY the raw commit message text, no markdown formatting, no code blocks, no backticks. DO NOT add "Generated with" or "Co-Authored-By"
 EOF
     
     # Generate commit message

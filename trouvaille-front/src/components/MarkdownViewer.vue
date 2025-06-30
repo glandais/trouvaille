@@ -89,4 +89,3 @@ onUnmounted(() => {
   destroyViewer()
 })
 </script>
-
