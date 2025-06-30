@@ -15,7 +15,7 @@ services:
       - "--entrypoints.web.address=:80"
       - "--log.level=DEBUG"
       - "--accesslog=true"
-      - "--providers.docker.constraints=Label('traefik.stack','${TRAEFIK_STACK}')"
+      - "--providers.docker.constraints=Label(`traefik.stack`,`${TRAEFIK_STACK}`)"
     ports:
       - "${HTTP_PORT:-8090}:80"        # HTTP configurable (default 8090)
       - "127.0.0.1:${TRAEFIK_DASHBOARD_HTTP_PORT:-28080}:8080"  # Dashboard (localhost only)
