@@ -282,10 +282,9 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
-import { LocationQueryRaw, useRoute } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { useDebounceFn } from '@vueuse/core'
 import { annoncesApi } from '../services/api'
-import router from '../router'
 import {
   AnnonceList,
   AnnonceType,
@@ -301,8 +300,11 @@ import AnnonceCard from '../components/AnnonceCard.vue'
 import LocationField from '../components/LocationField.vue'
 import { XMarkIcon, MagnifyingGlassIcon } from '@heroicons/vue/24/outline'
 import { SelectedLocation } from '@/types/location'
+import { useRouteParams } from '@/composables/useRouteParams'
+import { RouterParam } from '@/types/routeParams'
 
 const route = useRoute()
+const routeParams = useRouteParams()
 const { getTypeLabel, getNatureLabel } = useAnnonceLabels()
 
 const annonces = ref<AnnonceList[]>([])
@@ -328,32 +330,6 @@ const filters = ref<AnnonceSearch>({
   ...filterInitial,
 })
 
-interface ApplyFromRoute {
-  (input: string): void
-}
-
-interface GetRouteValue {
-  (): string | undefined
-}
-
-class RouterParam<T> {
-  paramName: string
-  defaultValue: T
-  applyFromRoute: ApplyFromRoute
-  getRouteValue: GetRouteValue
-  constructor(
-    paramName: string,
-    defaultValue: T,
-    applyFromRoute: ApplyFromRoute,
-    getRouteValue: GetRouteValue,
-  ) {
-    this.paramName = paramName
-    this.defaultValue = defaultValue
-    this.applyFromRoute = applyFromRoute
-    this.getRouteValue = getRouteValue
-  }
-}
-
 const getOrInitSelectedLocation = () => {
   if (selectedLocation.value) {
     return selectedLocation.value
@@ -363,19 +339,12 @@ const getOrInitSelectedLocation = () => {
   }
 }
 
-const asString = (t: number | undefined) => {
-  if (t === null || t === undefined) {
-    return undefined
-  }
-  return t.toString()
-}
-
 const routerParams = [
   new RouterParam<number>(
     'page',
     1,
     (s) => (currentPage.value = parseInt(s)),
-    () => asString(currentPage.value),
+    () => routeParams.asString(currentPage.value),
   ),
   new RouterParam<string | undefined>(
     'search',
@@ -399,13 +368,13 @@ const routerParams = [
     'prix_min',
     undefined,
     (s) => (filters.value.prix_min = parseInt(s)),
-    () => asString(filters.value.prix_min),
+    () => routeParams.asString(filters.value.prix_min),
   ),
   new RouterParam<string | undefined>(
     'prix_max',
     undefined,
     (s) => (filters.value.prix_max = parseInt(s)),
-    () => asString(filters.value.prix_max),
+    () => routeParams.asString(filters.value.prix_max),
   ),
   new RouterParam<string | undefined>(
     'location',
@@ -425,7 +394,10 @@ const routerParams = [
       sl.coordinates[0] = parseFloat(s)
       filters.value.longitude = parseFloat(s)
     },
-    () => (selectedLocation.value ? asString(selectedLocation.value.coordinates[0]) : undefined),
+    () =>
+      selectedLocation.value
+        ? routeParams.asString(selectedLocation.value.coordinates[0])
+        : undefined,
   ),
   new RouterParam<string | undefined>(
     'latitude',
@@ -435,13 +407,16 @@ const routerParams = [
       sl.coordinates[1] = parseFloat(s)
       filters.value.latitude = parseFloat(s)
     },
-    () => (selectedLocation.value ? asString(selectedLocation.value.coordinates[1]) : undefined),
+    () =>
+      selectedLocation.value
+        ? routeParams.asString(selectedLocation.value.coordinates[1])
+        : undefined,
   ),
   new RouterParam<string | undefined>(
     'distance_max',
     undefined,
     (s) => (filters.value.distance_max = parseInt(s)),
-    () => (selectedLocation.value ? asString(filters.value.distance_max) : undefined),
+    () => (selectedLocation.value ? routeParams.asString(filters.value.distance_max) : undefined),
   ),
   new RouterParam<string | undefined>(
     'sortOption',
@@ -451,19 +426,6 @@ const routerParams = [
   ),
 ]
 
-const applyFiltersToRouter = async () => {
-  updatingRoute.value = true
-  const query: LocationQueryRaw = {}
-  routerParams.forEach((routerParam) => {
-    const value = routerParam.getRouteValue()
-    if (value !== undefined && value.length > 0) {
-      query[routerParam.paramName] = value
-    }
-  })
-  await router.push({ name: 'annonces', query })
-  updatingRoute.value = false
-}
-
 const initFromQuery = () => {
   if (!updatingRoute.value) {
     filters.value = {
@@ -471,13 +433,7 @@ const initFromQuery = () => {
     }
     selectedLocation.value = null
     sortOption.value = 'date_creation!desc'
-
-    routerParams.forEach((routerParam) => {
-      const value = route.query[routerParam.paramName]
-      if (value !== null && value !== undefined) {
-        routerParam.applyFromRoute(value.toString())
-      }
-    })
+    routeParams.initFromRouterParams(routerParams)
     fetchAnnonces()
   }
 }
@@ -521,7 +477,7 @@ const fetchAnnonces = async () => {
     }
 
     const response = await annoncesApi.listAnnonces(annonceSearch)
-    await applyFiltersToRouter()
+    await routeParams.applyRouterParams('annonces', routerParams, updatingRoute)
 
     annonces.value = response.data.data || []
     pagination.value = response.data.pagination
