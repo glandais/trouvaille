@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/glandais/trouvaille/compare/v1.1.7...v1.2.0) (2025-06-30)
+
+
+### Features
+
+* Fetch front config from API ([0baccc6](https://github.com/glandais/trouvaille/commit/0baccc62ca25716bb259b52fa8c4d75c61d16ccc))
+
 ## [1.1.7](https://github.com/glandais/trouvaille/compare/v1.1.6...v1.1.7) (2025-06-30)
 
 
