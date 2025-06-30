@@ -10,7 +10,6 @@ import jakarta.annotation.security.PermitAll;
 import jakarta.ws.rs.core.Response;
 import java.io.InputStream;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -22,36 +21,13 @@ public class ApiResourcempl implements ApiResource {
   final AuthService authService;
 
   @Override
-  public Annonces listAnnonces(
-      AnnonceType type,
-      AnnonceStatut statut,
-      AnnonceNature nature,
-      BigInteger page,
-      BigInteger limit,
-      String search,
-      String userId,
-      BigDecimal prixMin,
-      BigDecimal prixMax,
-      Double latitude,
-      Double longitude,
-      BigDecimal distanceMax,
-      String sortBy,
-      String sortOrder) {
-    return annonceService.listAnnonces(
-        type,
-        statut,
-        nature,
-        page,
-        limit,
-        search,
-        userId,
-        prixMin,
-        prixMax,
-        latitude,
-        longitude,
-        distanceMax,
-        sortBy,
-        sortOrder);
+  public Annonces listAnnonces(AnnonceSearch data) {
+    return annonceService.listAnnonces(data);
+  }
+
+  @Override
+  public BigDecimal countAnnonces(AnnonceSearch data) {
+    return BigDecimal.valueOf(annonceService.countAnnonces(data));
   }
 
   @Override

@@ -10,8 +10,6 @@ import io.github.glandais.trouvaille.repository.AnnonceRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.NotFoundException;
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -33,45 +31,22 @@ public class AnnonceService {
   // PUBLIC API METHODS
   // ===============================
 
-  public Annonces listAnnonces(
-      AnnonceType type,
-      AnnonceStatut statut,
-      AnnonceNature nature,
-      BigInteger page,
-      BigInteger limit,
-      String search,
-      String userId,
-      BigDecimal prixMin,
-      BigDecimal prixMax,
-      Double latitude,
-      Double longitude,
-      BigDecimal distanceMax,
-      String sortBy,
-      String sortOrder) {
+  public Annonces listAnnonces(AnnonceSearch data) {
     // Pagination parameters
-    int pageNumber = page != null ? page.intValue() - 1 : 0; // Convert to 0-based
-    int pageSize = limit != null ? limit.intValue() : 20;
+    int pageNumber = data.getPage() != null ? data.getPage() - 1 : 0; // Convert to 0-based
+    int pageSize = data.getLimit() != null ? data.getLimit() : 20;
 
     if (pageNumber < 0) pageNumber = 0;
     if (pageSize < 1) pageSize = 20;
     if (pageSize > 100) pageSize = 100;
 
     // Use unified MongoDB aggregation pipeline for all queries
-    return executeQuery(
-        type,
-        statut,
-        nature,
-        search,
-        userId,
-        prixMin,
-        prixMax,
-        latitude,
-        longitude,
-        distanceMax,
-        sortBy,
-        sortOrder,
-        pageNumber,
-        pageSize);
+    return executeQuery(data, pageNumber, pageSize);
+  }
+
+  public int countAnnonces(AnnonceSearch data) {
+    List<Bson> pipeline = searchPipeline(data);
+    return getTotalCount(pipeline);
   }
 
   public Annonce createAnnonce(AnnonceBase data) {
@@ -110,83 +85,11 @@ public class AnnonceService {
   // QUERY EXECUTION METHODS
   // ===============================
 
-  private Annonces executeQuery(
-      AnnonceType type,
-      AnnonceStatut statut,
-      AnnonceNature nature,
-      String search,
-      String userId,
-      BigDecimal prixMin,
-      BigDecimal prixMax,
-      Double latitude,
-      Double longitude,
-      BigDecimal distanceMax,
-      String sortBy,
-      String sortOrder,
-      int pageNumber,
-      int pageSize) {
+  private Annonces executeQuery(AnnonceSearch data, int pageNumber, int pageSize) {
 
-    List<Bson> pipeline = new ArrayList<>();
-    boolean hasGeoQuery = latitude != null && longitude != null;
+    List<Bson> pipeline = searchPipeline(data);
 
-    if (hasGeoQuery) {
-      // Add geoNear stage for distance calculation and sorting
-      Document geoNearOptions = new Document();
-      geoNearOptions.append(
-          "near",
-          new Document()
-              .append("type", "Point")
-              .append("coordinates", List.of(longitude, latitude)));
-      geoNearOptions.append("distanceField", "calculatedDistance");
-      geoNearOptions.append("spherical", true);
-
-      // Add distance filter if specified (distance in meters)
-      if (distanceMax != null) {
-        geoNearOptions.append(
-            "maxDistance", distanceMax.doubleValue() * 1000); // Convert km to meters
-      }
-
-      pipeline.add(new Document("$geoNear", geoNearOptions));
-
-      // Add distance field in kilometers using addFields stage
-      pipeline.add(
-          new Document(
-              "$addFields",
-              new Document(
-                  "distance", new Document("$divide", List.of("$calculatedDistance", 1000)))));
-    }
-
-    // Add match stage for filters
-    Document matchStage = buildMatchStage(type, statut, nature, search, userId, prixMin, prixMax);
-    if (!matchStage.isEmpty()) {
-      pipeline.add(Aggregates.match(matchStage));
-    }
-
-    // Add sort stage
-    Document sortStage;
-    if (hasGeoQuery && "distance".equals(sortBy)) {
-      // Distance sorting is already handled by geoNear, no additional sort needed
-      sortStage = null;
-    } else {
-      sortStage = buildSortStage(sortBy, sortOrder);
-    }
-
-    if (sortStage != null && !sortStage.isEmpty()) {
-      pipeline.add(Aggregates.sort(sortStage));
-    }
-
-    // Execute aggregation to get total count
-    List<Bson> countPipeline = new ArrayList<>(pipeline);
-    countPipeline.add(Aggregates.count("total"));
-
-    List<Document> countResult =
-        annonceRepository
-            .mongoDatabase()
-            .getCollection("Annonce")
-            .aggregate(countPipeline, Document.class)
-            .into(new ArrayList<>());
-
-    int totalCount = countResult.isEmpty() ? 0 : countResult.getFirst().getInteger("total", 0);
+    int totalCount = getTotalCount(pipeline);
 
     // Add pagination stages
     pipeline.add(Aggregates.skip(pageNumber * pageSize));
@@ -218,6 +121,73 @@ public class AnnonceService {
     return result;
   }
 
+  private int getTotalCount(List<Bson> pipeline) {
+    // Execute aggregation to get total count
+    List<Bson> countPipeline = new ArrayList<>(pipeline);
+    countPipeline.add(Aggregates.count("total"));
+
+    List<Document> countResult =
+        annonceRepository
+            .mongoDatabase()
+            .getCollection("Annonce")
+            .aggregate(countPipeline, Document.class)
+            .into(new ArrayList<>());
+
+    int totalCount = countResult.isEmpty() ? 0 : countResult.getFirst().getInteger("total", 0);
+    return totalCount;
+  }
+
+  private List<Bson> searchPipeline(AnnonceSearch data) {
+    List<Bson> pipeline = new ArrayList<>();
+    boolean hasGeoQuery = data.getLatitude() != null && data.getLongitude() != null;
+
+    if (hasGeoQuery) {
+      // Add geoNear stage for distance calculation and sorting
+      Document geoNearOptions = new Document();
+      geoNearOptions.append(
+          "near",
+          new Document()
+              .append("type", "Point")
+              .append("coordinates", List.of(data.getLongitude(), data.getLatitude())));
+      geoNearOptions.append("distanceField", "calculatedDistance");
+      geoNearOptions.append("spherical", true);
+
+      // Add distance filter if specified (distance in meters)
+      if (data.getDistanceMax() != null) {
+        geoNearOptions.append("maxDistance", data.getDistanceMax() * 1000); // Convert km to meters
+      }
+
+      pipeline.add(new Document("$geoNear", geoNearOptions));
+
+      // Add distance field in kilometers using addFields stage
+      pipeline.add(
+          new Document(
+              "$addFields",
+              new Document(
+                  "distance", new Document("$divide", List.of("$calculatedDistance", 1000)))));
+    }
+
+    // Add match stage for filters
+    Document matchStage = buildMatchStage(data);
+    if (!matchStage.isEmpty()) {
+      pipeline.add(Aggregates.match(matchStage));
+    }
+
+    // Add sort stage
+    Document sortStage;
+    if (hasGeoQuery && AnnonceSearchSortBy.distance.equals(data.getSortBy())) {
+      // Distance sorting is already handled by geoNear, no additional sort needed
+      sortStage = null;
+    } else {
+      sortStage = buildSortStage(data.getSortBy(), data.getSortOrder());
+    }
+
+    if (sortStage != null && !sortStage.isEmpty()) {
+      pipeline.add(Aggregates.sort(sortStage));
+    }
+    return pipeline;
+  }
+
   // ===============================
   // VALIDATION & SECURITY
   // ===============================
@@ -240,44 +210,37 @@ public class AnnonceService {
   // QUERY BUILDERS & UTILITIES
   // ===============================
 
-  private Document buildMatchStage(
-      AnnonceType type,
-      AnnonceStatut statut,
-      AnnonceNature nature,
-      String search,
-      String userId,
-      BigDecimal prixMin,
-      BigDecimal prixMax) {
+  private Document buildMatchStage(AnnonceSearch data) {
     Document matchStage = new Document();
 
     // Apply status filtering logic
-    applyStatusFilterToMatchStage(matchStage, statut, userId);
+    applyStatusFilterToMatchStage(matchStage, data);
 
     // Filter by type
-    if (type != null) {
-      matchStage.append("type", annonceMapper.mapAnnonceType(type).toString());
+    if (data.getType() != null) {
+      matchStage.append("type", annonceMapper.mapAnnonceType(data.getType()).toString());
     }
 
     // Filter by nature
-    if (nature != null) {
-      matchStage.append("nature", annonceMapper.mapAnnonceNature(nature).toString());
+    if (data.getNature() != null) {
+      matchStage.append("nature", annonceMapper.mapAnnonceNature(data.getNature()).toString());
     }
 
     // Filter by price range
-    if (prixMin != null || prixMax != null) {
+    if (data.getPrixMin() != null || data.getPrixMax() != null) {
       Document priceFilter = new Document();
-      if (prixMin != null) {
-        priceFilter.append("$gte", prixMin.doubleValue());
+      if (data.getPrixMin() != null) {
+        priceFilter.append("$gte", data.getPrixMin());
       }
-      if (prixMax != null) {
-        priceFilter.append("$lte", prixMax.doubleValue());
+      if (data.getPrixMax() != null) {
+        priceFilter.append("$lte", data.getPrixMax());
       }
       matchStage.append("prix", priceFilter);
     }
 
     // Text search in title and description
-    if (search != null && !search.trim().isEmpty()) {
-      String searchPattern = search.trim();
+    if (data.getSearch() != null && !data.getSearch().trim().isEmpty()) {
+      String searchPattern = data.getSearch().trim();
       Document textSearch =
           new Document(
               "$or",
@@ -291,31 +254,31 @@ public class AnnonceService {
     }
 
     // Filter by user pseudo
-    if (userId != null && !userId.trim().isEmpty()) {
-      UserEntity user = userService.getUser(userId);
+    if (data.getUserId() != null && !data.getUserId().trim().isEmpty()) {
+      UserEntity user = userService.getUser(data.getUserId());
       if (user != null) {
-        matchStage.append("utilisateur", new ObjectId(userId));
+        matchStage.append("utilisateur", new ObjectId(data.getUserId()));
       }
     }
 
     return matchStage;
   }
 
-  private Document buildSortStage(String sortBy, String sortOrder) {
+  private Document buildSortStage(AnnonceSearchSortBy sortBy, AnnonceSearchSortOrder sortOrder) {
     Document sortStage = new Document();
 
     if (sortBy == null) {
-      sortBy = "date_creation";
+      sortBy = AnnonceSearchSortBy.date_creation;
     }
 
-    int direction = "asc".equals(sortOrder) ? 1 : -1;
+    int direction = AnnonceSearchSortOrder.asc.equals(sortOrder) ? 1 : -1;
 
     String sortField =
         switch (sortBy) {
-          case "date_creation" -> "dateCreation";
-          case "date_modification" -> "dateModification";
-          case "prix" -> "prix";
-          case "titre" -> "titre";
+          case date_creation -> "dateCreation";
+          case date_modification -> "dateModification";
+          case prix -> "prix";
+          case titre -> "titre";
           default -> "dateCreation";
         };
 
@@ -323,21 +286,20 @@ public class AnnonceService {
     return sortStage;
   }
 
-  private void applyStatusFilterToMatchStage(
-      Document matchStage, AnnonceStatut statut, String userId) {
-    if (userId == null || userId.trim().isEmpty()) {
+  private void applyStatusFilterToMatchStage(Document matchStage, AnnonceSearch data) {
+    if (data.getUserId() == null || data.getUserId().trim().isEmpty()) {
       // No user specified - only show active annonces
       matchStage.append("statut", AnnonceEntityStatut.active.toString());
     } else {
       // User specified - check if it's the current user
       UserEntity currentUser = userService.getCurrentUser();
-      UserEntity targetUser = userService.getUser(userId);
+      UserEntity targetUser = userService.getUser(data.getUserId());
 
       if (targetUser != null && currentUser.getId().equals(targetUser.getId())) {
         // Current user viewing their own annonces
-        if (statut != null) {
+        if (data.getStatut() != null) {
           // Apply specific status filter
-          matchStage.append("statut", annonceMapper.mapAnnonceStatut(statut).toString());
+          matchStage.append("statut", annonceMapper.mapAnnonceStatut(data.getStatut()).toString());
         }
         // If no status specified, show all statuses (no filter)
       } else {

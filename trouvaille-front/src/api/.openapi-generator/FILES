@@ -10,6 +10,9 @@ docs/Annonce.md
 docs/AnnonceBase.md
 docs/AnnonceList.md
 docs/AnnonceNature.md
+docs/AnnonceSearch.md
+docs/AnnonceSearchSortBy.md
+docs/AnnonceSearchSortOrder.md
 docs/AnnonceStatut.md
 docs/AnnonceType.md
 docs/AnnonceWithStatut.md

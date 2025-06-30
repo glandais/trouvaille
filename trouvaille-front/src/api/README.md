@@ -55,10 +55,11 @@ All URIs are relative to _http://localhost_
 
 | Class                 | Method                                                                   | HTTP request                                 | Description                                            |
 | --------------------- | ------------------------------------------------------------------------ | -------------------------------------------- | ------------------------------------------------------ |
+| _AnnoncesApi_         | [**countAnnonces**](docs/AnnoncesApi.md#countannonces)                   | **POST** /api/v1/annonces/search/count       | Récupérer le nombre d\&#39;annonces                    |
 | _AnnoncesApi_         | [**createAnnonce**](docs/AnnoncesApi.md#createannonce)                   | **POST** /api/v1/annonces                    | Créer une nouvelle annonce                             |
 | _AnnoncesApi_         | [**deleteAnnonce**](docs/AnnoncesApi.md#deleteannonce)                   | **DELETE** /api/v1/annonces/{id}             | Supprimer une annonce                                  |
 | _AnnoncesApi_         | [**getAnnonce**](docs/AnnoncesApi.md#getannonce)                         | **GET** /api/v1/annonces/{id}                | Récupérer une annonce par son ID                       |
-| _AnnoncesApi_         | [**listAnnonces**](docs/AnnoncesApi.md#listannonces)                     | **GET** /api/v1/annonces                     | Récupérer toutes les annonces                          |
+| _AnnoncesApi_         | [**listAnnonces**](docs/AnnoncesApi.md#listannonces)                     | **POST** /api/v1/annonces/search/list        | Récupérer toutes les annonces                          |
 | _AnnoncesApi_         | [**putAnnonce**](docs/AnnoncesApi.md#putannonce)                         | **PUT** /api/v1/annonces/{id}                | Mettre à jour une annonce                              |
 | _AuthentificationApi_ | [**exchangeOAuthToken**](docs/AuthentificationApi.md#exchangeoauthtoken) | **POST** /api/v1/auth/token                  | Échanger le code OAuth pour un token                   |
 | _PhotosApi_           | [**createPhoto**](docs/PhotosApi.md#createphoto)                         | **POST** /api/v1/annonces/photos             | Ajouter une photo                                      |
@@ -72,6 +73,9 @@ All URIs are relative to _http://localhost_
 - [AnnonceBase](docs/AnnonceBase.md)
 - [AnnonceList](docs/AnnonceList.md)
 - [AnnonceNature](docs/AnnonceNature.md)
+- [AnnonceSearch](docs/AnnonceSearch.md)
+- [AnnonceSearchSortBy](docs/AnnonceSearchSortBy.md)
+- [AnnonceSearchSortOrder](docs/AnnonceSearchSortOrder.md)
 - [AnnonceStatut](docs/AnnonceStatut.md)
 - [AnnonceType](docs/AnnonceType.md)
 - [AnnonceWithStatut](docs/AnnonceWithStatut.md)

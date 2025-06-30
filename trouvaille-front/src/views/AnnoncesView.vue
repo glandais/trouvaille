@@ -59,12 +59,12 @@
               Trier par
             </label>
             <select id="sort" v-model="sortOption" class="form-input" @change="debouncedSearch">
-              <option value="date_creation_desc">Plus récent</option>
-              <option value="date_creation_asc">Plus ancien</option>
-              <option value="prix_asc">Prix croissant</option>
-              <option value="prix_desc">Prix décroissant</option>
-              <option value="titre_asc">Titre A-Z</option>
-              <option value="titre_desc">Titre Z-A</option>
+              <option value="date_creation!desc">Plus récent</option>
+              <option value="date_creation!asc">Plus ancien</option>
+              <option value="prix!asc">Prix croissant</option>
+              <option value="prix!desc">Prix décroissant</option>
+              <option value="titre!asc">Titre A-Z</option>
+              <option value="titre!desc">Titre Z-A</option>
             </select>
           </div>
         </div>
@@ -280,8 +280,9 @@ import {
   AnnonceType,
   AnnonceNature,
   Pagination,
-  ListAnnoncesSortByEnum,
-  ListAnnoncesSortOrderEnum,
+  AnnonceSearch,
+  AnnonceSearchSortBy,
+  AnnonceSearchSortOrder,
 } from '../api'
 import { useAnnonceLabels } from '@/composables/useAnnonceLabels'
 import AppLayout from '../components/AppLayout.vue'
@@ -296,7 +297,7 @@ const { getTypeLabel, getNatureLabel } = useAnnonceLabels()
 const annonces = ref<AnnonceList[]>([])
 const pagination = ref<Pagination>()
 const loading = ref(false)
-const sortOption = ref('date_creation_desc')
+const sortOption = ref('date_creation!desc')
 const distanceSlider = ref(50)
 const distanceInput = ref('')
 const selectedLocation = ref<SelectedLocation | null>(null)
@@ -335,28 +336,30 @@ const hasCoordinates = computed(() => {
 const fetchAnnonces = async (page = 1) => {
   loading.value = true
   try {
-    const [sortBy, sortOrder] = sortOption.value.split('_')
-    const realSortBy = sortBy === 'date' ? `${sortBy}_creation` : sortBy
+    const [sortBy, sortOrder] = sortOption.value.split('!')
 
     const typeParam = (filters.value.type as AnnonceType | undefined) || undefined
     const natureParam = filters.value.nature || undefined
 
-    const response = await annoncesApi.listAnnonces(
-      typeParam,
-      undefined, // statut
-      natureParam as AnnonceNature | undefined,
-      page,
-      12, // limit
-      filters.value.search || undefined,
-      undefined, // userId
-      filters.value.prixMin ? parseFloat(filters.value.prixMin) : undefined,
-      filters.value.prixMax ? parseFloat(filters.value.prixMax) : undefined,
-      filters.value.latitude || undefined,
-      filters.value.longitude || undefined,
-      filters.value.distanceMax ? Math.round(parseFloat(filters.value.distanceMax)) : undefined,
-      realSortBy as ListAnnoncesSortByEnum,
-      sortOrder === 'desc' ? ListAnnoncesSortOrderEnum.Desc : ListAnnoncesSortOrderEnum.Asc,
-    )
+    const annonceSearch: AnnonceSearch = {
+      type: typeParam,
+      statut: undefined, // statut
+      nature: natureParam as AnnonceNature | undefined,
+      page: page,
+      limit: 12, // limit
+      search: filters.value.search || undefined,
+      user_id: undefined, // userId
+      prix_min: filters.value.prixMin ? parseFloat(filters.value.prixMin) : undefined,
+      prix_max: filters.value.prixMax ? parseFloat(filters.value.prixMax) : undefined,
+      latitude: filters.value.latitude || undefined,
+      longitude: filters.value.longitude || undefined,
+      distance_max: filters.value.distanceMax
+        ? Math.round(parseFloat(filters.value.distanceMax))
+        : undefined,
+      sort_by: sortBy as AnnonceSearchSortBy,
+      sort_order: sortOrder === 'desc' ? AnnonceSearchSortOrder.Desc : AnnonceSearchSortOrder.Asc,
+    }
+    const response = await annoncesApi.listAnnonces(annonceSearch)
 
     annonces.value = response.data.data || []
     pagination.value = response.data.pagination
@@ -413,7 +416,7 @@ const clearAllFilters = () => {
   selectedLocation.value = null
   distanceSlider.value = 50
   distanceInput.value = ''
-  sortOption.value = 'date_creation_desc'
+  sortOption.value = 'date_creation!desc'
   fetchAnnonces()
 }
 

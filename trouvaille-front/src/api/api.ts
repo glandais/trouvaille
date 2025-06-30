@@ -299,6 +299,123 @@ export enum AnnonceNature {
 /**
  *
  * @export
+ * @interface AnnonceSearch
+ */
+export interface AnnonceSearch {
+  /**
+   *
+   * @type {AnnonceType}
+   * @memberof AnnonceSearch
+   */
+  type?: AnnonceType
+  /**
+   *
+   * @type {AnnonceStatut}
+   * @memberof AnnonceSearch
+   */
+  statut?: AnnonceStatut
+  /**
+   *
+   * @type {AnnonceNature}
+   * @memberof AnnonceSearch
+   */
+  nature?: AnnonceNature
+  /**
+   * Numéro de page
+   * @type {number}
+   * @memberof AnnonceSearch
+   */
+  page?: number
+  /**
+   * Nombre d\'éléments par page
+   * @type {number}
+   * @memberof AnnonceSearch
+   */
+  limit?: number
+  /**
+   * Recherche textuelle dans titre et description
+   * @type {string}
+   * @memberof AnnonceSearch
+   */
+  search?: string
+  /**
+   * Recherche par utilisateur
+   * @type {string}
+   * @memberof AnnonceSearch
+   */
+  user_id?: string
+  /**
+   * Prix minimum
+   * @type {number}
+   * @memberof AnnonceSearch
+   */
+  prix_min?: number
+  /**
+   * Prix maximum
+   * @type {number}
+   * @memberof AnnonceSearch
+   */
+  prix_max?: number
+  /**
+   * Latitude pour le tri par distance
+   * @type {number}
+   * @memberof AnnonceSearch
+   */
+  latitude?: number
+  /**
+   * Longitude pour le tri par distance
+   * @type {number}
+   * @memberof AnnonceSearch
+   */
+  longitude?: number
+  /**
+   * Distance maximale en kilomètres (nécessite lat/lon)
+   * @type {number}
+   * @memberof AnnonceSearch
+   */
+  distance_max?: number
+  /**
+   *
+   * @type {AnnonceSearchSortBy}
+   * @memberof AnnonceSearch
+   */
+  sort_by?: AnnonceSearchSortBy
+  /**
+   *
+   * @type {AnnonceSearchSortOrder}
+   * @memberof AnnonceSearch
+   */
+  sort_order?: AnnonceSearchSortOrder
+}
+
+/**
+ *
+ * @export
+ * @enum {string}
+ */
+
+export enum AnnonceSearchSortBy {
+  DateCreation = 'date_creation',
+  DateModification = 'date_modification',
+  Prix = 'prix',
+  Titre = 'titre',
+  Distance = 'distance',
+}
+
+/**
+ *
+ * @export
+ * @enum {string}
+ */
+
+export enum AnnonceSearchSortOrder {
+  Asc = 'asc',
+  Desc = 'desc',
+}
+
+/**
+ *
+ * @export
  * @enum {string}
  */
 
@@ -583,6 +700,55 @@ export interface Utilisateur {
 export const AnnoncesApiAxiosParamCreator = function (configuration?: Configuration) {
   return {
     /**
+     *
+     * @summary Récupérer le nombre d\'annonces
+     * @param {AnnonceSearch} annonceSearch
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    countAnnonces: async (
+      annonceSearch: AnnonceSearch,
+      options: RawAxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'annonceSearch' is not null or undefined
+      assertParamExists('countAnnonces', 'annonceSearch', annonceSearch)
+      const localVarPath = `/api/v1/annonces/search/count`
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
+      let baseOptions
+      if (configuration) {
+        baseOptions = configuration.baseOptions
+      }
+
+      const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options }
+      const localVarHeaderParameter = {} as any
+      const localVarQueryParameter = {} as any
+
+      // authentication BearerAuth required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+      localVarHeaderParameter['Content-Type'] = 'application/json'
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter)
+      let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      }
+      localVarRequestOptions.data = serializeDataIfNeeded(
+        annonceSearch,
+        localVarRequestOptions,
+        configuration,
+      )
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      }
+    },
+    /**
      * Création d\'une annonce
      * @summary Créer une nouvelle annonce
      * @param {AnnonceBase} annonceBase
@@ -721,41 +887,17 @@ export const AnnoncesApiAxiosParamCreator = function (configuration?: Configurat
     /**
      * Liste paginée des annonces avec filtres et tri possibles
      * @summary Récupérer toutes les annonces
-     * @param {AnnonceType} [type] Type d\&#39;annonce
-     * @param {AnnonceStatut} [statut] Statut de l\&#39;annonce
-     * @param {AnnonceNature} [nature] Nature de l\&#39;annonce
-     * @param {number} [page] Numéro de page
-     * @param {number} [limit] Nombre d\&#39;éléments par page
-     * @param {string} [search] Recherche textuelle dans titre et description
-     * @param {string} [userId] Recherche par utilisateur
-     * @param {number} [prixMin] Prix minimum
-     * @param {number} [prixMax] Prix maximum
-     * @param {number} [latitude] Latitude pour le tri par distance
-     * @param {number} [longitude] Longitude pour le tri par distance
-     * @param {number} [distanceMax] Distance maximale en kilomètres (nécessite lat/lon)
-     * @param {ListAnnoncesSortByEnum} [sortBy] Champ de tri
-     * @param {ListAnnoncesSortOrderEnum} [sortOrder] Ordre de tri
+     * @param {AnnonceSearch} annonceSearch
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     listAnnonces: async (
-      type?: AnnonceType,
-      statut?: AnnonceStatut,
-      nature?: AnnonceNature,
-      page?: number,
-      limit?: number,
-      search?: string,
-      userId?: string,
-      prixMin?: number,
-      prixMax?: number,
-      latitude?: number,
-      longitude?: number,
-      distanceMax?: number,
-      sortBy?: ListAnnoncesSortByEnum,
-      sortOrder?: ListAnnoncesSortOrderEnum,
+      annonceSearch: AnnonceSearch,
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
-      const localVarPath = `/api/v1/annonces`
+      // verify required parameter 'annonceSearch' is not null or undefined
+      assertParamExists('listAnnonces', 'annonceSearch', annonceSearch)
+      const localVarPath = `/api/v1/annonces/search/list`
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
       const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
       let baseOptions
@@ -763,7 +905,7 @@ export const AnnoncesApiAxiosParamCreator = function (configuration?: Configurat
         baseOptions = configuration.baseOptions
       }
 
-      const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options }
+      const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options }
       const localVarHeaderParameter = {} as any
       const localVarQueryParameter = {} as any
 
@@ -771,61 +913,7 @@ export const AnnoncesApiAxiosParamCreator = function (configuration?: Configurat
       // http bearer authentication required
       await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
-      if (type !== undefined) {
-        localVarQueryParameter['type'] = type
-      }
-
-      if (statut !== undefined) {
-        localVarQueryParameter['statut'] = statut
-      }
-
-      if (nature !== undefined) {
-        localVarQueryParameter['nature'] = nature
-      }
-
-      if (page !== undefined) {
-        localVarQueryParameter['page'] = page
-      }
-
-      if (limit !== undefined) {
-        localVarQueryParameter['limit'] = limit
-      }
-
-      if (search !== undefined) {
-        localVarQueryParameter['search'] = search
-      }
-
-      if (userId !== undefined) {
-        localVarQueryParameter['user_id'] = userId
-      }
-
-      if (prixMin !== undefined) {
-        localVarQueryParameter['prix_min'] = prixMin
-      }
-
-      if (prixMax !== undefined) {
-        localVarQueryParameter['prix_max'] = prixMax
-      }
-
-      if (latitude !== undefined) {
-        localVarQueryParameter['latitude'] = latitude
-      }
-
-      if (longitude !== undefined) {
-        localVarQueryParameter['longitude'] = longitude
-      }
-
-      if (distanceMax !== undefined) {
-        localVarQueryParameter['distance_max'] = distanceMax
-      }
-
-      if (sortBy !== undefined) {
-        localVarQueryParameter['sort_by'] = sortBy
-      }
-
-      if (sortOrder !== undefined) {
-        localVarQueryParameter['sort_order'] = sortOrder
-      }
+      localVarHeaderParameter['Content-Type'] = 'application/json'
 
       setSearchParams(localVarUrlObj, localVarQueryParameter)
       let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
@@ -834,6 +922,11 @@ export const AnnoncesApiAxiosParamCreator = function (configuration?: Configurat
         ...headersFromBaseOptions,
         ...options.headers,
       }
+      localVarRequestOptions.data = serializeDataIfNeeded(
+        annonceSearch,
+        localVarRequestOptions,
+        configuration,
+      )
 
       return {
         url: toPathString(localVarUrlObj),
@@ -907,6 +1000,32 @@ export const AnnoncesApiFp = function (configuration?: Configuration) {
   const localVarAxiosParamCreator = AnnoncesApiAxiosParamCreator(configuration)
   return {
     /**
+     *
+     * @summary Récupérer le nombre d\'annonces
+     * @param {AnnonceSearch} annonceSearch
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async countAnnonces(
+      annonceSearch: AnnonceSearch,
+      options?: RawAxiosRequestConfig,
+    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<number>> {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.countAnnonces(
+        annonceSearch,
+        options,
+      )
+      const localVarOperationServerIndex = configuration?.serverIndex ?? 0
+      const localVarOperationServerBasePath =
+        operationServerMap['AnnoncesApi.countAnnonces']?.[localVarOperationServerIndex]?.url
+      return (axios, basePath) =>
+        createRequestFunction(
+          localVarAxiosArgs,
+          globalAxios,
+          BASE_PATH,
+          configuration,
+        )(axios, localVarOperationServerBasePath || basePath)
+    },
+    /**
      * Création d\'une annonce
      * @summary Créer une nouvelle annonce
      * @param {AnnonceBase} annonceBase
@@ -978,57 +1097,15 @@ export const AnnoncesApiFp = function (configuration?: Configuration) {
     /**
      * Liste paginée des annonces avec filtres et tri possibles
      * @summary Récupérer toutes les annonces
-     * @param {AnnonceType} [type] Type d\&#39;annonce
-     * @param {AnnonceStatut} [statut] Statut de l\&#39;annonce
-     * @param {AnnonceNature} [nature] Nature de l\&#39;annonce
-     * @param {number} [page] Numéro de page
-     * @param {number} [limit] Nombre d\&#39;éléments par page
-     * @param {string} [search] Recherche textuelle dans titre et description
-     * @param {string} [userId] Recherche par utilisateur
-     * @param {number} [prixMin] Prix minimum
-     * @param {number} [prixMax] Prix maximum
-     * @param {number} [latitude] Latitude pour le tri par distance
-     * @param {number} [longitude] Longitude pour le tri par distance
-     * @param {number} [distanceMax] Distance maximale en kilomètres (nécessite lat/lon)
-     * @param {ListAnnoncesSortByEnum} [sortBy] Champ de tri
-     * @param {ListAnnoncesSortOrderEnum} [sortOrder] Ordre de tri
+     * @param {AnnonceSearch} annonceSearch
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     async listAnnonces(
-      type?: AnnonceType,
-      statut?: AnnonceStatut,
-      nature?: AnnonceNature,
-      page?: number,
-      limit?: number,
-      search?: string,
-      userId?: string,
-      prixMin?: number,
-      prixMax?: number,
-      latitude?: number,
-      longitude?: number,
-      distanceMax?: number,
-      sortBy?: ListAnnoncesSortByEnum,
-      sortOrder?: ListAnnoncesSortOrderEnum,
+      annonceSearch: AnnonceSearch,
       options?: RawAxiosRequestConfig,
     ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Annonces>> {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.listAnnonces(
-        type,
-        statut,
-        nature,
-        page,
-        limit,
-        search,
-        userId,
-        prixMin,
-        prixMax,
-        latitude,
-        longitude,
-        distanceMax,
-        sortBy,
-        sortOrder,
-        options,
-      )
+      const localVarAxiosArgs = await localVarAxiosParamCreator.listAnnonces(annonceSearch, options)
       const localVarOperationServerIndex = configuration?.serverIndex ?? 0
       const localVarOperationServerBasePath =
         operationServerMap['AnnoncesApi.listAnnonces']?.[localVarOperationServerIndex]?.url
@@ -1084,6 +1161,21 @@ export const AnnoncesApiFactory = function (
   const localVarFp = AnnoncesApiFp(configuration)
   return {
     /**
+     *
+     * @summary Récupérer le nombre d\'annonces
+     * @param {AnnonceSearch} annonceSearch
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    countAnnonces(
+      annonceSearch: AnnonceSearch,
+      options?: RawAxiosRequestConfig,
+    ): AxiosPromise<number> {
+      return localVarFp
+        .countAnnonces(annonceSearch, options)
+        .then((request) => request(axios, basePath))
+    },
+    /**
      * Création d\'une annonce
      * @summary Créer une nouvelle annonce
      * @param {AnnonceBase} annonceBase
@@ -1121,58 +1213,16 @@ export const AnnoncesApiFactory = function (
     /**
      * Liste paginée des annonces avec filtres et tri possibles
      * @summary Récupérer toutes les annonces
-     * @param {AnnonceType} [type] Type d\&#39;annonce
-     * @param {AnnonceStatut} [statut] Statut de l\&#39;annonce
-     * @param {AnnonceNature} [nature] Nature de l\&#39;annonce
-     * @param {number} [page] Numéro de page
-     * @param {number} [limit] Nombre d\&#39;éléments par page
-     * @param {string} [search] Recherche textuelle dans titre et description
-     * @param {string} [userId] Recherche par utilisateur
-     * @param {number} [prixMin] Prix minimum
-     * @param {number} [prixMax] Prix maximum
-     * @param {number} [latitude] Latitude pour le tri par distance
-     * @param {number} [longitude] Longitude pour le tri par distance
-     * @param {number} [distanceMax] Distance maximale en kilomètres (nécessite lat/lon)
-     * @param {ListAnnoncesSortByEnum} [sortBy] Champ de tri
-     * @param {ListAnnoncesSortOrderEnum} [sortOrder] Ordre de tri
+     * @param {AnnonceSearch} annonceSearch
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     listAnnonces(
-      type?: AnnonceType,
-      statut?: AnnonceStatut,
-      nature?: AnnonceNature,
-      page?: number,
-      limit?: number,
-      search?: string,
-      userId?: string,
-      prixMin?: number,
-      prixMax?: number,
-      latitude?: number,
-      longitude?: number,
-      distanceMax?: number,
-      sortBy?: ListAnnoncesSortByEnum,
-      sortOrder?: ListAnnoncesSortOrderEnum,
+      annonceSearch: AnnonceSearch,
       options?: RawAxiosRequestConfig,
     ): AxiosPromise<Annonces> {
       return localVarFp
-        .listAnnonces(
-          type,
-          statut,
-          nature,
-          page,
-          limit,
-          search,
-          userId,
-          prixMin,
-          prixMax,
-          latitude,
-          longitude,
-          distanceMax,
-          sortBy,
-          sortOrder,
-          options,
-        )
+        .listAnnonces(annonceSearch, options)
         .then((request) => request(axios, basePath))
     },
     /**
@@ -1202,6 +1252,20 @@ export const AnnoncesApiFactory = function (
  * @extends {BaseAPI}
  */
 export class AnnoncesApi extends BaseAPI {
+  /**
+   *
+   * @summary Récupérer le nombre d\'annonces
+   * @param {AnnonceSearch} annonceSearch
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof AnnoncesApi
+   */
+  public countAnnonces(annonceSearch: AnnonceSearch, options?: RawAxiosRequestConfig) {
+    return AnnoncesApiFp(this.configuration)
+      .countAnnonces(annonceSearch, options)
+      .then((request) => request(this.axios, this.basePath))
+  }
+
   /**
    * Création d\'une annonce
    * @summary Créer une nouvelle annonce
@@ -1247,59 +1311,14 @@ export class AnnoncesApi extends BaseAPI {
   /**
    * Liste paginée des annonces avec filtres et tri possibles
    * @summary Récupérer toutes les annonces
-   * @param {AnnonceType} [type] Type d\&#39;annonce
-   * @param {AnnonceStatut} [statut] Statut de l\&#39;annonce
-   * @param {AnnonceNature} [nature] Nature de l\&#39;annonce
-   * @param {number} [page] Numéro de page
-   * @param {number} [limit] Nombre d\&#39;éléments par page
-   * @param {string} [search] Recherche textuelle dans titre et description
-   * @param {string} [userId] Recherche par utilisateur
-   * @param {number} [prixMin] Prix minimum
-   * @param {number} [prixMax] Prix maximum
-   * @param {number} [latitude] Latitude pour le tri par distance
-   * @param {number} [longitude] Longitude pour le tri par distance
-   * @param {number} [distanceMax] Distance maximale en kilomètres (nécessite lat/lon)
-   * @param {ListAnnoncesSortByEnum} [sortBy] Champ de tri
-   * @param {ListAnnoncesSortOrderEnum} [sortOrder] Ordre de tri
+   * @param {AnnonceSearch} annonceSearch
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
    * @memberof AnnoncesApi
    */
-  public listAnnonces(
-    type?: AnnonceType,
-    statut?: AnnonceStatut,
-    nature?: AnnonceNature,
-    page?: number,
-    limit?: number,
-    search?: string,
-    userId?: string,
-    prixMin?: number,
-    prixMax?: number,
-    latitude?: number,
-    longitude?: number,
-    distanceMax?: number,
-    sortBy?: ListAnnoncesSortByEnum,
-    sortOrder?: ListAnnoncesSortOrderEnum,
-    options?: RawAxiosRequestConfig,
-  ) {
+  public listAnnonces(annonceSearch: AnnonceSearch, options?: RawAxiosRequestConfig) {
     return AnnoncesApiFp(this.configuration)
-      .listAnnonces(
-        type,
-        statut,
-        nature,
-        page,
-        limit,
-        search,
-        userId,
-        prixMin,
-        prixMax,
-        latitude,
-        longitude,
-        distanceMax,
-        sortBy,
-        sortOrder,
-        options,
-      )
+      .listAnnonces(annonceSearch, options)
       .then((request) => request(this.axios, this.basePath))
   }
 
@@ -1321,26 +1340,6 @@ export class AnnoncesApi extends BaseAPI {
       .putAnnonce(id, annonceWithStatut, options)
       .then((request) => request(this.axios, this.basePath))
   }
-}
-
-/**
- * @export
- * @enum {string}
- */
-export enum ListAnnoncesSortByEnum {
-  DateCreation = 'date_creation',
-  DateModification = 'date_modification',
-  Prix = 'prix',
-  Titre = 'titre',
-  Distance = 'distance',
-}
-/**
- * @export
- * @enum {string}
- */
-export enum ListAnnoncesSortOrderEnum {
-  Asc = 'asc',
-  Desc = 'desc',
 }
 
 /**
