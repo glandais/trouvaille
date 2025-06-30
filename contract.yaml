@@ -5,113 +5,19 @@ info:
   version: 1.0.0
 
 paths:
-  /api/v1/annonces:
-    get:
+  /api/v1/annonces/search/list:
+    post:
       summary: Récupérer toutes les annonces
       description: Liste paginée des annonces avec filtres et tri possibles
       tags:
         - Annonces
       operationId: listAnnonces
-      parameters:
-        - name: type
-          in: query
-          description: Type d'annonce
-          schema:
-            $ref: '#/components/schemas/AnnonceType'
-        - name: statut
-          in: query
-          description: Statut de l'annonce
-          schema:
-            $ref: '#/components/schemas/AnnonceStatut'
-        - name: nature
-          in: query
-          description: Nature de l'annonce
-          schema:
-            $ref: '#/components/schemas/AnnonceNature'
-        - name: page
-          in: query
-          description: Numéro de page
-          schema:
-            type: integer
-            minimum: 1
-            default: 1
-        - name: limit
-          in: query
-          description: Nombre d'éléments par page
-          schema:
-            type: integer
-            minimum: 1
-            maximum: 100
-            default: 20
-        - name: search
-          in: query
-          description: Recherche textuelle dans titre et description
-          schema:
-            type: string
-        - name: user_id
-          in: query
-          description: Recherche par utilisateur
-          schema:
-            type: string
-        - name: prix_min
-          in: query
-          description: Prix minimum
-          schema:
-            type: number
-            format: decimal
-            minimum: 0
-        - name: prix_max
-          in: query
-          description: Prix maximum
-          schema:
-            type: number
-            format: decimal
-            minimum: 0
-        - name: latitude
-          in: query
-          description: Latitude pour le tri par distance
-          schema:
-            type: number
-            format: double
-            minimum: -90
-            maximum: 90
-        - name: longitude
-          in: query
-          description: Longitude pour le tri par distance
-          schema:
-            type: number
-            format: double
-            minimum: -180
-            maximum: 180
-        - name: distance_max
-          in: query
-          description: Distance maximale en kilomètres (nécessite lat/lon)
-          schema:
-            type: number
-            format: decimal
-            minimum: 0
-            maximum: 1000
-        - name: sort_by
-          in: query
-          description: Champ de tri
-          schema:
-            type: string
-            enum:
-              - date_creation
-              - date_modification
-              - prix
-              - titre
-              - distance
-            default: date_creation
-        - name: sort_order
-          in: query
-          description: Ordre de tri
-          schema:
-            type: string
-            enum:
-              - asc
-              - desc
-            default: desc
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AnnonceSearch'
       responses:
         '200':
           description: Liste des annonces
@@ -120,6 +26,28 @@ paths:
               schema:
                 $ref: '#/components/schemas/Annonces'
 
+  /api/v1/annonces/search/count:
+    post:
+      summary: Récupérer le nombre d'annonces
+      tags:
+        - Annonces
+      operationId: countAnnonces
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AnnonceSearch'
+      responses:
+        '200':
+          description: Nombre
+          content:
+            application/json:
+              schema:
+                type: number
+                format: int32
+
+  /api/v1/annonces:
     post:
       summary: Créer une nouvelle annonce
       description: Création d'une annonce
@@ -397,6 +325,86 @@ components:
       required:
         - latitude
         - longitude
+
+    AnnonceSearch:
+      type: object
+      properties:
+        type:
+          description: Type d'annonce
+          $ref: '#/components/schemas/AnnonceType'
+        statut:
+          description: Statut de l'annonce
+          $ref: '#/components/schemas/AnnonceStatut'
+        nature:
+          description: Nature de l'annonce
+          $ref: '#/components/schemas/AnnonceNature'
+        page:
+          description: Numéro de page
+          type: integer
+          minimum: 1
+          default: 1
+        limit:
+          description: Nombre d'éléments par page
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 20
+        search:
+          description: Recherche textuelle dans titre et description
+          type: string
+        user_id:
+          description: Recherche par utilisateur
+          type: string
+        prix_min:
+          description: Prix minimum
+          type: number
+          format: decimal
+          minimum: 0
+        prix_max:
+          description: Prix maximum
+          type: number
+          format: decimal
+          minimum: 0
+        latitude:
+          description: Latitude pour le tri par distance
+          type: number
+          format: double
+          minimum: -90
+          maximum: 90
+        longitude:
+          description: Longitude pour le tri par distance
+          type: number
+          format: double
+          minimum: -180
+          maximum: 180
+        distance_max:
+          description: Distance maximale en kilomètres (nécessite lat/lon)
+          type: number
+          format: decimal
+          minimum: 0
+          maximum: 1000
+        sort_by:
+          description: Champ de tri
+          $ref: "#/components/schemas/AnnonceSearchSortBy"
+        sort_order:
+          description: Ordre de tri
+          $ref: "#/components/schemas/AnnonceSearchSortOrder"
+
+    AnnonceSearchSortBy:
+      type: string
+      enum:
+        - date_creation
+        - date_modification
+        - prix
+        - titre
+        - distance
+
+    AnnonceSearchSortOrder:
+      type: string
+      enum:
+        - asc
+        - desc
+
 
     AnnonceBase:
       type: object

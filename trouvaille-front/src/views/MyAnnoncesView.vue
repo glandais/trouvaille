@@ -50,11 +50,11 @@
 
       <!-- Annonces Grid -->
       <div
-        v-else-if="filteredAnnonces.length > 0"
+        v-else-if="annonces.length > 0"
         class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
       >
         <AnnonceCard
-          v-for="annonce in filteredAnnonces"
+          v-for="annonce in annonces"
           :key="annonce.id"
           :annonce="annonce"
           :show-status="true"
@@ -127,8 +127,9 @@ import {
   AnnonceList,
   AnnonceStatut,
   Pagination,
-  ListAnnoncesSortByEnum,
-  ListAnnoncesSortOrderEnum,
+  AnnonceSearch,
+  AnnonceSearchSortBy,
+  AnnonceSearchSortOrder,
 } from '../api'
 import AppLayout from '../components/AppLayout.vue'
 import AnnonceCard from '../components/AnnonceCard.vue'
@@ -140,53 +141,79 @@ const annonces = ref<AnnonceList[]>([])
 const pagination = ref<Pagination>()
 const loading = ref(false)
 const selectedStatus = ref('')
+const statusCounts = ref<Record<string, number>>({
+  '': 0,
+  [AnnonceStatut.Active]: 0,
+  [AnnonceStatut.Suspendue]: 0,
+  [AnnonceStatut.Vendue]: 0,
+})
 
 const statusTabs = computed(() => [
-  { label: 'Toutes', value: '', count: annonces.value.length },
+  { label: 'Toutes', value: '', count: statusCounts.value[''] },
   {
     label: 'Actives',
     value: AnnonceStatut.Active,
-    count: annonces.value.filter((a) => a.statut === AnnonceStatut.Active).length,
+    count: statusCounts.value[AnnonceStatut.Active],
   },
   {
     label: 'Suspendues',
     value: AnnonceStatut.Suspendue,
-    count: annonces.value.filter((a) => a.statut === AnnonceStatut.Suspendue).length,
+    count: statusCounts.value[AnnonceStatut.Suspendue],
   },
   {
     label: 'Vendues',
     value: AnnonceStatut.Vendue,
-    count: annonces.value.filter((a) => a.statut === AnnonceStatut.Vendue).length,
+    count: statusCounts.value[AnnonceStatut.Vendue],
   },
 ])
 
-const filteredAnnonces = computed(() => {
-  if (!selectedStatus.value) return annonces.value
-  return annonces.value.filter((annonce) => annonce.statut === selectedStatus.value)
-})
+const fetchStatusCounts = async () => {
+  if (!authStore.user?.id) return
+
+  try {
+    // Count all annonces
+    const allCount = await annoncesApi.countAnnonces({
+      user_id: authStore.user.id,
+    })
+    statusCounts.value[''] = allCount.data
+
+    // Count by status
+    for (const status of [AnnonceStatut.Active, AnnonceStatut.Suspendue, AnnonceStatut.Vendue]) {
+      const count = await annoncesApi.countAnnonces({
+        user_id: authStore.user.id,
+        statut: status,
+      })
+      statusCounts.value[status] = count.data
+    }
+  } catch (error) {
+    console.error('Failed to fetch status counts:', error)
+  }
+}
 
 const fetchMyAnnonces = async (page = 1) => {
   if (!authStore.user?.id) return
 
   loading.value = true
-  try {
-    const response = await annoncesApi.listAnnonces(
-      undefined, // type
-      (selectedStatus.value as AnnonceStatut) || undefined, // statut
-      undefined, // nature
-      page, // page
-      12, // limit
-      undefined, // search
-      authStore.user.id, // userId
-      undefined, // prixMin
-      undefined, // prixMax
-      undefined, // latitude
-      undefined, // longitude
-      undefined, // distanceMax
-      ListAnnoncesSortByEnum.DateCreation, // sortBy
-      ListAnnoncesSortOrderEnum.Desc, // sortOrder
-    )
 
+  const annonceSearch: AnnonceSearch = {
+    type: undefined,
+    statut: (selectedStatus.value as AnnonceStatut) || undefined,
+    nature: undefined,
+    page: page,
+    limit: 12,
+    search: undefined,
+    user_id: authStore.user.id,
+    prix_min: undefined,
+    prix_max: undefined,
+    latitude: undefined,
+    longitude: undefined,
+    distance_max: undefined,
+    sort_by: AnnonceSearchSortBy.DateCreation,
+    sort_order: AnnonceSearchSortOrder.Desc,
+  }
+
+  try {
+    const response = await annoncesApi.listAnnonces(annonceSearch)
     annonces.value = response.data.data || []
     pagination.value = response.data.pagination
   } catch (error) {
@@ -207,6 +234,8 @@ const handleAnnonceDeleted = (annonceId: string) => {
   if (index > -1) {
     annonces.value.splice(index, 1)
   }
+  // Refresh counts
+  fetchStatusCounts()
 }
 
 const handleAnnonceUpdated = (updatedAnnonce?: AnnonceList) => {
@@ -217,7 +246,8 @@ const handleAnnonceUpdated = (updatedAnnonce?: AnnonceList) => {
       annonces.value[index] = { ...annonces.value[index], ...updatedAnnonce }
     }
   }
-  // Optionally refresh the data
+  // Refresh counts and data
+  fetchStatusCounts()
   fetchMyAnnonces()
 }
 
@@ -272,13 +302,14 @@ const getVisiblePages = () => {
   return rangeWithDots.filter((page, index, arr) => arr.indexOf(page) === index)
 }
 
-onMounted(() => {
-  fetchMyAnnonces()
+onMounted(async () => {
+  await fetchStatusCounts()
+  await fetchMyAnnonces()
 })
 
 // Watch status changes
 watch(selectedStatus, () => {
-  fetchMyAnnonces()
+  fetchMyAnnonces(1) // Reset to page 1 when changing status
 })
 </script>
 
