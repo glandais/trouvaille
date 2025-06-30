@@ -112,12 +112,7 @@
         }
       ],
       [
-        "@semantic-release/github",
-        {
-          "successComment": false,
-          "failComment": false,
-          "releasedLabels": false
-        }
+        "@semantic-release/github"
       ],
       [
         "@semantic-release/git",
