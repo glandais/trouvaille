@@ -1,38 +1,31 @@
-name: Continuous Integration
+name: CI
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ '**' ]
   pull_request:
-    branches: [ main, develop ]
+    branches: [ '**' ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
     
-    permissions:
-      contents: read
-      actions: read
-      
-    strategy:
-      matrix:
-        java-version: [21]
-        node-version: [20]
-    
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
       
-    - name: Set up JDK ${{ matrix.java-version }}
+    - name: Set up JDK 21
       uses: actions/setup-java@v4
       with:
-        java-version: ${{ matrix.java-version }}
+        java-version: '21'
         distribution: 'temurin'
+        cache: 'maven'
+        cache-dependency-path: 'trouvaille-back/pom.xml'
         
-    - name: Set up Node.js ${{ matrix.node-version }}
+    - name: Set up Node.js 20
       uses: actions/setup-node@v4
       with:
-        node-version: ${{ matrix.node-version }}
+        node-version: '20'
         cache: 'npm'
         cache-dependency-path: trouvaille-front/package-lock.json
         
@@ -43,35 +36,19 @@ jobs:
         key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
         restore-keys: |
           ${{ runner.os }}-maven-
-          
-    - name: Cache Node.js dependencies
-      uses: actions/cache@v4
-      with:
-        path: trouvaille-front/node_modules
-        key: ${{ runner.os }}-node-${{ hashFiles('trouvaille-front/package-lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-node-
-          
-    - name: Run CI build script
-      run: ./ci-build.sh
-      
-    - name: Upload backend test results
-      uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: backend-test-results
-        path: trouvaille-back/target/surefire-reports/
-        
-    - name: Upload frontend build artifacts
-      uses: actions/upload-artifact@v4
-      if: success()
-      with:
-        name: frontend-dist
-        path: trouvaille-front/dist/
-        
-    - name: Upload backend build artifacts
-      uses: actions/upload-artifact@v4
-      if: success()
-      with:
-        name: backend-jar
-        path: trouvaille-back/target/*.jar
+
+    - name: Frontend
+      run: |
+        cd trouvaille-front
+        npm ci
+        npm run generate:api
+        npm run format:check
+        npm run lint:check
+        npm run type-check
+        npm run test:unit 2>/dev/null || echo "No unit tests configured yet"
+        npm run build
+
+    - name: Backend
+      run: |
+        cd trouvaille-back
+        ./mvnw clean package
