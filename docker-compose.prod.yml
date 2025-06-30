@@ -13,7 +13,7 @@ services:
       - "--log.level=WARN"               # Reduce log verbosity
       - "--accesslog=true"
       - "--accesslog.filepath=/var/log/traefik/access.log"
-      - "--providers.docker.constraints=Label('traefik.stack','${TRAEFIK_STACK}')"
+      - "--providers.docker.constraints=Label(`traefik.stack`,`${TRAEFIK_STACK}`)"
     ports:
       - "${HTTP_PORT:-8090}:80"           # HTTP only, configurable port
       # Dashboard not exposed in production
