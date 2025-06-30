@@ -11,6 +11,7 @@
 import { ref, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import { Editor, type EditorOptions, type PreviewStyle, type EditorType } from '@toast-ui/editor'
 import '@toast-ui/editor/dist/toastui-editor.css'
+import './MarkdownEditor.css'
 
 interface Props {
   modelValue: string
@@ -181,69 +182,3 @@ onUnmounted(() => {
   destroyEditor()
 })
 </script>
-
-<style scoped>
-.markdown-editor {
-  @apply w-full;
-}
-
-.editor-container {
-  @apply border-0 rounded-md overflow-hidden;
-}
-
-.character-count {
-  @apply text-sm text-gray-500 text-right p-2 bg-gray-50 border-t border-gray-200;
-}
-
-.toastui-editor-wrapper {
-  @apply w-full;
-}
-
-/* Override Toast UI Editor styles */
-.toastui-editor-wrapper :deep(.toastui-editor) {
-  @apply border border-gray-300 rounded-md;
-}
-
-.toastui-editor-wrapper :deep(.toastui-editor-defaultUI) {
-  @apply border-0;
-}
-
-.toastui-editor-wrapper :deep(.toastui-editor-toolbar) {
-  @apply bg-gray-50 border-b border-gray-200;
-}
-
-.toastui-editor-wrapper :deep(.toastui-editor-toolbar-item) {
-  @apply text-gray-600 hover:text-gray-900;
-}
-
-.toastui-editor-wrapper :deep(.toastui-editor-md-container),
-.toastui-editor-wrapper :deep(.toastui-editor-ww-container) {
-  @apply bg-white;
-}
-
-.toastui-editor-wrapper :deep(.toastui-editor-md-preview) {
-  @apply bg-gray-50;
-}
-
-/* Force light mode - dark mode disabled */
-.toastui-editor-wrapper :deep(.toastui-editor-toolbar) {
-  @apply bg-gray-50 border-gray-200 !important;
-}
-
-.toastui-editor-wrapper :deep(.toastui-editor-toolbar-item) {
-  @apply text-gray-600 hover:text-gray-900 !important;
-}
-
-.toastui-editor-wrapper :deep(.toastui-editor-md-container),
-.toastui-editor-wrapper :deep(.toastui-editor-ww-container) {
-  @apply bg-white text-gray-900 !important;
-}
-
-.toastui-editor-wrapper :deep(.toastui-editor-md-preview) {
-  @apply bg-gray-50 text-gray-900 !important;
-}
-
-.toastui-editor-wrapper :deep(.toastui-editor) {
-  @apply border-gray-300 !important;
-}
-</style>
