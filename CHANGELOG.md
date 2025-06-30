@@ -1,3 +1,10 @@
+# [1.4.0](https://github.com/glandais/trouvaille/compare/v1.3.1...v1.4.0) (2025-06-30)
+
+
+### Features
+
+* API validation ([91b5704](https://github.com/glandais/trouvaille/commit/91b5704131c4aa8819ff08af5c8806d2a8ecf226))
+
 ## [1.3.1](https://github.com/glandais/trouvaille/compare/v1.3.0...v1.3.1) (2025-06-30)
 
 
