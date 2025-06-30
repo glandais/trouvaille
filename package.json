@@ -15,16 +15,59 @@
       "develop"
     ],
     "plugins": [
-      "@semantic-release/commit-analyzer",
-      "@semantic-release/release-notes-generator",
-      "@semantic-release/changelog",
+      [
+        "@semantic-release/commit-analyzer",
+        {
+          "releaseRules": [
+            { "type": "feat", "release": "minor" },
+            { "type": "fix", "release": "patch" },
+            { "type": "perf", "release": "patch" },
+            { "type": "revert", "release": "patch" },
+            { "type": "docs", "release": false },
+            { "type": "style", "release": false },
+            { "type": "chore", "release": false },
+            { "type": "refactor", "release": "patch" },
+            { "type": "test", "release": false },
+            { "type": "build", "release": false },
+            { "type": "ci", "release": false },
+            { "breaking": true, "release": "major" }
+          ]
+        }
+      ],
+      [
+        "@semantic-release/release-notes-generator",
+        {
+          "presetConfig": {
+            "types": [
+              { "type": "feat", "section": "✨ Features" },
+              { "type": "fix", "section": "🐛 Bug Fixes" },
+              { "type": "perf", "section": "⚡ Performance Improvements" },
+              { "type": "revert", "section": "⏪ Reverts" },
+              { "type": "refactor", "section": "♻️ Code Refactoring" }
+            ]
+          }
+        }
+      ],
+      [
+        "@semantic-release/changelog",
+        {
+          "changelogFile": "CHANGELOG.md"
+        }
+      ],
       [
         "@semantic-release/npm",
         {
           "npmPublish": false
         }
       ],
-      "@semantic-release/github",
+      [
+        "@semantic-release/github",
+        {
+          "successComment": false,
+          "failComment": false,
+          "releasedLabels": false
+        }
+      ],
       [
         "@semantic-release/git",
         {
@@ -36,7 +79,6 @@
           "message": "chore(release): v${nextRelease.version}\n\n${nextRelease.notes}"
         }
       ]
-    ]
   },
   "devDependencies": {
     "@semantic-release/changelog": "^6.0.3",
