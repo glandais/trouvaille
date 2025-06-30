@@ -1,6 +1,6 @@
 {
   "app": {
-    "name": "Trouvaille",
+    "name": "Ventes NP",
     "tagline": "Plateforme de petites annonces privée",
     "auth": {
       "authenticating": "Authentification en cours...",

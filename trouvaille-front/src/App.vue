@@ -40,19 +40,33 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { onMounted, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useAuthStore } from './stores/auth'
 import { useLocationStore } from './stores/location'
 
+const { t, locale } = useI18n()
 const authStore = useAuthStore()
 const locationStore = useLocationStore()
 
+const updateTitle = () => {
+  document.title = t('app.name')
+}
+
 onMounted(async () => {
+  // Set initial title
+  updateTitle()
+
   await authStore.initializeAuth()
 
   // Initialize user location once authenticated
   if (authStore.isAuthenticated) {
     locationStore.initializeUserLocation()
   }
+})
+
+// Watch for locale changes and update title
+watch(locale, () => {
+  updateTitle()
 })
 </script>
