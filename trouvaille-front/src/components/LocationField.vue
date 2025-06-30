@@ -116,7 +116,6 @@ interface Props {
   label?: string
   placeholder?: string
   disabled?: boolean
-  autoDetect?: boolean
 }
 
 interface Emits {
@@ -129,7 +128,6 @@ const props = withDefaults(defineProps<Props>(), {
   label: undefined, // Will use $t('location.title') if not provided
   placeholder: undefined, // Will use $t('location.placeholder') if not provided
   disabled: false,
-  autoDetect: true,
 })
 
 const emit = defineEmits<Emits>()
@@ -212,6 +210,9 @@ const getCurrentLocation = async () => {
   } else {
     // Trigger location detection - this will update the store and the watcher will handle updating selectedLocation
     await locationStore.initializeUserLocation()
+    if (locationStore.hasUserLocation) {
+      selectedLocation.value = locationStore.userLocation
+    }
   }
 }
 
@@ -221,24 +222,4 @@ const hideGeocodingWithDelay = () => {
   }, 200)
 }
 
-// Auto-detect location on component mount
-onMounted(() => {
-  // If auto-detect is enabled and no location is selected, trigger detection if not attempted yet
-  if (props.autoDetect && !selectedLocation.value && !locationStore.hasAttemptedDetection) {
-    // Trigger location detection - the watcher will handle updating selectedLocation
-    locationStore.initializeUserLocation()
-  }
-})
-
-// Watch for changes in store's userLocation when autoDetect is enabled
-watch(
-  () => locationStore.userLocation,
-  (newUserLocation) => {
-    // Only auto-update if autoDetect is enabled and no location is currently selected
-    if (props.autoDetect && !selectedLocation.value && newUserLocation) {
-      selectedLocation.value = newUserLocation
-    }
-  },
-  { immediate: true },
-)
 </script>

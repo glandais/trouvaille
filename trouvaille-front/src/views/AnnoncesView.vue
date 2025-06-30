@@ -423,6 +423,7 @@ const routerParams = [
     (s) => {
       const sl = getOrInitSelectedLocation()
       sl.coordinates[0] = parseFloat(s)
+      filters.value.longitude = parseFloat(s)
     },
     () => (selectedLocation.value ? asString(selectedLocation.value.coordinates[0]) : undefined),
   ),
@@ -432,6 +433,7 @@ const routerParams = [
     (s) => {
       const sl = getOrInitSelectedLocation()
       sl.coordinates[1] = parseFloat(s)
+      filters.value.latitude = parseFloat(s)
     },
     () => (selectedLocation.value ? asString(selectedLocation.value.coordinates[1]) : undefined),
   ),
@@ -500,7 +502,7 @@ const hasDistanceFilter = computed(() => {
 })
 
 const hasCoordinates = computed(() => {
-  return filters.value.latitude !== null && filters.value.longitude !== null
+  return filters.value.latitude !== undefined && filters.value.longitude !== undefined
 })
 
 const fetchAnnonces = async () => {

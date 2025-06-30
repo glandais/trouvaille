@@ -58,11 +58,6 @@ onMounted(async () => {
   updateTitle()
 
   await authStore.initializeAuth()
-
-  // Initialize user location once authenticated
-  if (authStore.isAuthenticated) {
-    locationStore.initializeUserLocation()
-  }
 })
 
 // Watch for locale changes and update title

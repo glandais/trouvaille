@@ -310,7 +310,6 @@
           {{ $t('location.privacy_note') }}
           <LocationField
             v-model="selectedLocation"
-            :auto-detect="!isEditMode"
             @change="handleLocationChange"
           />
         </div>
@@ -555,10 +554,7 @@ const loadExistingAnnonce = async () => {
     // Set selected location if coordinates exist
     if (response.data.coordinates?.latitude && response.data.coordinates?.longitude) {
       selectedLocation.value = {
-        label: t('location.saved', {
-          lat: response.data.coordinates.latitude.toFixed(4),
-          lng: response.data.coordinates.longitude.toFixed(4),
-        }),
+        label: response.data.ville,
         city: response.data.ville,
         coordinates: [response.data.coordinates.longitude, response.data.coordinates.latitude],
       }
