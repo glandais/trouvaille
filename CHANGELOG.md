@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/glandais/trouvaille/compare/v1.0.0...v1.1.0) (2025-06-30)
+
+
+### Features
+
+* **ui:** redesign AnnonceCard component with improved layout and UX ([#17](https://github.com/glandais/trouvaille/issues/17)) ([2fd0ff8](https://github.com/glandais/trouvaille/commit/2fd0ff8e88868ac2f4ec3f52ac3de6efdef809e9))
+
 # 1.0.0 (2025-06-30)
 
 
