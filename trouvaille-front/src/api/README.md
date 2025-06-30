@@ -62,6 +62,7 @@ All URIs are relative to _http://localhost_
 | _AnnoncesApi_         | [**listAnnonces**](docs/AnnoncesApi.md#listannonces)                     | **POST** /api/v1/annonces/search/list        | Récupérer toutes les annonces                          |
 | _AnnoncesApi_         | [**putAnnonce**](docs/AnnoncesApi.md#putannonce)                         | **PUT** /api/v1/annonces/{id}                | Mettre à jour une annonce                              |
 | _AuthentificationApi_ | [**exchangeOAuthToken**](docs/AuthentificationApi.md#exchangeoauthtoken) | **POST** /api/v1/auth/token                  | Échanger le code OAuth pour un token                   |
+| _ConfigApi_           | [**getConfig**](docs/ConfigApi.md#getconfig)                             | **GET** /api/v1/config                       | Récupérer la configuration                             |
 | _PhotosApi_           | [**createPhoto**](docs/PhotosApi.md#createphoto)                         | **POST** /api/v1/annonces/photos             | Ajouter une photo                                      |
 | _PhotosApi_           | [**deletePhoto**](docs/PhotosApi.md#deletephoto)                         | **DELETE** /api/v1/annonces/photos/{photoId} | Supprimer une photo                                    |
 | _PhotosApi_           | [**getPhotoFull**](docs/PhotosApi.md#getphotofull)                       | **GET** /api/v1/photos/{photoId}/full        | Récupérer le contenu d\&#39;une photo en taille réelle |
@@ -82,6 +83,7 @@ All URIs are relative to _http://localhost_
 - [Annonces](docs/Annonces.md)
 - [Coordinates](docs/Coordinates.md)
 - [ErrorDetailsInner](docs/ErrorDetailsInner.md)
+- [FrontConfiguration](docs/FrontConfiguration.md)
 - [ModelError](docs/ModelError.md)
 - [OAuthTokenRequest](docs/OAuthTokenRequest.md)
 - [OAuthTokenResponse](docs/OAuthTokenResponse.md)

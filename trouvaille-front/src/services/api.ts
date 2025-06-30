@@ -1,11 +1,15 @@
 import axios from 'axios'
 import type { AxiosInstance } from 'axios'
-import { Configuration, AnnoncesApi, PhotosApi, AuthentificationApi } from '../api'
+import { Configuration, AnnoncesApi, PhotosApi, AuthentificationApi, ConfigApi } from '../api'
 import { useAuthStore } from '../stores/auth'
+
+const baseURL = import.meta.env.VITE_API_BASE_URL
+  ? import.meta.env.VITE_API_BASE_URL
+  : window.location.origin
 
 // Create axios instance with base configuration
 const axiosInstance: AxiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
+  baseURL,
   timeout: 10000,
 })
 
@@ -37,7 +41,7 @@ axiosInstance.interceptors.response.use(
 
 // Create API configuration
 const apiConfiguration = new Configuration({
-  basePath: import.meta.env.VITE_API_BASE_URL,
+  basePath: baseURL,
 })
 
 // Export API instances
@@ -48,5 +52,6 @@ export const authentificationApi = new AuthentificationApi(
   undefined,
   axiosInstance,
 )
+export const configApi = new ConfigApi(apiConfiguration, undefined, undefined)
 
 export { axiosInstance }

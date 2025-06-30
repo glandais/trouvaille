@@ -1,5 +1,6 @@
 package io.github.glandais.trouvaille.resource;
 
+import io.github.glandais.trouvaille.config.FrontConfig;
 import io.github.glandais.trouvaille.openapi.ApiResource;
 import io.github.glandais.trouvaille.openapi.beans.*;
 import io.github.glandais.trouvaille.service.AnnonceService;
@@ -19,6 +20,7 @@ public class ApiResourcempl implements ApiResource {
   final AnnonceService annonceService;
   final PhotoService photoService;
   final AuthService authService;
+  final FrontConfig frontConfig;
 
   @Override
   public Annonces listAnnonces(AnnonceSearch data) {
@@ -74,5 +76,14 @@ public class ApiResourcempl implements ApiResource {
   @PermitAll
   public OAuthTokenResponse exchangeOAuthToken(OAuthTokenRequest data) {
     return authService.exchangeOAuthToken(data);
+  }
+
+  @Override
+  @PermitAll
+  public FrontConfiguration getConfig() {
+    FrontConfiguration configuration = new FrontConfiguration();
+    configuration.setAuthorizeUri(frontConfig.authorizeUri());
+    configuration.setClientId(frontConfig.clientId());
+    return configuration;
   }
 }

@@ -326,10 +326,6 @@ The API is documented using OpenAPI 3.0.3 specification in `contract.yaml`.
 trouvaille.oauth.client-id=${OAUTH_CLIENT_ID}
 trouvaille.oauth.client-secret=${OAUTH_CLIENT_SECRET}
 quarkus.rest-client.oauth2.url=${OAUTH_BASE_URL}
-
-# Frontend (.env)
-VITE_OAUTH_AUTHORIZE_URI=https://chat.n-peloton.fr/oauth/authorize
-VITE_OAUTH_CLIENT_ID=trouvaille
 ```
 
 ## 🗄️ Database

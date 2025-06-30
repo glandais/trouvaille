@@ -564,6 +564,25 @@ export interface ErrorDetailsInner {
 /**
  *
  * @export
+ * @interface FrontConfiguration
+ */
+export interface FrontConfiguration {
+  /**
+   *
+   * @type {string}
+   * @memberof FrontConfiguration
+   */
+  authorizeUri: string
+  /**
+   *
+   * @type {string}
+   * @memberof FrontConfiguration
+   */
+  clientId: string
+}
+/**
+ *
+ * @export
  * @interface ModelError
  */
 export interface ModelError {
@@ -1480,6 +1499,126 @@ export class AuthentificationApi extends BaseAPI {
   public exchangeOAuthToken(oAuthTokenRequest: OAuthTokenRequest, options?: RawAxiosRequestConfig) {
     return AuthentificationApiFp(this.configuration)
       .exchangeOAuthToken(oAuthTokenRequest, options)
+      .then((request) => request(this.axios, this.basePath))
+  }
+}
+
+/**
+ * ConfigApi - axios parameter creator
+ * @export
+ */
+export const ConfigApiAxiosParamCreator = function (configuration?: Configuration) {
+  return {
+    /**
+     *
+     * @summary Récupérer la configuration
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    getConfig: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+      const localVarPath = `/api/v1/config`
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
+      let baseOptions
+      if (configuration) {
+        baseOptions = configuration.baseOptions
+      }
+
+      const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options }
+      const localVarHeaderParameter = {} as any
+      const localVarQueryParameter = {} as any
+
+      // authentication BearerAuth required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter)
+      let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      }
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      }
+    },
+  }
+}
+
+/**
+ * ConfigApi - functional programming interface
+ * @export
+ */
+export const ConfigApiFp = function (configuration?: Configuration) {
+  const localVarAxiosParamCreator = ConfigApiAxiosParamCreator(configuration)
+  return {
+    /**
+     *
+     * @summary Récupérer la configuration
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async getConfig(
+      options?: RawAxiosRequestConfig,
+    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<FrontConfiguration>> {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.getConfig(options)
+      const localVarOperationServerIndex = configuration?.serverIndex ?? 0
+      const localVarOperationServerBasePath =
+        operationServerMap['ConfigApi.getConfig']?.[localVarOperationServerIndex]?.url
+      return (axios, basePath) =>
+        createRequestFunction(
+          localVarAxiosArgs,
+          globalAxios,
+          BASE_PATH,
+          configuration,
+        )(axios, localVarOperationServerBasePath || basePath)
+    },
+  }
+}
+
+/**
+ * ConfigApi - factory interface
+ * @export
+ */
+export const ConfigApiFactory = function (
+  configuration?: Configuration,
+  basePath?: string,
+  axios?: AxiosInstance,
+) {
+  const localVarFp = ConfigApiFp(configuration)
+  return {
+    /**
+     *
+     * @summary Récupérer la configuration
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    getConfig(options?: RawAxiosRequestConfig): AxiosPromise<FrontConfiguration> {
+      return localVarFp.getConfig(options).then((request) => request(axios, basePath))
+    },
+  }
+}
+
+/**
+ * ConfigApi - object-oriented interface
+ * @export
+ * @class ConfigApi
+ * @extends {BaseAPI}
+ */
+export class ConfigApi extends BaseAPI {
+  /**
+   *
+   * @summary Récupérer la configuration
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof ConfigApi
+   */
+  public getConfig(options?: RawAxiosRequestConfig) {
+    return ConfigApiFp(this.configuration)
+      .getConfig(options)
       .then((request) => request(this.axios, this.basePath))
   }
 }

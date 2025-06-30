@@ -269,8 +269,33 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
+  /api/v1/config:
+    get:
+      summary: Récupérer la configuration
+      operationId: getConfig
+      tags:
+        - Config
+      responses:
+        '200':
+          description: Détails de l'annonce
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FrontConfiguration'
+
 components:
   schemas:
+    FrontConfiguration:
+      type: object
+      properties:
+        authorizeUri:
+          type: string
+        clientId:
+          type: string
+      required:
+        - authorizeUri
+        - clientId
+
     Utilisateur:
       type: object
       properties:

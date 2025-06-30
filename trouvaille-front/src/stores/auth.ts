@@ -1,22 +1,18 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { type OAuthTokenRequest, type Utilisateur } from '../api'
-import { authentificationApi } from '../services/api'
+import { authentificationApi, configApi } from '../services/api'
 
 export const useAuthStore = defineStore('auth', () => {
+  const redirectUri = window.location.origin + '/oauth/callback'
+  const authorizeUri = ref<string>('')
+  const clientId = ref<string>('')
+
   const accessToken = ref<string | null>(localStorage.getItem('access_token'))
   const user = ref<Utilisateur | null>(null)
   const isAuthenticating = ref(false)
 
   const isAuthenticated = computed(() => !!accessToken.value)
-
-  const OAUTH_CONFIG = {
-    authorizeUri:
-      import.meta.env.VITE_OAUTH_AUTHORIZE_URI || 'https://chat.n-peloton.fr/oauth/authorize',
-    clientId: import.meta.env.VITE_OAUTH_CLIENT_ID || 'trouvaille',
-    redirectUri: window.location.origin + '/oauth/callback',
-    scope: 'read',
-  }
 
   const login = () => {
     const state = generateRandomState()
@@ -24,13 +20,13 @@ export const useAuthStore = defineStore('auth', () => {
 
     const params = new URLSearchParams({
       response_type: 'code',
-      client_id: OAUTH_CONFIG.clientId,
-      redirect_uri: OAUTH_CONFIG.redirectUri,
-      scope: OAUTH_CONFIG.scope,
+      client_id: clientId.value,
+      redirect_uri: redirectUri,
+      scope: 'read',
       state,
     })
 
-    window.location.href = `${OAUTH_CONFIG.authorizeUri}?${params.toString()}`
+    window.location.href = `${authorizeUri.value}?${params.toString()}`
   }
 
   const handleOAuthCallback = async (code: string, state: string): Promise<boolean> => {
@@ -50,7 +46,7 @@ export const useAuthStore = defineStore('auth', () => {
       const tokenRequest: OAuthTokenRequest = {
         code,
         state,
-        redirectUri: OAUTH_CONFIG.redirectUri,
+        redirectUri: redirectUri,
       }
 
       const tokenResponse = await authentificationApi.exchangeOAuthToken(tokenRequest)
@@ -58,7 +54,7 @@ export const useAuthStore = defineStore('auth', () => {
       localStorage.setItem('access_token', tokenResponse.data.access_token)
 
       // Fetch user info
-      await fetchUserInfo()
+      fetchUserInfo()
 
       return true
     } catch (error) {
@@ -69,7 +65,7 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  const fetchUserInfo = async () => {
+  const fetchUserInfo = () => {
     if (!accessToken.value) return
 
     try {
@@ -94,16 +90,18 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   const initializeAuth = async () => {
+    const configResponse = await configApi.getConfig()
+    const frontConfig = configResponse.data
+    authorizeUri.value = frontConfig.authorizeUri
+    clientId.value = frontConfig.clientId
+
     if (accessToken.value) {
       // Check if token is expired
       if (isTokenExpired(accessToken.value)) {
         logout()
         return
       }
-
-      isAuthenticating.value = true
-      await fetchUserInfo()
-      isAuthenticating.value = false
+      fetchUserInfo()
     }
   }
 
