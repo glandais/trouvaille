@@ -139,8 +139,8 @@ Conventional commit format with scope:
 git fetch origin
 git checkout dependabot/maven/io.quarkus.platform-quarkus-bom-3.24.1
 
-# Run full CI build
-./ci-build.sh
+# Run full build
+./build.sh latest jvm
 
 # Test specific functionality
 cd trouvaille-back && ./mvnw test
