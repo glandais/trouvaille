@@ -42,7 +42,10 @@
       "browse": "Parcourir",
       "uploading": "Upload en cours...",
       "modifying": "Modification...",
-      "publishing": "Publication..."
+      "publishing": "Publication...",
+      "suspend": "Suspendre",
+      "activate": "Activer",
+      "markSold": "Marquer vendue"
     },
     "status": {
       "success": "Succès",
