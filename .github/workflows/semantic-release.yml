@@ -85,11 +85,17 @@ jobs:
         ./build.sh ${TAG} jvm
         
         # Tag images for GitHub Container Registry
-        docker tag ghcr.io/${{ github.repository_owner }}/trouvaille-backend:${TAG} ghcr.io/${{ github.repository_owner }}/trouvaille-backend:latest
-        docker tag ghcr.io/${{ github.repository_owner }}/trouvaille-frontend:${TAG} ghcr.io/${{ github.repository_owner }}/trouvaille-frontend:latest
+        echo "tag ghcr.io/glandais/trouvaille-backend:${TAG} ghcr.io/glandais/trouvaille-backend:latest"
+        docker tag ghcr.io/glandais/trouvaille-backend:${TAG} ghcr.io/glandais/trouvaille-backend:latest
+        echo "docker tag ghcr.io/glandais/trouvaille-frontend:${TAG} ghcr.io/glandais/trouvaille-frontend:latest"
+        docker tag ghcr.io/glandais/trouvaille-frontend:${TAG} ghcr.io/glandais/trouvaille-frontend:latest
         
         # Push images
-        docker push ghcr.io/${{ github.repository_owner }}/trouvaille-backend:${TAG}
-        docker push ghcr.io/${{ github.repository_owner }}/trouvaille-frontend:${TAG}
-        docker push ghcr.io/${{ github.repository_owner }}/trouvaille-backend:latest
-        docker push ghcr.io/${{ github.repository_owner }}/trouvaille-frontend:latest
+        echo "docker push ghcr.io/glandais/trouvaille-backend:${TAG}"
+        docker push ghcr.io/glandais/trouvaille-backend:${TAG}
+        echo "docker push ghcr.io/glandais/trouvaille-frontend:${TAG}"
+        docker push ghcr.io/glandais/trouvaille-frontend:${TAG}
+        echo "docker push ghcr.io/glandais/trouvaille-backend:latest"
+        docker push ghcr.io/glandais/trouvaille-backend:latest
+        echo "docker push ghcr.io/glandais/trouvaille-frontend:latest"
+        docker push ghcr.io/glandais/trouvaille-frontend:latest
