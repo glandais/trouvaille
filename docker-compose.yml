@@ -15,6 +15,7 @@ services:
       - "--entrypoints.web.address=:80"
       - "--log.level=DEBUG"
       - "--accesslog=true"
+      - "--providers.docker.constraints=Label('traefik.stack','${TRAEFIK_STACK}')"
     ports:
       - "${HTTP_PORT:-8090}:80"        # HTTP configurable (default 8090)
       - "127.0.0.1:${TRAEFIK_DASHBOARD_HTTP_PORT:-28080}:8080"  # Dashboard (localhost only)
@@ -22,6 +23,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     labels:
       - "traefik.enable=true"
+      - "traefik.stack=${TRAEFIK_STACK}"
       - "traefik.http.routers.traefik.rule=Host(`traefik.localhost`)"
       - "traefik.http.routers.traefik.service=api@internal"
 
@@ -67,6 +69,7 @@ services:
       - "./data/keys:/opt/trouvaille/data/keys"
     labels:
       - "traefik.enable=true"
+      - "traefik.stack=${TRAEFIK_STACK}"
       - "traefik.http.routers.quarkus.rule=PathPrefix(`/api`)"
       - "traefik.http.routers.quarkus.priority=100"
       - "traefik.http.services.quarkus.loadbalancer.server.port=8080"
@@ -83,6 +86,7 @@ services:
       - .env
     labels:
       - "traefik.enable=true"
+      - "traefik.stack=${TRAEFIK_STACK}"
       - "traefik.http.routers.frontend.rule=PathPrefix(`/`)"
       - "traefik.http.services.frontend.loadbalancer.server.port=80"
       - "traefik.http.routers.frontend.priority=1"
