@@ -1,3 +1,10 @@
+## [1.1.3](https://github.com/glandais/trouvaille/compare/v1.1.2...v1.1.3) (2025-06-30)
+
+
+### Bug Fixes
+
+* semantic release attempt ([30488e5](https://github.com/glandais/trouvaille/commit/30488e579a621123586ffae2bc60254819023d7b))
+
 ## [1.1.2](https://github.com/glandais/trouvaille/compare/v1.1.1...v1.1.2) (2025-06-30)
 
 
