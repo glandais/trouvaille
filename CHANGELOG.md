@@ -1,3 +1,10 @@
+## [1.1.2](https://github.com/glandais/trouvaille/compare/v1.1.1...v1.1.2) (2025-06-30)
+
+
+### Bug Fixes
+
+* Release ([1ad76ee](https://github.com/glandais/trouvaille/commit/1ad76ee8ed2e68eb06a5d92286c035938b71a773))
+
 ## [1.1.1](https://github.com/glandais/trouvaille/compare/v1.1.0...v1.1.1) (2025-06-30)
 
 
