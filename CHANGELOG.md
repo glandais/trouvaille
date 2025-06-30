@@ -1,3 +1,10 @@
+## [1.1.7](https://github.com/glandais/trouvaille/compare/v1.1.6...v1.1.7) (2025-06-30)
+
+
+### Performance Improvements
+
+* front build chunking ([600302a](https://github.com/glandais/trouvaille/commit/600302a4cc5825ef14bef4d4f00123e3531422f0))
+
 ## [1.1.6](https://github.com/glandais/trouvaille/compare/v1.1.5...v1.1.6) (2025-06-30)
 
 ## [1.1.5](https://github.com/glandais/trouvaille/compare/v1.1.4...v1.1.5) (2025-06-30)
