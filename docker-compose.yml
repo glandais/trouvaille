@@ -17,7 +17,7 @@ services:
       - "--accesslog=true"
     ports:
       - "${HTTP_PORT:-8090}:80"        # HTTP configurable (default 8090)
-      - "127.0.0.1:28080:8080"  # Dashboard (localhost only)
+      - "127.0.0.1:28081:8080"  # Dashboard (localhost only)
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     labels:
