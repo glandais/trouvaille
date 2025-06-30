@@ -1,3 +1,10 @@
+# 1.0.0 (2025-06-30)
+
+
+### Features
+
+* WIP ([3febaad](https://github.com/glandais/trouvaille/commit/3febaadc5189fde9548dcbfcf041c57d0043256e))
+
 ## [1.0.1](https://github.com/glandais/trouvaille/compare/v1.0.0...v1.0.1) (2025-06-28)
 
 
