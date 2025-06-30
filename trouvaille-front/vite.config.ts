@@ -10,6 +10,20 @@ export default defineConfig({
     vue(),
     vueDevTools(),
   ],
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: (id) => {
+          console.log(id);
+          if (id.includes('node_modules/axios/')) return 'axios'
+          if (id.includes('node_modules/@toast-ui')) return 'tui'
+          if (id.includes('node_modules/@vue')) return 'vue'
+          if (id.includes('node_modules/vue')) return 'vue2'
+          if (id.includes('trouvaille-front/src')) return 'trouvaille'
+        }
+      }
+    }
+  },
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
