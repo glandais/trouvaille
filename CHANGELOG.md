@@ -1,3 +1,10 @@
+## [1.2.2](https://github.com/glandais/trouvaille/compare/v1.2.1...v1.2.2) (2025-06-30)
+
+
+### Bug Fixes
+
+* branding NP ([47d064e](https://github.com/glandais/trouvaille/commit/47d064e87ba2074abbbb7e10248eb5783bfc6aab))
+
 ## [1.2.1](https://github.com/glandais/trouvaille/compare/v1.2.0...v1.2.1) (2025-06-30)
 
 
