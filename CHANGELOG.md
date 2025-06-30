@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/glandais/trouvaille/compare/v1.2.0...v1.2.1) (2025-06-30)
+
+
+### Bug Fixes
+
+* favicon ([57e3c73](https://github.com/glandais/trouvaille/commit/57e3c7320c8cdd5af32f8cc7269706bed1f2f55b))
+
 # [1.2.0](https://github.com/glandais/trouvaille/compare/v1.1.7...v1.2.0) (2025-06-30)
 
 
