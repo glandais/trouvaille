@@ -1,3 +1,10 @@
+## [1.3.1](https://github.com/glandais/trouvaille/compare/v1.3.0...v1.3.1) (2025-06-30)
+
+
+### Bug Fixes
+
+* build ([b67f7d9](https://github.com/glandais/trouvaille/commit/b67f7d9f6cc5b5866fbc79baf71c30d99f88d1d5))
+
 # [1.3.0](https://github.com/glandais/trouvaille/compare/v1.2.2...v1.3.0) (2025-06-30)
 
 
