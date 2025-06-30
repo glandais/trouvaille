@@ -4,8 +4,9 @@ services:
   # Reverse proxy
   traefik:
     image: traefik:3.4
-    container_name: trouvaille-traefik
     restart: unless-stopped
+    networks:
+      - trouvaille
     command:
       - "--api.dashboard=true"
       - "--api.insecure=true"
@@ -27,8 +28,9 @@ services:
   # MongoDB
   mongodb:
     image: mongo:8.0.10
-    container_name: trouvaille-mongodb
     restart: unless-stopped
+    networks:
+      - trouvaille
     env_file:
       - .env
     volumes:
@@ -52,8 +54,9 @@ services:
   # Backend Quarkus
   backend:
     image: ghcr.io/glandais/trouvaille-backend:latest
-    container_name: trouvaille-backend
     restart: unless-stopped
+    networks:
+      - trouvaille
     depends_on:
       mongodb:
         condition: service_healthy
@@ -71,8 +74,9 @@ services:
   # Frontend Vue.js
   frontend:
     image: ghcr.io/glandais/trouvaille-frontend:latest
-    container_name: trouvaille-frontend
     restart: unless-stopped
+    networks:
+      - trouvaille
     depends_on:
       - backend
     env_file:
@@ -82,3 +86,6 @@ services:
       - "traefik.http.routers.frontend.rule=PathPrefix(`/`)"
       - "traefik.http.services.frontend.loadbalancer.server.port=80"
       - "traefik.http.routers.frontend.priority=1"
+
+networks:
+  trouvaille:
