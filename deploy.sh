@@ -151,7 +151,7 @@ Environments:
   development       Development tools, localhost-only port exposure
 
 Examples:
-  $0 build native                    # Build native images
+  $0 build native                   # Build native images
   $0 up native production           # Start in production mode
   $0 up jvm development             # Start in development mode with debug tools
   $0 logs                           # View logs

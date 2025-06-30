@@ -13,7 +13,7 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Configuration
-BACKEND_IMAGE="ghcr.io/glandais/trouvaille-backend/backend"
+BACKEND_IMAGE="ghcr.io/glandais/trouvaille-backend"
 FRONTEND_IMAGE="ghcr.io/glandais/trouvaille-frontend"
 TAG="${1:-latest}"
 BUILD_TYPE="${2:-native}" # native or jvm
@@ -72,15 +72,6 @@ fi
 log_info "Using tag: $TAG"
 log_info "Backend build type: $BUILD_TYPE"
 
-# Generate OpenAPI code for both frontend and backend
-log_info "🔄 Generating OpenAPI code..."
-./generate-openapi.sh
-
-if [ $? -ne 0 ]; then
-    log_error "Failed to generate OpenAPI code"
-    exit 1
-fi
-
 # Build backend
 log_info "Building backend image..."
 cd trouvaille-back
@@ -137,9 +128,15 @@ cd ..
 log_info "Building frontend image..."
 cd trouvaille-front
 
-# Check if node_modules exists
-if [ ! -d "node_modules" ]; then
-    log_warning "node_modules not found. Run 'npm install' first for better build caching."
+npm ci
+if [ $? -ne 0 ]; then
+    log_error "Failed to install npm dependencies"
+    exit 1
+fi
+npm run build
+if [ $? -ne 0 ]; then
+    log_error "Failed to build front"
+    exit 1
 fi
 
 docker build -t ${FRONTEND_IMAGE}:${TAG} .
@@ -155,7 +152,7 @@ cd ..
 
 # Display built images
 log_info "Built images:"
-docker images | grep -E "(trouvaille/backend|trouvaille/frontend)" | head -10
+docker images | grep -E "(trouvaille-backend|trouvaille-frontend)" | head -10
 
 # Check total size
 BACKEND_SIZE=$(docker images ${BACKEND_IMAGE}:${TAG} --format "table {{.Size}}" | tail -1)
@@ -168,17 +165,10 @@ log_info "  Backend:  $BACKEND_SIZE"
 log_info "  Frontend: $FRONTEND_SIZE"
 echo ""
 log_info "To start the application:"
-log_info "  docker compose up -d"
+log_info "  ./deploy.sh up $BUILD_TYPE production (or development)"
 echo ""
 log_info "To access the application:"
 log_info "  Frontend: http://localhost"
 log_info "  Backend API: http://localhost/api"
 log_info "  Traefik Dashboard: http://localhost:8080"
 echo ""
-
-# Optional: Run basic health checks
-if command -v curl &> /dev/null; then
-    log_info "To verify the deployment after docker compose up:"
-    log_info "  curl http://localhost/health"
-    log_info "  curl http://localhost/api/health"
-fi
