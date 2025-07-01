@@ -1,3 +1,10 @@
+## [1.5.1](https://github.com/glandais/trouvaille/compare/v1.5.0...v1.5.1) (2025-07-01)
+
+
+### Bug Fixes
+
+* enum mapping ([b618fde](https://github.com/glandais/trouvaille/commit/b618fde0201d462b77ed800c94b2d4013d277334))
+
 # [1.5.0](https://github.com/glandais/trouvaille/compare/v1.4.0...v1.5.0) (2025-07-01)
 
 
