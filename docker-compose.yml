@@ -29,7 +29,7 @@ services:
 
   # MongoDB
   mongodb:
-    image: mongo:8.0.10
+    image: mongo:8.0.11
     restart: unless-stopped
     networks:
       - trouvaille
