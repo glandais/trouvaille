@@ -13,7 +13,6 @@ const router = createRouter({
       path: '/annonces',
       name: 'annonces',
       component: () => import('../views/AnnoncesView.vue'),
-      meta: { requiresAuth: true },
     },
     {
       path: '/annonces/create',
