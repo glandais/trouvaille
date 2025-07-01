@@ -27,15 +27,7 @@
         class="absolute select-none pointer-events-none top-1/2 left-1/2"
         :style="imageStyle"
         @load="onImageLoad"
-        @error="$emit('error')"
       />
-
-      <!-- Loading -->
-      <div v-else-if="loading" class="absolute inset-0 flex items-center justify-center text-white">
-        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
-        <span class="ml-3">Chargement...</span>
-      </div>
-
       <!-- Error -->
       <div v-else class="absolute inset-0 flex items-center justify-center text-white">
         <div class="text-center">
@@ -127,7 +119,6 @@ interface Props {
   show: boolean
   photoUrl?: string
   alt?: string
-  loading?: boolean
   showPrevious?: boolean
   showNext?: boolean
   currentIndex?: number
@@ -145,7 +136,6 @@ const emit = defineEmits<{
   close: []
   previous: []
   next: []
-  error: []
 }>()
 
 // Refs

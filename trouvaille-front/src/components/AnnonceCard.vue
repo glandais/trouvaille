@@ -5,27 +5,11 @@
     <!-- Image Container -->
     <div class="relative aspect-[4/3] bg-gray-100" @click="goToDetail()">
       <img
-        v-if="photoUrl && !photoError"
+        v-if="photoUrl"
         :src="photoUrl"
         :alt="annonce.titre"
         class="w-full h-full object-cover cursor-pointer"
-        @error="onImageError"
       />
-      <div
-        v-else-if="photoLoading"
-        class="w-full h-full flex items-center justify-center cursor-pointer"
-      >
-        <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
-      </div>
-      <div
-        v-else-if="photoError"
-        class="w-full h-full flex items-center justify-center bg-red-50 cursor-pointer"
-      >
-        <div class="text-center">
-          <PhotoIcon class="h-12 w-12 text-red-400 mx-auto mb-1" />
-          <p class="text-xs text-red-600">{{ $t('errors.image_load') }}</p>
-        </div>
-      </div>
       <div v-else class="w-full h-full flex items-center justify-center cursor-pointer">
         <PhotoIcon class="h-12 w-12 text-gray-400" />
       </div>
@@ -178,11 +162,11 @@ import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '../stores/auth'
 import { AnnonceList, AnnonceType, AnnonceWithStatut, AnnonceStatut, PeriodeLocation } from '../api'
 import { PhotoIcon, MapPinIcon, PencilIcon, TrashIcon } from '@heroicons/vue/24/outline'
-import { usePhoto } from '../composables/usePhoto'
 import { annoncesApi } from '../services/api'
 import { useI18nFormatters } from '@/composables/useI18nFormatters'
 import { useAnnonceLabels } from '@/composables/useAnnonceLabels'
 import DistanceDisplay from './DistanceDisplay.vue'
+import { photoService } from '../services/photoService'
 const authStore = useAuthStore()
 const { t } = useI18n()
 const { formatSmartDate, formatPrice: formatPriceI18n } = useI18nFormatters()
@@ -211,13 +195,9 @@ const goToDetail = () => {
 
 // Utiliser le composable pour charger la première photo
 const firstPhotoId = computed(() => props.annonce.photos?.[0] || null)
-
-const { url: photoUrl, loading: photoLoading, error: photoError } = usePhoto(firstPhotoId, 'thumb')
-
-// Fonction pour gérer les erreurs d'images
-const onImageError = () => {
-  // L'erreur sera gérée par le composable usePhoto
-}
+const photoUrl = computed(() =>
+  firstPhotoId.value ? photoService.getPhotoUrl(firstPhotoId.value, 'thumb') : null,
+)
 
 // Use i18n formatter for price
 const formatPrice = (prix?: number, periode?: PeriodeLocation) => {

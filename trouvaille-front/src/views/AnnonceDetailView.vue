@@ -61,29 +61,12 @@
           <!-- Main Photo -->
           <div class="aspect-w-16 aspect-h-12 bg-gray-100 rounded-lg overflow-hidden">
             <img
-              v-if="fullPhotoUrl && !fullPhotoError"
+              v-if="fullPhotoUrl"
               :src="fullPhotoUrl"
               :alt="annonce.titre"
               class="w-full h-96 object-cover cursor-pointer"
               @click="openPhotoModal"
-              @error="onImageError"
             />
-            <div
-              v-else-if="fullPhotoLoading"
-              class="w-full h-96 flex items-center justify-center bg-gray-100"
-            >
-              <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-              <span class="ml-2 text-sm text-gray-600">{{ $t('photos.loading') }}</span>
-            </div>
-            <div
-              v-else-if="fullPhotoError"
-              class="w-full h-96 flex items-center justify-center bg-red-50"
-            >
-              <div class="text-center">
-                <PhotoIcon class="h-16 w-16 text-red-400 mx-auto mb-2" />
-                <p class="text-sm text-red-600">{{ $t('errors.load_error') }}</p>
-              </div>
-            </div>
             <div v-else class="w-full h-96 flex items-center justify-center bg-gray-100">
               <PhotoIcon class="h-16 w-16 text-gray-400" />
             </div>
@@ -103,18 +86,11 @@
               ]"
             >
               <img
-                v-if="thumbUrls[photo] && !thumbErrors[photo]"
-                :src="thumbUrls[photo]"
+                v-if="thumbUrls[index]"
+                :src="thumbUrls[index]"
                 :alt="`Photo ${index + 1}`"
                 class="w-full h-20 object-cover"
-                @error="onImageError"
               />
-              <div
-                v-else-if="thumbErrors[photo]"
-                class="w-full h-20 flex items-center justify-center bg-red-50"
-              >
-                <PhotoIcon class="h-4 w-4 text-red-400" />
-              </div>
               <div v-else class="w-full h-20 flex items-center justify-center bg-gray-100">
                 <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
               </div>
@@ -247,7 +223,6 @@
         :show="showPhotoModal"
         :photo-url="fullPhotoUrl"
         :alt="annonce.titre"
-        :loading="fullPhotoLoading"
         :show-previous="hasPhotos && currentPhotoIndex > 0"
         :show-next="hasPhotos && currentPhotoIndex < totalPhotos - 1"
         :current-index="currentPhotoIndex"
@@ -255,7 +230,6 @@
         @close="closePhotoModal"
         @previous="previousPhoto"
         @next="nextPhoto"
-        @error="onPhotoViewerError"
       />
     </div>
   </AppLayout>
@@ -267,6 +241,7 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '../stores/auth'
 import { annoncesApi } from '../services/api'
+import { photoService } from '../services/photoService'
 import { Annonce, AnnonceStatut } from '../api'
 import AppLayout from '../components/AppLayout.vue'
 import PhotoViewer from '../components/PhotoViewer.vue'
@@ -280,7 +255,6 @@ import {
   ChatBubbleLeftIcon,
   ChevronRightIcon,
 } from '@heroicons/vue/24/outline'
-import { usePhotos, usePhoto } from '../composables/usePhoto'
 import { useI18nFormatters } from '../composables/useI18nFormatters'
 import { useAnnonceLabels } from '../composables/useAnnonceLabels'
 
@@ -308,12 +282,12 @@ const currentPhoto = computed(() => {
 
 // Utiliser les composables pour charger les photos
 const photoIds = computed(() => annonce.value?.photos || [])
-const { urls: thumbUrls, errors: thumbErrors } = usePhotos(photoIds, 'thumb')
-const {
-  url: fullPhotoUrl,
-  loading: fullPhotoLoading,
-  error: fullPhotoError,
-} = usePhoto(currentPhoto, 'full')
+const thumbUrls = computed(() =>
+  photoIds.value.map((photoId) => photoService.getPhotoUrl(photoId, 'thumb')),
+)
+const fullPhotoUrl = computed(() =>
+  currentPhoto.value ? photoService.getPhotoUrl(currentPhoto.value, 'full') : undefined,
+)
 
 const isOwner = computed(() => {
   return authStore.user?.id === annonce.value?.utilisateur?.id
@@ -338,18 +312,6 @@ const fetchAnnonce = async () => {
   } finally {
     loading.value = false
   }
-}
-
-// Fonction pour déboguer les erreurs d'images
-const onImageError = (event: Event) => {
-  const img = event.target as HTMLImageElement
-  console.error('Image error:', {
-    src: img.src,
-    currentPhoto: currentPhoto.value,
-    fullPhotoUrl: fullPhotoUrl.value,
-    fullPhotoError: fullPhotoError.value,
-    fullPhotoLoading: fullPhotoLoading.value,
-  })
 }
 
 // Using formatPrice from useI18nFormatters composable
@@ -383,10 +345,6 @@ const nextPhoto = () => {
   if (hasPhotos.value && currentPhotoIndex.value < totalPhotos.value - 1) {
     currentPhotoIndex.value++
   }
-}
-
-const onPhotoViewerError = () => {
-  console.error('Photo viewer error for photo:', currentPhoto.value)
 }
 
 const confirmDelete = () => {

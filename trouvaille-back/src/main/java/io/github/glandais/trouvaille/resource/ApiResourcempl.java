@@ -8,9 +8,14 @@ import io.github.glandais.trouvaille.service.AuthService;
 import io.github.glandais.trouvaille.service.PhotoService;
 import io.quarkus.security.Authenticated;
 import jakarta.annotation.security.PermitAll;
-import jakarta.ws.rs.core.NewCookie;
-import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.*;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -21,6 +26,8 @@ public class ApiResourcempl implements ApiApi {
   final PhotoService photoService;
   final AuthService authService;
   final FrontConfig frontConfig;
+
+  @Context Request request;
 
   @Override
   public Response listAnnonces(AnnonceSearch data) {
@@ -68,12 +75,12 @@ public class ApiResourcempl implements ApiApi {
 
   @Override
   public Response getPhotoFull(String photoId) {
-    return Response.ok(photoService.getPhotoFull(photoId)).build();
+    return buildPhotoResponse(photoService.getPhotoFull(photoId));
   }
 
   @Override
   public Response getPhotoThumb(String photoId) {
-    return Response.ok(photoService.getPhotoThumb(photoId)).build();
+    return buildPhotoResponse(photoService.getPhotoThumb(photoId));
   }
 
   @Override
@@ -99,5 +106,41 @@ public class ApiResourcempl implements ApiApi {
     configuration.setAuthorizeUri(frontConfig.authorizeUri());
     configuration.setClientId(frontConfig.clientId());
     return Response.ok(configuration).build();
+  }
+
+  private Response buildPhotoResponse(File photoFile) {
+    try {
+      BasicFileAttributes attrs =
+          Files.readAttributes(photoFile.toPath(), BasicFileAttributes.class);
+
+      // Generate ETag based on file size and last modified time
+      String etag = photoFile.length() + "-" + attrs.lastModifiedTime().toMillis();
+
+      // Get last modified date
+      Date lastModified = Date.from(attrs.lastModifiedTime().toInstant());
+
+      // Create entity tag for conditional requests
+      EntityTag entityTag = new EntityTag(etag);
+
+      // Check conditional requests
+      Response.ResponseBuilder builder = request.evaluatePreconditions(lastModified, entityTag);
+      if (builder != null) {
+        // Return 304 Not Modified if content hasn't changed
+        return builder.header("Cache-Control", "private, max-age=86400").build();
+      }
+
+      return Response.ok(photoFile)
+          .header("ETag", etag)
+          .header(
+              "Last-Modified",
+              DateTimeFormatter.RFC_1123_DATE_TIME.format(
+                  lastModified.toInstant().atZone(ZoneId.of("GMT"))))
+          .header("Cache-Control", "private, max-age=86400") // Cache for 24 hours
+          .build();
+
+    } catch (IOException e) {
+      // Fallback to simple response if file attributes can't be read
+      return Response.ok(photoFile).build();
+    }
   }
 }
