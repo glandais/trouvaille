@@ -57,45 +57,8 @@
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <!-- Photo Gallery -->
-        <div class="space-y-4">
-          <!-- Main Photo -->
-          <div class="aspect-w-16 aspect-h-12 bg-gray-100 rounded-lg overflow-hidden">
-            <img
-              v-if="fullPhotoUrl"
-              :src="fullPhotoUrl"
-              :alt="annonce.titre"
-              class="w-full h-96 object-cover cursor-pointer"
-              @click="openPhotoModal"
-            />
-            <div v-else class="w-full h-96 flex items-center justify-center bg-gray-100">
-              <PhotoIcon class="h-16 w-16 text-gray-400" />
-            </div>
-          </div>
-
-          <!-- Photo Thumbnails -->
-          <div v-if="annonce.photos && annonce.photos.length > 1" class="grid grid-cols-4 gap-2">
-            <button
-              v-for="(photo, index) in annonce.photos"
-              :key="photo.id"
-              @click="currentPhotoIndex = index"
-              :class="[
-                'aspect-w-1 aspect-h-1 rounded-lg overflow-hidden border-2 transition-colors',
-                currentPhotoIndex === index
-                  ? 'border-blue-500'
-                  : 'border-gray-200 hover:border-gray-300',
-              ]"
-            >
-              <img
-                v-if="photo.thumbUrl"
-                :src="photo.thumbUrl"
-                :alt="`Photo ${index + 1}`"
-                class="w-full h-20 object-cover"
-              />
-              <div v-else class="w-full h-20 flex items-center justify-center bg-gray-100">
-                <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
-              </div>
-            </button>
-          </div>
+        <div class="space-y-4 gallery-container">
+          <Gallery :list="photos" :options="galleryOptions" />
         </div>
 
         <!-- Annonce Details -->
@@ -218,20 +181,6 @@
           </div>
         </div>
       </div>
-
-      <!-- Photo Viewer -->
-      <PhotoViewer
-        :show="showPhotoModal"
-        :photo-url="fullPhotoUrl"
-        :alt="annonce.titre"
-        :show-previous="hasPhotos && currentPhotoIndex > 0"
-        :show-next="hasPhotos && currentPhotoIndex < totalPhotos - 1"
-        :current-index="currentPhotoIndex"
-        :total-count="totalPhotos"
-        @close="closePhotoModal"
-        @previous="previousPhoto"
-        @next="nextPhoto"
-      />
     </div>
   </AppLayout>
 </template>
@@ -244,11 +193,9 @@ import { useAuthStore } from '../stores/auth'
 import { annoncesApi } from '../services/api'
 import { Annonce, AnnonceStatut } from '../api'
 import AppLayout from '../components/AppLayout.vue'
-import PhotoViewer from '../components/PhotoViewer.vue'
 import MarkdownViewer from '../components/MarkdownViewer.vue'
 import DistanceDisplay from '../components/DistanceDisplay.vue'
 import {
-  PhotoIcon,
   MapPinIcon,
   PencilIcon,
   TrashIcon,
@@ -257,6 +204,7 @@ import {
 } from '@heroicons/vue/24/outline'
 import { useI18nFormatters } from '../composables/useI18nFormatters'
 import { useAnnonceLabels } from '../composables/useAnnonceLabels'
+import { Gallery } from 'vue-preview-imgs'
 
 interface Props {
   id: string
@@ -272,27 +220,23 @@ const { getTypeLabel, getNatureLabel, getStatusLabel } = useAnnonceLabels()
 const annonce = ref<Annonce>()
 const loading = ref(true)
 const error = ref(false)
-const currentPhotoIndex = ref(0)
-const showPhotoModal = ref(false)
-
-const currentPhoto = computed(() => {
-  if (!annonce.value?.photos || annonce.value.photos.length === 0) return null
-  return annonce.value.photos[currentPhotoIndex.value]
-})
-
-const fullPhotoUrl = computed(() => (currentPhoto.value ? currentPhoto.value.fullUrl : undefined))
 
 const isOwner = computed(() => {
   return authStore.user?.id === annonce.value?.utilisateur?.id
 })
 
-const hasPhotos = computed(() => {
-  return annonce.value?.photos && annonce.value.photos.length > 0
-})
+const photos = computed(
+  () =>
+    annonce.value?.photos.map((photo) => ({
+      href: photo.fullUrl,
+      thumbnail: photo.thumbUrl,
+      width: photo.width,
+      height: photo.height,
+      cropped: true,
+    })) || [],
+)
 
-const totalPhotos = computed(() => {
-  return annonce.value?.photos.length || 0
-})
+const galleryOptions = {}
 
 const fetchAnnonce = async () => {
   try {
@@ -316,28 +260,6 @@ const getStatutBadgeClass = (statut?: AnnonceStatut) => {
     [AnnonceStatut.Vendue]: 'badge badge-sold',
   }
   return statut ? classes[statut] : 'badge'
-}
-
-// Using formatSmartDate from useI18nFormatters composable
-
-const openPhotoModal = () => {
-  showPhotoModal.value = true
-}
-
-const closePhotoModal = () => {
-  showPhotoModal.value = false
-}
-
-const previousPhoto = () => {
-  if (currentPhotoIndex.value > 0) {
-    currentPhotoIndex.value--
-  }
-}
-
-const nextPhoto = () => {
-  if (hasPhotos.value && currentPhotoIndex.value < totalPhotos.value - 1) {
-    currentPhotoIndex.value++
-  }
 }
 
 const confirmDelete = () => {

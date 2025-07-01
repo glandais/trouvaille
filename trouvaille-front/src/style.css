@@ -65,3 +65,7 @@ body {
 .badge-sold {
   @apply bg-gray-100 text-gray-800;
 }
+
+.vpis-gallery {
+  display: flex;
+}
