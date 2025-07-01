@@ -1,3 +1,11 @@
+# [1.7.0](https://github.com/glandais/trouvaille/compare/v1.6.0...v1.7.0) (2025-07-01)
+
+
+### Features
+
+* complete photo in API/front ([4684c60](https://github.com/glandais/trouvaille/commit/4684c601574b7949184655ace7a2981a849bfb98))
+* Using vue-preview-imgs for gallery ([78cd752](https://github.com/glandais/trouvaille/commit/78cd752e8f67b87e40febf09204091cc63aea3a7))
+
 # [1.6.0](https://github.com/glandais/trouvaille/compare/v1.5.1...v1.6.0) (2025-07-01)
 
 
