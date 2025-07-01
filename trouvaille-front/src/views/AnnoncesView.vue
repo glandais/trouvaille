@@ -107,7 +107,8 @@
 
           <div class="relative">
             <label for="distance" class="block text-sm font-medium text-gray-700 mb-1">
-              Distance max: {{ distanceLabel }}
+              Distance max:
+              <DistanceDisplay :distance="filters.distance_max" empty-value="Illimitée" />
             </label>
             <div class="space-y-2">
               <input
@@ -210,7 +211,9 @@
       <div v-else>
         <!-- Results count -->
         <div class="flex justify-between items-center mb-6">
-          <p class="text-gray-600">{{ pagination?.total_elements || 0 }} annonce(s) trouvée(s)</p>
+          <p class="text-gray-600">
+            {{ $t('annonce.search.results', pagination?.total_elements || 0) }}
+          </p>
         </div>
 
         <!-- Annonces Grid -->
@@ -294,6 +297,7 @@ import {
   AnnonceSearchSortBy,
   AnnonceSearchSortOrder,
 } from '../api'
+import DistanceDisplay from '../components/DistanceDisplay.vue'
 import { useAnnonceLabels } from '@/composables/useAnnonceLabels'
 import AppLayout from '../components/AppLayout.vue'
 import AnnonceCard from '../components/AnnonceCard.vue'
@@ -437,10 +441,6 @@ const initFromQuery = () => {
     fetchAnnonces()
   }
 }
-
-const distanceLabel = computed(() => {
-  return filters.value.distance_max ? `${filters.value.distance_max} km` : 'Illimitée'
-})
 
 const hasActiveFilters = computed(() => {
   return (

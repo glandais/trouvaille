@@ -17,6 +17,7 @@ interface Props {
     latitude: number
     longitude: number
   }
+  emptyValue: string
 }
 
 const props = defineProps<Props>()
@@ -43,8 +44,6 @@ const toRadians = (degrees: number): number => {
   return degrees * (Math.PI / 180)
 }
 
-// Using i18n formatDistance from composable instead of local function
-
 const formattedDistance = computed(() => {
   // If distance is provided directly, use it
   if (props.distance !== undefined) {
@@ -64,6 +63,6 @@ const formattedDistance = computed(() => {
   }
 
   // No distance available
-  return null
+  return props.emptyValue
 })
 </script>

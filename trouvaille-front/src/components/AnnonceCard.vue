@@ -91,6 +91,7 @@
         <DistanceDisplay
           :distance="annonce.distance"
           :coordinates="annonce.coordinates"
+          empty-value=""
           class="ml-2"
         />
       </div>

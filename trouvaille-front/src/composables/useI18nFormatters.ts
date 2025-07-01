@@ -81,7 +81,7 @@ export function useI18nFormatters() {
    */
   const formatDistance = (distanceInKm: number | undefined): string => {
     if (distanceInKm === undefined || distanceInKm === null) {
-      return t('location.distance.unlimited')
+      return ''
     }
 
     // Round to 1 decimal place for distances < 10km, otherwise to nearest km

@@ -142,6 +142,7 @@
               <DistanceDisplay
                 :distance="(annonce as any).distance"
                 :coordinates="annonce.coordinates"
+                empty-value=""
               />
             </div>
           </div>
