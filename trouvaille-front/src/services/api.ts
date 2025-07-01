@@ -3,9 +3,7 @@ import type { AxiosInstance } from 'axios'
 import { Configuration, AnnoncesApi, PhotosApi, AuthentificationApi, ConfigApi } from '../api'
 import { useAuthStore } from '../stores/auth'
 
-const baseURL = import.meta.env.VITE_API_BASE_URL
-  ? import.meta.env.VITE_API_BASE_URL
-  : window.location.origin
+const baseURL = window.location.origin
 
 // Create axios instance with base configuration
 const axiosInstance: AxiosInstance = axios.create({

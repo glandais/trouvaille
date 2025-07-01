@@ -8,6 +8,8 @@ import io.github.glandais.trouvaille.service.AuthService;
 import io.github.glandais.trouvaille.service.PhotoService;
 import io.quarkus.security.Authenticated;
 import jakarta.annotation.security.PermitAll;
+import jakarta.ws.rs.core.NewCookie;
+import jakarta.ws.rs.core.Response;
 import java.io.File;
 import lombok.RequiredArgsConstructor;
 
@@ -21,67 +23,81 @@ public class ApiResourcempl implements ApiApi {
   final FrontConfig frontConfig;
 
   @Override
-  public Annonces listAnnonces(AnnonceSearch data) {
-    return annonceService.listAnnonces(data);
+  public Response listAnnonces(AnnonceSearch data) {
+    return Response.ok(annonceService.listAnnonces(data)).build();
   }
 
   @Override
-  public Integer countAnnonces(AnnonceSearch data) {
-    return annonceService.countAnnonces(data);
+  public Response countAnnonces(AnnonceSearch data) {
+    return Response.ok(annonceService.countAnnonces(data)).build();
   }
 
   @Override
-  public Annonce createAnnonce(AnnonceBase data) {
-    return annonceService.createAnnonce(data);
+  public Response createAnnonce(AnnonceBase data) {
+    return Response.status(Response.Status.CREATED)
+        .entity(annonceService.createAnnonce(data))
+        .build();
   }
 
   @Override
-  public Annonce getAnnonce(String id) {
-    return annonceService.getAnnonce(id);
+  public Response getAnnonce(String id) {
+    return Response.ok(annonceService.getAnnonce(id)).build();
   }
 
   @Override
-  public Annonce putAnnonce(String id, AnnonceWithStatut data) {
-    return annonceService.putAnnonce(id, data);
+  public Response putAnnonce(String id, AnnonceWithStatut data) {
+    return Response.ok(annonceService.putAnnonce(id, data)).build();
   }
 
   @Override
-  public void deleteAnnonce(String id) {
+  public Response deleteAnnonce(String id) {
     annonceService.deleteAnnonce(id);
+    return Response.status(Response.Status.NO_CONTENT).build();
   }
 
   @Override
-  public String createPhoto(File data) {
-    return photoService.createPhoto(data);
+  public Response createPhoto(File data) {
+    return Response.ok(photoService.createPhoto(data)).build();
   }
 
   @Override
-  public void deletePhoto(String photoId) {
+  public Response deletePhoto(String photoId) {
     photoService.deletePhoto(photoId);
+    return Response.status(Response.Status.NO_CONTENT).build();
   }
 
   @Override
-  public File getPhotoFull(String photoId) {
-    return photoService.getPhotoFull(photoId);
+  public Response getPhotoFull(String photoId) {
+    return Response.ok(photoService.getPhotoFull(photoId)).build();
   }
 
   @Override
-  public File getPhotoThumb(String photoId) {
-    return photoService.getPhotoThumb(photoId);
-  }
-
-  @Override
-  @PermitAll
-  public OAuthTokenResponse exchangeOAuthToken(OAuthTokenRequest data) {
-    return authService.exchangeOAuthToken(data);
+  public Response getPhotoThumb(String photoId) {
+    return Response.ok(photoService.getPhotoThumb(photoId)).build();
   }
 
   @Override
   @PermitAll
-  public FrontConfiguration getConfig() {
+  public Response exchangeOAuthToken(OAuthTokenRequest data) {
+    OAuthTokenResponse oAuthTokenResponse = authService.exchangeOAuthToken(data);
+    NewCookie authCookie =
+        new NewCookie.Builder("auth_token")
+            .value(oAuthTokenResponse.getAccessToken())
+            .path("/api")
+            .httpOnly(true)
+            .secure(true)
+            .sameSite(NewCookie.SameSite.STRICT)
+            .maxAge(86400)
+            .build();
+    return Response.ok(oAuthTokenResponse).cookie(authCookie).build();
+  }
+
+  @Override
+  @PermitAll
+  public Response getConfig() {
     FrontConfiguration configuration = new FrontConfiguration();
     configuration.setAuthorizeUri(frontConfig.authorizeUri());
     configuration.setClientId(frontConfig.clientId());
-    return configuration;
+    return Response.ok(configuration).build();
   }
 }
