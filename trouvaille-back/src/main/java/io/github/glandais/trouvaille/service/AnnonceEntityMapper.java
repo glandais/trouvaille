@@ -67,9 +67,8 @@ public abstract class AnnonceEntityMapper {
       configuration = "upper")
   public abstract AnnonceStatut mapAnnonceStatut(AnnonceEntityStatut statut);
 
-  public abstract AnnonceType mapStringToAnnonceType(String type);
-
-  public abstract AnnonceNature mapStringToAnnonceNature(String nature);
-
-  public abstract PeriodeLocation mapStringToPeriodeLocation(String periodeLocation);
+  @EnumMapping(
+      nameTransformationStrategy = MappingConstants.CASE_TRANSFORMATION,
+      configuration = "upper")
+  public abstract PeriodeLocation mapStringToPeriodeLocation(PeriodeEntityLocation periodeLocation);
 }
