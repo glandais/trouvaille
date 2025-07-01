@@ -87,6 +87,7 @@ All URIs are relative to _http://localhost_
 - [OAuthTokenResponse](docs/OAuthTokenResponse.md)
 - [Pagination](docs/Pagination.md)
 - [PeriodeLocation](docs/PeriodeLocation.md)
+- [Photo](docs/Photo.md)
 - [Utilisateur](docs/Utilisateur.md)
 
 <a id="documentation-for-authorization"></a>

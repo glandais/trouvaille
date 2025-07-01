@@ -2,6 +2,7 @@ package io.github.glandais.trouvaille.service;
 
 import io.github.glandais.trouvaille.api.model.*;
 import io.github.glandais.trouvaille.entity.*;
+import java.util.List;
 import org.bson.types.ObjectId;
 import org.mapstruct.*;
 
@@ -12,7 +13,18 @@ public abstract class AnnonceMapper {
     return new ObjectId(objectId);
   }
 
+  @Mapping(source = "photos", target = "photos", qualifiedByName = "mapPhotos")
   public abstract AnnonceEntity mapAnnonceCreate(AnnonceBase data);
+
+  @Named("mapPhotos")
+  public abstract List<ObjectId> mapPhotos(List<Photo> data);
+
+  public ObjectId mapPhoto(Photo data) {
+    if (data == null) {
+      return null;
+    }
+    return mapObjectId(data.getId());
+  }
 
   public abstract void updateAnnonceEntity(
       @MappingTarget AnnonceEntity annonceEntity, AnnonceWithStatut data);

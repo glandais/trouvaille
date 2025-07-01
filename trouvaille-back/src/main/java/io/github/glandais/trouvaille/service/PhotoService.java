@@ -1,5 +1,6 @@
 package io.github.glandais.trouvaille.service;
 
+import io.github.glandais.trouvaille.api.model.Photo;
 import io.github.glandais.trouvaille.entity.AnnonceEntity;
 import io.github.glandais.trouvaille.entity.PhotoEntity;
 import io.github.glandais.trouvaille.repository.AnnonceRepository;
@@ -23,6 +24,7 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 @RequiredArgsConstructor
 public class PhotoService {
 
+  final AnnonceEntityMapper annonceEntityMapper;
   final PhotoRepository photoRepository;
   final AnnonceRepository annonceRepository;
   final ImageService imageService;
@@ -31,7 +33,7 @@ public class PhotoService {
   @ConfigProperty(name = "trouvaille.photos.storage-path")
   String storageBasePath;
 
-  public String createPhoto(File data) {
+  public Photo createPhoto(File data) {
     try {
       // Read image data
       byte[] imageData = Files.readAllBytes(data.toPath());
@@ -40,29 +42,31 @@ public class PhotoService {
         throw new BadRequestException("Empty image data");
       }
 
-      // Create photo entity
-      PhotoEntity photoEntity =
-          new PhotoEntity(new ObjectId(), userService.getCurrentUser().getId());
+      ObjectId id = new ObjectId();
 
       // Create directory structure (a/b/c/d for ID abcdef...)
-      Path photoDir = createPhotoDirectory(photoEntity.getId().toString());
+      Path photoDir = createPhotoDirectory(id.toString());
 
       // Resize and save full size image (max 2048x2048)
-      byte[] fullSizeData =
+      PhotoContent full =
           imageService.resizeImage(new java.io.ByteArrayInputStream(imageData), 2048, 2048, "jpg");
       Path fullSizePath = photoDir.resolve("full.jpg");
-      Files.write(fullSizePath, fullSizeData, StandardOpenOption.CREATE);
+      Files.write(fullSizePath, full.bytes(), StandardOpenOption.CREATE);
 
       // Resize and save thumbnail (256x256)
-      byte[] thumbnailData =
+      PhotoContent thumb =
           imageService.resizeImage(new java.io.ByteArrayInputStream(imageData), 256, 256, "jpg");
       Path thumbnailPath = photoDir.resolve("thumb.jpg");
-      Files.write(thumbnailPath, thumbnailData, StandardOpenOption.CREATE);
+      Files.write(thumbnailPath, thumb.bytes(), StandardOpenOption.CREATE);
+
+      // Create photo entity
+      PhotoEntity photoEntity =
+          new PhotoEntity(id, userService.getCurrentUser().getId(), full.width(), full.height());
 
       // Save to database
       photoRepository.persist(photoEntity);
 
-      return photoEntity.getId().toString();
+      return annonceEntityMapper.mapPhoto(photoEntity);
     } catch (IOException e) {
       throw new BadRequestException("Failed to process image: " + e.getMessage(), e);
     }

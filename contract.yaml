@@ -146,7 +146,7 @@ paths:
           content:
             application/json:
               schema:
-                type: string
+                $ref: '#/components/schemas/Photo'
 
   /api/v1/annonces/photos/{photoId}:
     delete:
@@ -386,6 +386,25 @@ components:
         - asc
         - desc
 
+    Photo:
+      type: object
+      properties:
+        id:
+          type: string
+        thumbUrl:
+          type: string
+        fullUrl:
+          type: string
+        width:
+          type: integer
+        height:
+          type: integer
+      required:
+        - id
+        - thumbUrl
+        - fullUrl
+        - width
+        - height
 
     AnnonceBase:
       type: object
@@ -414,7 +433,7 @@ components:
         photos:
           type: array
           items:
-            type: string
+            $ref: '#/components/schemas/Photo'
           maxItems: 10
         coordinates:
           $ref: '#/components/schemas/Coordinates'
@@ -427,6 +446,7 @@ components:
         - description
         - prix
         - coordinates
+        - photos
         - ville
 
     AnnonceStatut:

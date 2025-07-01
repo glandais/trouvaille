@@ -226,10 +226,10 @@
           </div>
 
           <!-- Photo Preview Grid -->
-          <div v-if="uploadedPhotos.length > 0" class="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div v-for="(photo, index) in uploadedPhotos" :key="photo.id" class="relative group">
+          <div v-if="form.photos.length > 0" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div v-for="(photo, index) in form.photos" :key="photo.id" class="relative group">
               <img
-                :src="photo.url"
+                :src="photo.thumbUrl"
                 :alt="`Photo ${index + 1}`"
                 class="w-full h-32 object-cover rounded-lg border border-gray-200"
               />
@@ -249,7 +249,7 @@
                     <ChevronLeftIcon class="h-4 w-4" />
                   </button>
                   <button
-                    v-if="index < uploadedPhotos.length - 1"
+                    v-if="index < form.photos.length - 1"
                     type="button"
                     @click="movePhoto(index, index + 1)"
                     class="p-2 bg-white text-gray-600 rounded-full hover:text-gray-900"
@@ -354,7 +354,6 @@ import AppLayout from '../components/AppLayout.vue'
 import MarkdownEditor from '../components/MarkdownEditor.vue'
 import LocationField from '../components/LocationField.vue'
 import { PhotoIcon, ChevronLeftIcon, ChevronRightIcon, TrashIcon } from '@heroicons/vue/24/outline'
-import { photoService } from '../services/photoService'
 import { SelectedLocation } from '@/types/location'
 
 interface Props {
@@ -380,7 +379,6 @@ const form = reactive<AnnonceBase & { statut: AnnonceStatut }>({
 
 const errors = ref<Record<string, string>>({})
 const submitting = ref(false)
-const uploadedPhotos = ref<Array<{ id: string; url: string }>>([])
 const uploadingPhotos = ref<Array<{ name: string; progress: number }>>([])
 const selectedLocation = ref<SelectedLocation | null>(null)
 const loading = ref(false)
@@ -418,7 +416,7 @@ const handleDrop = (event: DragEvent) => {
 }
 
 const handleFiles = async (files: File[]) => {
-  if (uploadedPhotos.value.length + files.length > 10) {
+  if (form.photos.length + files.length > 10) {
     alert(t('photos.upload.max_files_exceeded'))
     return
   }
@@ -457,11 +455,9 @@ const uploadPhoto = async (file: File) => {
     uploadProgress.progress = 100
 
     // The response data is directly the photo ID (string)
-    const photoId = response.data
-    const photoUrl = URL.createObjectURL(file)
+    const photo = response.data
 
-    uploadedPhotos.value.push({ id: photoId, url: photoUrl })
-    form.photos?.push(photoId)
+    form.photos.push(photo)
   } catch (error) {
     console.error('Failed to upload photo:', error)
     alert(t('photos.upload.upload_failed', { filename: file.name }))
@@ -475,20 +471,11 @@ const uploadPhoto = async (file: File) => {
 }
 
 const removePhoto = async (index: number) => {
-  const photo = uploadedPhotos.value[index]
+  const photo = form.photos[index]
 
   try {
     await photosApi.deletePhoto(photo.id)
-    uploadedPhotos.value.splice(index, 1)
-
-    if (form.photos) {
-      const photoIndex = form.photos.findIndex((id) => id === photo.id)
-      if (photoIndex > -1) {
-        form.photos.splice(photoIndex, 1)
-      }
-    }
-
-    URL.revokeObjectURL(photo.url)
+    form.photos.splice(index, 1)
   } catch (error) {
     console.error('Failed to delete photo:', error)
     alert(t('photos.actions.delete_error'))
@@ -496,21 +483,14 @@ const removePhoto = async (index: number) => {
 }
 
 const movePhoto = (fromIndex: number, toIndex: number) => {
-  const photos = [...uploadedPhotos.value]
-  const photosIds = [...(form.photos || [])]
+  const photos = [...(form.photos || [])]
 
   // Swap photos
   const temp = photos[fromIndex]
   photos[fromIndex] = photos[toIndex]
   photos[toIndex] = temp
 
-  // Swap IDs
-  const tempId = photosIds[fromIndex]
-  photosIds[fromIndex] = photosIds[toIndex]
-  photosIds[toIndex] = tempId
-
-  uploadedPhotos.value = photos
-  form.photos = photosIds
+  form.photos = photos
 }
 
 const handleLocationChange = (location: SelectedLocation | null) => {
@@ -557,22 +537,6 @@ const loadExistingAnnonce = async () => {
     // Load existing photos
     if (response.data.photos && response.data.photos.length > 0) {
       form.photos = [...response.data.photos]
-
-      // Charger les URLs des photos existantes via le service
-      const photoPromises = response.data.photos.map(async (photoId) => {
-        try {
-          const url = await photoService.getPhotoUrl(photoId, 'thumb')
-          return { id: photoId, url }
-        } catch (error) {
-          console.warn(`Failed to load existing photo ${photoId}:`, error)
-          return null
-        }
-      })
-
-      const photoResults = await Promise.allSettled(photoPromises)
-      uploadedPhotos.value = photoResults
-        .filter((result) => result.status === 'fulfilled' && result.value !== null)
-        .map((result) => (result as PromiseFulfilledResult<{ id: string; url: string }>).value)
     }
   } catch (error) {
     console.error('Failed to load annonce:', error)

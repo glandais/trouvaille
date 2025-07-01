@@ -26,6 +26,7 @@ docs/OAuthTokenRequest.md
 docs/OAuthTokenResponse.md
 docs/Pagination.md
 docs/PeriodeLocation.md
+docs/Photo.md
 docs/PhotosApi.md
 docs/Utilisateur.md
 git_push.sh

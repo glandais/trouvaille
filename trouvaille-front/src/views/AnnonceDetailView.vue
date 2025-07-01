@@ -76,7 +76,7 @@
           <div v-if="annonce.photos && annonce.photos.length > 1" class="grid grid-cols-4 gap-2">
             <button
               v-for="(photo, index) in annonce.photos"
-              :key="photo"
+              :key="photo.id"
               @click="currentPhotoIndex = index"
               :class="[
                 'aspect-w-1 aspect-h-1 rounded-lg overflow-hidden border-2 transition-colors',
@@ -86,8 +86,8 @@
               ]"
             >
               <img
-                v-if="thumbUrls[index]"
-                :src="thumbUrls[index]"
+                v-if="photo.thumbUrl"
+                :src="photo.thumbUrl"
                 :alt="`Photo ${index + 1}`"
                 class="w-full h-20 object-cover"
               />
@@ -242,7 +242,6 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '../stores/auth'
 import { annoncesApi } from '../services/api'
-import { photoService } from '../services/photoService'
 import { Annonce, AnnonceStatut } from '../api'
 import AppLayout from '../components/AppLayout.vue'
 import PhotoViewer from '../components/PhotoViewer.vue'
@@ -281,14 +280,7 @@ const currentPhoto = computed(() => {
   return annonce.value.photos[currentPhotoIndex.value]
 })
 
-// Utiliser les composables pour charger les photos
-const photoIds = computed(() => annonce.value?.photos || [])
-const thumbUrls = computed(() =>
-  photoIds.value.map((photoId) => photoService.getPhotoUrl(photoId, 'thumb')),
-)
-const fullPhotoUrl = computed(() =>
-  currentPhoto.value ? photoService.getPhotoUrl(currentPhoto.value, 'full') : undefined,
-)
+const fullPhotoUrl = computed(() => (currentPhoto.value ? currentPhoto.value.fullUrl : undefined))
 
 const isOwner = computed(() => {
   return authStore.user?.id === annonce.value?.utilisateur?.id
@@ -299,7 +291,7 @@ const hasPhotos = computed(() => {
 })
 
 const totalPhotos = computed(() => {
-  return annonce.value?.photos?.length || 0
+  return annonce.value?.photos.length || 0
 })
 
 const fetchAnnonce = async () => {

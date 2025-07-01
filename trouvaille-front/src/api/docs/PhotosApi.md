@@ -11,7 +11,7 @@ All URIs are relative to _http://localhost_
 
 # **createPhoto**
 
-> string createPhoto(body)
+> Photo createPhoto(body)
 
 ### Example
 
@@ -34,7 +34,7 @@ const { status, data } = await apiInstance.createPhoto(body)
 
 ### Return type
 
-**string**
+**Photo**
 
 ### Authorization
 

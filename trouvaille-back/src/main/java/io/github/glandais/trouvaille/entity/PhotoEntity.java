@@ -15,4 +15,8 @@ public class PhotoEntity {
   public ObjectId id;
 
   public ObjectId utilisateur;
+
+  public int width;
+
+  public int height;
 }

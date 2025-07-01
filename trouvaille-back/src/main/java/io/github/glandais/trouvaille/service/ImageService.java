@@ -11,7 +11,7 @@ import javax.imageio.ImageIO;
 @ApplicationScoped
 public class ImageService {
 
-  public byte[] resizeImage(
+  public PhotoContent resizeImage(
       InputStream inputStream, int targetWidth, int targetHeight, String format)
       throws IOException {
     BufferedImage originalImage = ImageIO.read(inputStream);
@@ -58,6 +58,6 @@ public class ImageService {
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
     ImageIO.write(resizedImage, format, outputStream);
 
-    return outputStream.toByteArray();
+    return new PhotoContent(outputStream.toByteArray(), newWidth, newHeight);
   }
 }

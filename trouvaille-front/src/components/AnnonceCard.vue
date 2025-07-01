@@ -167,7 +167,6 @@ import { annoncesApi } from '../services/api'
 import { useI18nFormatters } from '@/composables/useI18nFormatters'
 import { useAnnonceLabels } from '@/composables/useAnnonceLabels'
 import DistanceDisplay from './DistanceDisplay.vue'
-import { photoService } from '../services/photoService'
 const authStore = useAuthStore()
 const { t } = useI18n()
 const { formatSmartDate, formatPrice: formatPriceI18n } = useI18nFormatters()
@@ -195,10 +194,8 @@ const goToDetail = () => {
 }
 
 // Utiliser le composable pour charger la première photo
-const firstPhotoId = computed(() => props.annonce.photos?.[0] || null)
-const photoUrl = computed(() =>
-  firstPhotoId.value ? photoService.getPhotoUrl(firstPhotoId.value, 'thumb') : null,
-)
+const firstPhoto = computed(() => props.annonce.photos[0] || null)
+const photoUrl = computed(() => (firstPhoto.value ? firstPhoto.value.thumbUrl : null))
 
 // Use i18n formatter for price
 const formatPrice = (prix?: number, periode?: PeriodeLocation) => {

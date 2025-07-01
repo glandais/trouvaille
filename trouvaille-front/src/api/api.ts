@@ -77,10 +77,10 @@ export interface Annonce {
   periode_location?: PeriodeLocation
   /**
    *
-   * @type {Array<string>}
+   * @type {Array<Photo>}
    * @memberof Annonce
    */
-  photos?: Array<string>
+  photos: Array<Photo>
   /**
    *
    * @type {Coordinates}
@@ -169,10 +169,10 @@ export interface AnnonceBase {
   periode_location?: PeriodeLocation
   /**
    *
-   * @type {Array<string>}
+   * @type {Array<Photo>}
    * @memberof AnnonceBase
    */
-  photos?: Array<string>
+  photos: Array<Photo>
   /**
    *
    * @type {Coordinates}
@@ -231,10 +231,10 @@ export interface AnnonceList {
   periode_location?: PeriodeLocation
   /**
    *
-   * @type {Array<string>}
+   * @type {Array<Photo>}
    * @memberof AnnonceList
    */
-  photos?: Array<string>
+  photos: Array<Photo>
   /**
    *
    * @type {Coordinates}
@@ -480,10 +480,10 @@ export interface AnnonceWithStatut {
   periode_location?: PeriodeLocation
   /**
    *
-   * @type {Array<string>}
+   * @type {Array<Photo>}
    * @memberof AnnonceWithStatut
    */
-  photos?: Array<string>
+  photos: Array<Photo>
   /**
    *
    * @type {Coordinates}
@@ -642,6 +642,43 @@ export enum PeriodeLocation {
   Mois = 'mois',
 }
 
+/**
+ *
+ * @export
+ * @interface Photo
+ */
+export interface Photo {
+  /**
+   *
+   * @type {string}
+   * @memberof Photo
+   */
+  id: string
+  /**
+   *
+   * @type {string}
+   * @memberof Photo
+   */
+  thumbUrl: string
+  /**
+   *
+   * @type {string}
+   * @memberof Photo
+   */
+  fullUrl: string
+  /**
+   *
+   * @type {number}
+   * @memberof Photo
+   */
+  width: number
+  /**
+   *
+   * @type {number}
+   * @memberof Photo
+   */
+  height: number
+}
 /**
  *
  * @export
@@ -1786,7 +1823,7 @@ export const PhotosApiFp = function (configuration?: Configuration) {
     async createPhoto(
       body: File,
       options?: RawAxiosRequestConfig,
-    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<string>> {
+    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Photo>> {
       const localVarAxiosArgs = await localVarAxiosParamCreator.createPhoto(body, options)
       const localVarOperationServerIndex = configuration?.serverIndex ?? 0
       const localVarOperationServerBasePath =
@@ -1889,7 +1926,7 @@ export const PhotosApiFactory = function (
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    createPhoto(body: File, options?: RawAxiosRequestConfig): AxiosPromise<string> {
+    createPhoto(body: File, options?: RawAxiosRequestConfig): AxiosPromise<Photo> {
       return localVarFp.createPhoto(body, options).then((request) => request(axios, basePath))
     },
     /**
