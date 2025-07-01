@@ -1,3 +1,10 @@
+# [1.6.0](https://github.com/glandais/trouvaille/compare/v1.5.1...v1.6.0) (2025-07-01)
+
+
+### Features
+
+* **frontend:** improve distance display handling across components ([4c585c3](https://github.com/glandais/trouvaille/commit/4c585c32a4b681cbfd6ebfa8f15210164a3140d3))
+
 ## [1.5.1](https://github.com/glandais/trouvaille/compare/v1.5.0...v1.5.1) (2025-07-01)
 
 
