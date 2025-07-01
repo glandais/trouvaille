@@ -1,3 +1,15 @@
+# [1.5.0](https://github.com/glandais/trouvaille/compare/v1.4.0...v1.5.0) (2025-07-01)
+
+
+### Bug Fixes
+
+* auth ([f42fd14](https://github.com/glandais/trouvaille/commit/f42fd142cdc6d6fad1163442d371e5024d912187))
+
+
+### Features
+
+* implement cookie-based authentication with HTTPS support ([c06455c](https://github.com/glandais/trouvaille/commit/c06455cd0344d60e327e5feb2d4f59df0600ddf1))
+
 # [1.4.0](https://github.com/glandais/trouvaille/compare/v1.3.1...v1.4.0) (2025-06-30)
 
 
