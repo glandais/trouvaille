@@ -67,11 +67,7 @@ body {
 }
 
 .vpis-gallery {
-  grid-gap: 10px;
-  display: grid;
-  grid-template-columns: 1fr 0.5fr 0.5fr;
-  position: relative;
-  width: 100%;
+  @apply grid grid-cols-2 md:grid-cols-3 gap-10;
 }
 
 .vpis-item-figure {
@@ -80,4 +76,9 @@ body {
   margin: 0;
   padding: 0;
   align-content: center;
+}
+
+.vpis-item-figure img {
+  display: block;
+  margin: auto;
 }
