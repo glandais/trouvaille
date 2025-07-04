@@ -1,3 +1,10 @@
+## [1.9.4](https://github.com/glandais/trouvaille/compare/v1.9.3...v1.9.4) (2025-07-04)
+
+
+### Bug Fixes
+
+* pictures grid layout ([66ef90d](https://github.com/glandais/trouvaille/commit/66ef90d9bb791efb897a9a7dd961255a9b0cbb1b))
+
 ## [1.9.3](https://github.com/glandais/trouvaille/compare/v1.9.2...v1.9.3) (2025-07-04)
 
 
