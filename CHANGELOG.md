@@ -1,3 +1,10 @@
+## [1.9.3](https://github.com/glandais/trouvaille/compare/v1.9.2...v1.9.3) (2025-07-04)
+
+
+### Bug Fixes
+
+* label ([a4a5606](https://github.com/glandais/trouvaille/commit/a4a56064f12c479b49f5458d4b787bd03fa4e190))
+
 ## [1.9.2](https://github.com/glandais/trouvaille/compare/v1.9.1...v1.9.2) (2025-07-04)
 
 
