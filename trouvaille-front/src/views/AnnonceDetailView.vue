@@ -58,7 +58,11 @@
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <!-- Photo Gallery -->
         <div class="space-y-4 gallery-container">
-          <Gallery :list="photos" :options="galleryOptions" />
+          <Gallery :options="galleryOptions">
+            <figure v-for="photo in photos" :key="photo.id" class="vpis-item-figure">
+              <Item v-bind="photo" />
+            </figure>
+          </Gallery>
         </div>
 
         <!-- Annonce Details -->
@@ -204,7 +208,7 @@ import {
 } from '@heroicons/vue/24/outline'
 import { useI18nFormatters } from '../composables/useI18nFormatters'
 import { useAnnonceLabels } from '../composables/useAnnonceLabels'
-import { Gallery } from 'vue-preview-imgs'
+import { Gallery, Item } from 'vue-preview-imgs'
 
 interface Props {
   id: string
@@ -228,6 +232,7 @@ const isOwner = computed(() => {
 const photos = computed(
   () =>
     annonce.value?.photos.map((photo) => ({
+      id: photo.id,
       href: photo.fullUrl,
       thumbnail: photo.thumbUrl,
       width: photo.width,
