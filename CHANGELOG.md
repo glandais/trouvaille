@@ -1,3 +1,10 @@
+## [1.9.2](https://github.com/glandais/trouvaille/compare/v1.9.1...v1.9.2) (2025-07-04)
+
+
+### Bug Fixes
+
+* lodash ([30eccf3](https://github.com/glandais/trouvaille/commit/30eccf31dd0fda43c241df51807852a574b6be4e))
+
 ## [1.9.1](https://github.com/glandais/trouvaille/compare/v1.9.0...v1.9.1) (2025-07-04)
 
 
