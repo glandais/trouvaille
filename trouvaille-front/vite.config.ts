@@ -22,7 +22,7 @@ export default defineConfig({
           if (id.includes('node_modules/axios/')) return 'axios'
           if (id.includes('node_modules/prosemirror')) return 'prosemirror'
           if (id.includes('node_modules/@toast-ui')) return 'tui'
-          if (id.includes('node_modules/@vue')) return 'vue'
+          if (id.includes('node_modules/@vue')) return 'vue1'
           if (id.includes('node_modules/vue')) return 'vue2'
           if (id.includes('trouvaille-front/src')) return 'trouvaille'
         }
