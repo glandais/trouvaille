@@ -1,3 +1,10 @@
+## [1.9.5](https://github.com/glandais/trouvaille/compare/v1.9.4...v1.9.5) (2025-07-04)
+
+
+### Bug Fixes
+
+* restore below title ([585f2ca](https://github.com/glandais/trouvaille/commit/585f2ca78ca0e6984c000ee2ca70a0340ef80fba))
+
 ## [1.9.4](https://github.com/glandais/trouvaille/compare/v1.9.3...v1.9.4) (2025-07-04)
 
 
