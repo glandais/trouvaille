@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { type OAuthTokenRequest, type Utilisateur } from '../api'
 import { authentificationApi, configApi } from '../services/api'
@@ -10,7 +10,6 @@ export const useAuthStore = defineStore('auth', () => {
   const authorizeUri = ref<string>('')
   const clientId = ref<string>('')
   const debugInfo = ref<string>('')
-  const route = useRoute()
   const router = useRouter()
   const { t } = useI18n()
 

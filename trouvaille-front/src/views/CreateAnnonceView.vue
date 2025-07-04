@@ -13,6 +13,47 @@
     </div>
 
     <div v-else class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <!-- Restore Banner -->
+      <div
+        v-if="canRestore"
+        class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-8 rounded-md shadow-sm"
+      >
+        <div class="flex">
+          <div class="flex-shrink-0">
+            <ExclamationTriangleIcon class="h-5 w-5 text-yellow-400" aria-hidden="true" />
+          </div>
+          <div class="ml-3">
+            <p class="text-sm text-yellow-700">
+              {{ $t('annonce.form.restore.message') }}
+            </p>
+            <div class="mt-2 text-sm">
+              <button
+                @click="
+                  () => {
+                    copyToForm(savedAnnonce!)
+                    canRestore = false
+                  }
+                "
+                class="font-medium text-yellow-700 hover:text-yellow-600"
+              >
+                {{ $t('annonce.form.restore.restore') }}
+              </button>
+              <button
+                @click="
+                  () => {
+                    discardSave()
+                    canRestore = false
+                  }
+                "
+                class="ml-4 font-medium text-gray-700 hover:text-gray-600"
+              >
+                {{ $t('annonce.form.restore.discard') }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Header -->
       <div class="mb-8">
         <h1 class="text-3xl font-bold text-gray-900">
@@ -337,9 +378,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, reactive, watch, computed, toRaw } from 'vue'
+import { useDebounceFn } from '@vueuse/core'
+import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import { isEqual } from 'lodash-es'
 import { annoncesApi, photosApi } from '../services/api'
 import {
   AnnonceBase,
@@ -348,12 +391,17 @@ import {
   AnnonceNature,
   AnnonceStatut,
   PeriodeLocation,
-  Annonce,
 } from '../api'
 import AppLayout from '../components/AppLayout.vue'
 import MarkdownEditor from '../components/MarkdownEditor.vue'
 import LocationField from '../components/LocationField.vue'
-import { PhotoIcon, ChevronLeftIcon, ChevronRightIcon, TrashIcon } from '@heroicons/vue/24/outline'
+import {
+  PhotoIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  TrashIcon,
+  ExclamationTriangleIcon,
+} from '@heroicons/vue/24/outline'
 import { SelectedLocation } from '@/types/location'
 
 interface Props {
@@ -362,9 +410,10 @@ interface Props {
 
 const props = defineProps<Props>()
 const router = useRouter()
+const route = useRoute()
 const { t } = useI18n()
 
-const form = reactive<AnnonceBase & { statut: AnnonceStatut }>({
+const defaultForm: AnnonceBase & { statut: AnnonceStatut } = {
   type: AnnonceType.Vente,
   nature: AnnonceNature.Offre,
   titre: '',
@@ -375,6 +424,42 @@ const form = reactive<AnnonceBase & { statut: AnnonceStatut }>({
   ville: '',
   photos: [],
   statut: AnnonceStatut.Active,
+}
+
+const form = reactive<AnnonceBase & { statut: AnnonceStatut }>({
+  ...defaultForm,
+})
+
+const localStorageEntry = computed(() => {
+  if (isEditMode.value && props.id) {
+    return 'annonce_' + props.id
+  } else {
+    return 'annonce_new'
+  }
+})
+
+const savedAnnonce = ref<(AnnonceBase & { statut: AnnonceStatut }) | undefined>(undefined)
+const canRestore = ref<boolean>(false)
+
+const getSavedAnnonce = (): (AnnonceBase & { statut: AnnonceStatut }) | undefined => {
+  const json = localStorage.getItem(localStorageEntry.value)
+  if (json) {
+    return JSON.parse(json)
+  } else {
+    return undefined
+  }
+}
+
+const discardSave = () => {
+  localStorage.removeItem(localStorageEntry.value)
+}
+
+const saveForm = useDebounceFn(() => {
+  localStorage.setItem(localStorageEntry.value, JSON.stringify(toRaw(form)))
+}, 500)
+
+watch(form, () => {
+  saveForm()
 })
 
 const errors = ref<Record<string, string>>({})
@@ -384,7 +469,6 @@ const selectedLocation = ref<SelectedLocation | null>(null)
 const loading = ref(false)
 
 const isEditMode = computed(() => !!props.id)
-const existingAnnonce = ref<Annonce>()
 
 const validateForm = () => {
   errors.value = {}
@@ -394,7 +478,7 @@ const validateForm = () => {
   if (!form.titre || form.titre.length < 5) {
     errors.value.titre = t('validation.title_min_length')
   }
-  if (!form.prix || form.prix <= 0) {
+  if (!form.prix || form.prix < 0) {
     errors.value.prix = t('validation.price_invalid')
   }
 
@@ -506,38 +590,57 @@ const handleLocationChange = (location: SelectedLocation | null) => {
   }
 }
 
-const loadExistingAnnonce = async () => {
-  if (!props.id) return
+const copyToForm = (annonce: AnnonceBase & { statut: AnnonceStatut }) => {
+  // Populate form with existing data
+  form.type = annonce.type
+  form.nature = annonce.nature
+  form.titre = annonce.titre || ''
+  form.description = annonce.description || ''
+  form.prix = annonce.prix
+  form.periode_location = annonce.periode_location
+  form.coordinates = annonce.coordinates
+  form.ville = annonce.ville
+  form.statut = annonce.statut
 
+  // Set selected location if coordinates exist
+  if (annonce.coordinates?.latitude && annonce.coordinates?.longitude) {
+    selectedLocation.value = {
+      label: annonce.ville,
+      city: annonce.ville,
+      coordinates: [annonce.coordinates.longitude, annonce.coordinates.latitude],
+    }
+  } else {
+    selectedLocation.value = null
+  }
+
+  // Load existing photos
+  if (annonce.photos && annonce.photos.length > 0) {
+    form.photos = [...annonce.photos]
+  } else {
+    form.photos = []
+  }
+}
+
+const init = async () => {
   loading.value = true
   try {
-    const response = await annoncesApi.getAnnonce(props.id)
-    existingAnnonce.value = response.data
-
-    // Populate form with existing data
-    form.type = response.data.type
-    form.nature = response.data.nature
-    form.titre = response.data.titre || ''
-    form.description = response.data.description || ''
-    form.prix = response.data.prix
-    form.periode_location = response.data.periode_location
-    form.coordinates = response.data.coordinates
-    form.ville = response.data.ville
-    form.statut = response.data.statut
-
-    // Set selected location if coordinates exist
-    if (response.data.coordinates?.latitude && response.data.coordinates?.longitude) {
-      selectedLocation.value = {
-        label: response.data.ville,
-        city: response.data.ville,
-        coordinates: [response.data.coordinates.longitude, response.data.coordinates.latitude],
+    savedAnnonce.value = getSavedAnnonce()
+    let existingAnnonce: (AnnonceBase & { statut: AnnonceStatut }) | null = null
+    if (isEditMode.value && props.id) {
+      const response = await annoncesApi.getAnnonce(props.id)
+      existingAnnonce = response.data
+    } else {
+      existingAnnonce = {
+        ...defaultForm,
       }
     }
-
-    // Load existing photos
-    if (response.data.photos && response.data.photos.length > 0) {
-      form.photos = [...response.data.photos]
-    }
+    copyToForm(existingAnnonce)
+    const savedAnnonceValue = savedAnnonce.value
+      ? JSON.parse(JSON.stringify(toRaw(savedAnnonce.value)))
+      : null
+    const rawForm = JSON.parse(JSON.stringify(toRaw(form)))
+    const testCanRestore = (savedAnnonceValue && !isEqual(savedAnnonceValue, rawForm)) || false
+    canRestore.value = testCanRestore
   } catch (error) {
     console.error('Failed to load annonce:', error)
     alert(t('annonce.edit.error'))
@@ -573,7 +676,7 @@ const handleSubmit = async () => {
       // Create new annonce
       response = await annoncesApi.createAnnonce(form)
     }
-
+    discardSave()
     router.push(`/annonces/${response.data.id}`)
   } catch (error) {
     console.error('Failed to save annonce:', error)
@@ -583,9 +686,11 @@ const handleSubmit = async () => {
   }
 }
 
-onMounted(() => {
-  if (isEditMode.value) {
-    loadExistingAnnonce()
-  }
-})
+watch(
+  route,
+  () => {
+    init()
+  },
+  { immediate: true },
+)
 </script>

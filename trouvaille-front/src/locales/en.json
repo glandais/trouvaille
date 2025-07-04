@@ -209,6 +209,12 @@
       },
       "help": {
         "status": "Change the status to temporarily suspend your listing or mark it as sold/rented"
+      },
+      "restore": {
+        "title": "Unsaved changes",
+        "message": "You have unsaved changes from a previous session. Do you want to restore them?",
+        "restore": "Restore",
+        "discard": "Discard"
       }
     }
   },
