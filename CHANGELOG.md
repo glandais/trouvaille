@@ -1,3 +1,10 @@
+# [1.8.0](https://github.com/glandais/trouvaille/compare/v1.7.0...v1.8.0) (2025-07-04)
+
+
+### Features
+
+* photos gallery layout ([b2ba74d](https://github.com/glandais/trouvaille/commit/b2ba74d0c260f8aa58638d2ed81f4263f3f829d1))
+
 # [1.7.0](https://github.com/glandais/trouvaille/compare/v1.6.0...v1.7.0) (2025-07-01)
 
 
