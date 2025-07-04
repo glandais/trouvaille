@@ -383,6 +383,7 @@ import { useDebounceFn } from '@vueuse/core'
 import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { isEqual } from 'lodash-es'
+import ls from 'localstorage-slim'
 import { annoncesApi, photosApi } from '../services/api'
 import {
   AnnonceBase,
@@ -438,24 +439,19 @@ const localStorageEntry = computed(() => {
   }
 })
 
-const savedAnnonce = ref<(AnnonceBase & { statut: AnnonceStatut }) | undefined>(undefined)
+const savedAnnonce = ref<(AnnonceBase & { statut: AnnonceStatut }) | null>(null)
 const canRestore = ref<boolean>(false)
 
-const getSavedAnnonce = (): (AnnonceBase & { statut: AnnonceStatut }) | undefined => {
-  const json = localStorage.getItem(localStorageEntry.value)
-  if (json) {
-    return JSON.parse(json)
-  } else {
-    return undefined
-  }
+const getSavedAnnonce = (): (AnnonceBase & { statut: AnnonceStatut }) | null => {
+  return ls.get(localStorageEntry.value)
 }
 
 const discardSave = () => {
-  localStorage.removeItem(localStorageEntry.value)
+  ls.remove(localStorageEntry.value)
 }
 
 const saveForm = useDebounceFn(() => {
-  localStorage.setItem(localStorageEntry.value, JSON.stringify(toRaw(form)))
+  ls.set(localStorageEntry.value, toRaw(form), { ttl: 24 * 3600 })
 }, 500)
 
 watch(form, () => {
