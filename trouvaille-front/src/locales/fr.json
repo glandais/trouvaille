@@ -119,7 +119,7 @@
     },
     "delete": {
       "title": "Supprimer l'annonce",
-      "confirm": "Êtes-vous sûr de vouloir supprimer \"{title}\"",
+      "confirm": "Êtes-vous sûr de vouloir supprimer \"{title}\" ?",
       "success": "Annonce supprimée avec succès !",
       "error": "Erreur lors de la suppression de l'annonce"
     },
