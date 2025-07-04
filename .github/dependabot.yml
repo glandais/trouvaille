@@ -116,26 +116,25 @@ updates:
           - "minor"
           - "patch"
 
-  # Docker dependencies (Root)
-  - package-ecosystem: "docker"
+  # npm dependencies (root)
+  - package-ecosystem: "npm"
     directory: "/"
     schedule:
       interval: "weekly"
-      day: "tuesday"
-      time: "09:00"
+      day: "monday"
+      time: "09:30"
       timezone: "Europe/Paris"
-    open-pull-requests-limit: 3
+    open-pull-requests-limit: 10
     reviewers:
       - "glandais"
     assignees:
       - "glandais"
     commit-message:
-      prefix: "deps(docker)"
+      prefix: "deps(npm)"
       include: "scope"
     labels:
       - "dependencies"
-      - "docker"
-      - "infrastructure"
+      - "npm"
 
   # Docker dependencies (Backend)
   - package-ecosystem: "docker"
