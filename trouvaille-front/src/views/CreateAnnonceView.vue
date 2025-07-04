@@ -13,6 +13,16 @@
     </div>
 
     <div v-else class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <!-- Header -->
+      <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900">
+          {{ isEditMode ? $t('annonce.edit.title') : $t('annonce.create.title') }}
+        </h1>
+        <p class="mt-2 text-gray-600">
+          {{ isEditMode ? $t('annonce.edit.description') : $t('annonce.create.description') }}
+        </p>
+      </div>
+
       <!-- Restore Banner -->
       <div
         v-if="canRestore"
@@ -52,16 +62,6 @@
             </div>
           </div>
         </div>
-      </div>
-
-      <!-- Header -->
-      <div class="mb-8">
-        <h1 class="text-3xl font-bold text-gray-900">
-          {{ isEditMode ? $t('annonce.edit.title') : $t('annonce.create.title') }}
-        </h1>
-        <p class="mt-2 text-gray-600">
-          {{ isEditMode ? $t('annonce.edit.description') : $t('annonce.create.description') }}
-        </p>
       </div>
 
       <!-- Form -->
