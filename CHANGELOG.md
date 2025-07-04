@@ -1,3 +1,11 @@
+# [1.9.0](https://github.com/glandais/trouvaille/compare/v1.8.0...v1.9.0) (2025-07-04)
+
+
+### Features
+
+* Restore edit ([be555e3](https://github.com/glandais/trouvaille/commit/be555e3ce9e6038b367c99a923b899da13bbc06f))
+* Revue authentification navigateur ([e2b30b9](https://github.com/glandais/trouvaille/commit/e2b30b94b64e4fdb5b6d360e2eac99573b2eef00))
+
 # [1.8.0](https://github.com/glandais/trouvaille/compare/v1.7.0...v1.8.0) (2025-07-04)
 
 
