@@ -1,3 +1,10 @@
+## [1.9.1](https://github.com/glandais/trouvaille/compare/v1.9.0...v1.9.1) (2025-07-04)
+
+
+### Bug Fixes
+
+* TTL for unsaved changes ([d11fef5](https://github.com/glandais/trouvaille/commit/d11fef5554dd9709d8751fcf47fca1c94f602a56))
+
 # [1.9.0](https://github.com/glandais/trouvaille/compare/v1.8.0...v1.9.0) (2025-07-04)
 
 
