@@ -1,18 +1,12 @@
 <template>
   <div id="app">
-    <!-- Always show router-view for OAuth callback -->
-    <router-view v-if="$route.name === 'oauth-callback'" />
-
     <!-- Show loading while authenticating -->
-    <div
-      v-else-if="authStore.isAuthenticating"
-      class="min-h-screen flex items-center justify-center"
-    >
+    <div v-if="authStore.isAuthenticating" class="min-h-screen flex items-center justify-center">
       <div class="text-center">
         <div
           class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"
         ></div>
-        <p class="text-gray-600">{{ $t('app.auth.authenticating') }}</p>
+        <p class="text-gray-600">{{ authStore.debugInfo }}</p>
       </div>
     </div>
 
@@ -54,7 +48,6 @@ const updateTitle = () => {
 onMounted(async () => {
   // Set initial title
   updateTitle()
-
   await authStore.initializeAuth()
 })
 

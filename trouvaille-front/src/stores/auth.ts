@@ -1,12 +1,18 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { type OAuthTokenRequest, type Utilisateur } from '../api'
 import { authentificationApi, configApi } from '../services/api'
 
 export const useAuthStore = defineStore('auth', () => {
-  const redirectUri = window.location.origin + '/oauth/callback'
+  const redirectUri = window.location.origin
   const authorizeUri = ref<string>('')
   const clientId = ref<string>('')
+  const debugInfo = ref<string>('')
+  const route = useRoute()
+  const router = useRouter()
+  const { t } = useI18n()
 
   const accessToken = ref<string | null>(localStorage.getItem('access_token'))
   const user = ref<Utilisateur | null>(null)
@@ -17,6 +23,7 @@ export const useAuthStore = defineStore('auth', () => {
   const login = () => {
     const state = generateRandomState()
     localStorage.setItem('oauth_state', state)
+    localStorage.setItem('from_url', window.location.href)
 
     const params = new URLSearchParams({
       response_type: 'code',
@@ -29,18 +36,20 @@ export const useAuthStore = defineStore('auth', () => {
     window.location.href = `${authorizeUri.value}?${params.toString()}`
   }
 
-  const handleOAuthCallback = async (code: string, state: string): Promise<boolean> => {
-    const storedState = localStorage.getItem('oauth_state')
+  const handleOAuthCallback = async (code: string, state: string): Promise<void> => {
+    isAuthenticating.value = true
 
-    if (state !== storedState) {
-      console.error('OAuth state mismatch')
-      return false
-    }
-
-    localStorage.removeItem('oauth_state')
+    debugInfo.value = t('oauth.debug.exchanging')
 
     try {
-      isAuthenticating.value = true
+      const storedState = localStorage.getItem('oauth_state')
+
+      if (state !== storedState) {
+        debugInfo.value = 'Authentication error'
+        console.error('OAuth state mismatch')
+      }
+
+      localStorage.removeItem('oauth_state')
 
       // Exchange code for access token via backend proxy
       const tokenRequest: OAuthTokenRequest = {
@@ -56,12 +65,18 @@ export const useAuthStore = defineStore('auth', () => {
       // Fetch user info
       fetchUserInfo()
 
-      return true
-    } catch (error) {
-      console.error('OAuth callback error:', error)
-      return false
-    } finally {
+      debugInfo.value = 'Success! Redirecting...'
+      const storedUrl = localStorage.getItem('from_url')
+      localStorage.removeItem('from_url')
+      if (storedUrl) {
+        window.location.href = storedUrl
+      } else {
+        router.push('/')
+      }
       isAuthenticating.value = false
+    } catch (error) {
+      debugInfo.value = 'Authentication error'
+      console.error('OAuth callback error:', error)
     }
   }
 
@@ -102,6 +117,16 @@ export const useAuthStore = defineStore('auth', () => {
         return
       }
       fetchUserInfo()
+    } else {
+      debugInfo.value = t('oauth.debug.processing')
+
+      const params = new URLSearchParams(window.location.search)
+      const code = params.get('code')
+      const state = params.get('state')
+
+      if (code && state) {
+        await handleOAuthCallback(code, state)
+      }
     }
   }
 
@@ -155,5 +180,6 @@ export const useAuthStore = defineStore('auth', () => {
     logout,
     handleOAuthCallback,
     initializeAuth,
+    debugInfo,
   }
 })
