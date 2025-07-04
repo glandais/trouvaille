@@ -128,17 +128,6 @@ cd ..
 log_info "Building frontend image..."
 cd trouvaille-front
 
-npm ci
-if [ $? -ne 0 ]; then
-    log_error "Failed to install npm dependencies"
-    exit 1
-fi
-npm run build
-if [ $? -ne 0 ]; then
-    log_error "Failed to build front"
-    exit 1
-fi
-
 docker build -t ${FRONTEND_IMAGE}:${TAG} .
 
 if [ $? -eq 0 ]; then
