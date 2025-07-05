@@ -1,5 +1,7 @@
 package io.github.glandais.trouvaille.client;
 
+import io.github.glandais.trouvaille.client.dto.CreatePostRequest;
+import io.github.glandais.trouvaille.client.dto.PostResponse;
 import io.github.glandais.trouvaille.client.dto.TokenResponse;
 import io.github.glandais.trouvaille.client.dto.User;
 import jakarta.ws.rs.*;
@@ -8,7 +10,7 @@ import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
 @RegisterRestClient(configKey = "oauth2")
 @Path("/")
-public interface OAuth2Client {
+public interface MattermostClient {
 
   @POST
   @Path("/oauth/access_token")
@@ -25,4 +27,10 @@ public interface OAuth2Client {
   @Path("/api/v4/users/me")
   @Produces(MediaType.APPLICATION_JSON)
   User getCurrentUser(@HeaderParam("Authorization") String authorization);
+
+  @POST
+  @Path("/api/v4/posts")
+  @Produces(MediaType.APPLICATION_JSON)
+  PostResponse createPost(
+      @HeaderParam("Authorization") String authorization, CreatePostRequest post);
 }

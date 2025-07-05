@@ -42,4 +42,6 @@ public class AnnonceEntity {
   public Date dateCreation;
 
   public Date dateModification;
+
+  public String mattermostRootId;
 }
