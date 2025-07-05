@@ -2,7 +2,7 @@ package io.github.glandais.trouvaille.service;
 
 import io.github.glandais.trouvaille.api.model.OAuthTokenRequest;
 import io.github.glandais.trouvaille.api.model.OAuthTokenResponse;
-import io.github.glandais.trouvaille.client.OAuth2Client;
+import io.github.glandais.trouvaille.client.MattermostClient;
 import io.github.glandais.trouvaille.client.dto.TokenResponse;
 import io.github.glandais.trouvaille.client.dto.User;
 import io.github.glandais.trouvaille.config.OAuthConfig;
@@ -23,7 +23,7 @@ public class AuthService {
 
   @Inject OAuthConfig oauthConfig;
 
-  @Inject @RestClient OAuth2Client mattermostClient;
+  @Inject @RestClient MattermostClient mattermostClient;
 
   public OAuthTokenResponse exchangeOAuthToken(OAuthTokenRequest request) {
     log.info("Exchanging OAuth code for token");
