@@ -26,6 +26,7 @@ public class AnnonceService {
   final AnnonceEntityMapper annonceEntityMapper;
   final AnnonceMapper annonceMapper;
   final UserService userService;
+  final MattermostService mattermostService;
 
   // ===============================
   // PUBLIC API METHODS
@@ -56,6 +57,7 @@ public class AnnonceService {
     annonceEntity.setStatut(AnnonceEntityStatut.active);
     annonceEntity.setDateCreation(new Date());
     annonceEntity.setDateModification(new Date());
+    mattermostService.createAnnonce(annonceEntity);
     annonceRepository.persist(annonceEntity);
     return getAnnonce(annonceEntity.getId().toString());
   }
@@ -71,6 +73,7 @@ public class AnnonceService {
     checkAnnonceOwnership(annonceEntity);
     annonceMapper.updateAnnonceEntity(annonceEntity, data);
     annonceEntity.setDateModification(new Date());
+    mattermostService.updateAnnonce(annonceEntity);
     annonceRepository.update(annonceEntity);
     return getAnnonce(id);
   }
