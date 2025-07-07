@@ -1,3 +1,10 @@
+## [1.12.3](https://github.com/glandais/trouvaille/compare/v1.12.2...v1.12.3) (2025-07-07)
+
+
+### Bug Fixes
+
+* remove native & use jib ([b569f51](https://github.com/glandais/trouvaille/commit/b569f51edc18556274f92662589c71aeaba081c1))
+
 ## [1.12.2](https://github.com/glandais/trouvaille/compare/v1.12.1...v1.12.2) (2025-07-07)
 
 
