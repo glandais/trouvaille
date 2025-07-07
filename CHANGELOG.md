@@ -1,3 +1,10 @@
+## [1.12.1](https://github.com/glandais/trouvaille/compare/v1.12.0...v1.12.1) (2025-07-07)
+
+
+### Bug Fixes
+
+* test reducing image size ([c7c24d1](https://github.com/glandais/trouvaille/commit/c7c24d1182aa77bf8e59d0738238b6fcabb92b6c))
+
 # [1.12.0](https://github.com/glandais/trouvaille/compare/v1.11.0...v1.12.0) (2025-07-07)
 
 
