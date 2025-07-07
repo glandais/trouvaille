@@ -110,6 +110,9 @@ else
         exit 1
     fi
     
+    log_info "Resetting timestamps..."
+    find target/quarkus-app -exec touch -t 202401010000 {} \;
+
     # Build Docker image using our adapted JVM Dockerfile
     log_info "Building JVM Docker image..."
     docker build -f Dockerfile.jvm-trouvaille -t ${BACKEND_IMAGE}:${TAG} .
