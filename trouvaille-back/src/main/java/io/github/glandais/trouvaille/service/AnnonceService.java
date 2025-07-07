@@ -2,10 +2,7 @@ package io.github.glandais.trouvaille.service;
 
 import com.mongodb.client.model.Aggregates;
 import io.github.glandais.trouvaille.api.model.*;
-import io.github.glandais.trouvaille.entity.AnnonceEntity;
-import io.github.glandais.trouvaille.entity.AnnonceEntityStatut;
-import io.github.glandais.trouvaille.entity.AnnonceEntityWithDistance;
-import io.github.glandais.trouvaille.entity.UserEntity;
+import io.github.glandais.trouvaille.entity.*;
 import io.github.glandais.trouvaille.repository.AnnonceRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.ForbiddenException;
@@ -57,6 +54,7 @@ public class AnnonceService {
     annonceEntity.setStatut(AnnonceEntityStatut.active);
     annonceEntity.setDateCreation(new Date());
     annonceEntity.setDateModification(new Date());
+    checkLocation(annonceEntity);
     mattermostService.createAnnonce(annonceEntity);
     annonceRepository.persist(annonceEntity);
     return getAnnonce(annonceEntity.getId().toString());
@@ -73,6 +71,7 @@ public class AnnonceService {
     checkAnnonceOwnership(annonceEntity);
     annonceMapper.updateAnnonceEntity(annonceEntity, data);
     annonceEntity.setDateModification(new Date());
+    checkLocation(annonceEntity);
     mattermostService.updateAnnonce(annonceEntity);
     annonceRepository.update(annonceEntity);
     return getAnnonce(id);
@@ -309,6 +308,12 @@ public class AnnonceService {
         // Different user - only show active annonces
         matchStage.append("statut", AnnonceEntityStatut.active.toString());
       }
+    }
+  }
+
+  private void checkLocation(AnnonceEntity annonceEntity) {
+    if (annonceEntity.getType() != AnnonceEntityType.location) {
+      annonceEntity.setPeriodeLocation(null);
     }
   }
 }
