@@ -63,7 +63,7 @@ public class AuthService {
       return response;
 
     } catch (Exception e) {
-      log.error("Failed to exchange OAuth token", e);
+      log.error("Failed to exchange OAuth token with Mattermost", e);
       throw new RuntimeException("OAuth token exchange failed", e);
     }
   }
