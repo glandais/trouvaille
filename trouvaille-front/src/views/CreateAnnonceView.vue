@@ -474,7 +474,7 @@ const validateForm = () => {
   if (!form.titre || form.titre.length < 5) {
     errors.value.titre = t('validation.title_min_length')
   }
-  if (!form.prix || form.prix < 0) {
+  if (form.prix != 0 || form.prix < 0) {
     errors.value.prix = t('validation.price_invalid')
   }
 
