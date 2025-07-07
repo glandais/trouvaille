@@ -1,3 +1,10 @@
+## [1.12.4](https://github.com/glandais/trouvaille/compare/v1.12.3...v1.12.4) (2025-07-07)
+
+
+### Bug Fixes
+
+* fix log ([b25632c](https://github.com/glandais/trouvaille/commit/b25632ccb86cebfd44f5979d56286ebb1d7a6321))
+
 ## [1.12.3](https://github.com/glandais/trouvaille/compare/v1.12.2...v1.12.3) (2025-07-07)
 
 
