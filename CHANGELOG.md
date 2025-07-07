@@ -1,3 +1,10 @@
+## [1.12.7](https://github.com/glandais/trouvaille/compare/v1.12.6...v1.12.7) (2025-07-07)
+
+
+### Bug Fixes
+
+* reliable cookie ([88717b5](https://github.com/glandais/trouvaille/commit/88717b5afd2e19e4c6501313887f4dd93fae41d9))
+
 ## [1.12.6](https://github.com/glandais/trouvaille/compare/v1.12.5...v1.12.6) (2025-07-07)
 
 
