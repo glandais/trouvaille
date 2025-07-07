@@ -5,7 +5,7 @@ Nouvelle annonce !
 Mise à jour !
 {/if}
 
-{annonce.type.label}/{annonce.nature.label} - @{username} - {annonce.prix}€{#if annonce.periodeLocation != null}/{annonce.periodeLocation.label}{/if} - **{annonce.titre}** - {annonce.photos.size} photo(s)
+{annonce.type.label}/{annonce.nature.label} - @{username} - {annonce.prix}€{#if annonce.periodeLocation != null}/{annonce.periodeLocation.label}{/if} - [**{annonce.titre}**]({frontUrl}/annonces/{annonce.id}) - {annonce.photos.size} photo(s)
 
 {annonce.description}
 
