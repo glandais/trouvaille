@@ -29,13 +29,12 @@ log_error() {
 
 # Configuration
 ACTION="${1:-up}"
-BUILD_TYPE="${2:-native}"
-ENVIRONMENT="${3:-production}"  # production, development
+ENVIRONMENT="${2:-production}"  # production, development
 
 case "$ACTION" in
     "build")
         log_info "Building images..."
-        ./build.sh latest $BUILD_TYPE
+        ./build.sh latest
         ;;
     "up"|"start")
         log_info "Starting services in $ENVIRONMENT mode..."
@@ -130,11 +129,11 @@ case "$ACTION" in
         cat << EOF
 Trouvaille Deployment Script
 
-Usage: $0 [ACTION] [BUILD_TYPE] [ENVIRONMENT]
+Usage: $0 [ACTION] [ENVIRONMENT]
 
 Actions:
-  build [native|jvm]            Build Docker images
-  up|start [native|jvm] [env]   Start all services
+  build                         Build Docker images
+  up|start [env]                Start all services
   down|stop                     Stop all services  
   restart                       Restart all services
   logs                          Show logs from all services
@@ -142,18 +141,14 @@ Actions:
   clean                         Remove all containers, images and volumes
   help                          Show this help message
 
-Build Types (for build action):
-  native            Build Quarkus native image (default, slower build, faster runtime)
-  jvm               Build Quarkus JVM image (faster build, slower runtime)
-
 Environments:
   production        Secure configuration, no exposed ports (default)
   development       Development tools, localhost-only port exposure
 
 Examples:
-  $0 build native                   # Build native images
-  $0 up native production           # Start in production mode
-  $0 up jvm development             # Start in development mode with debug tools
+  $0 build                          # Build images
+  $0 up production                  # Start in production mode
+  $0 up development                 # Start in development mode with debug tools
   $0 logs                           # View logs
   $0 clean                          # Clean everything
 

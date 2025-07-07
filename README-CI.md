@@ -33,17 +33,17 @@ Comprehensive build script for creating production Docker images.
 
 **Features:**
 - 🐳 Docker image creation
-- 🏗️ Native or JVM builds
+- 🏗️ JVM builds
 - 📦 Multi-stage builds
 - 💾 Build caching
 - 📊 Size reporting
 
 **Usage:**
 ```bash
-./build.sh [tag] [jvm|native]
+./build.sh [tag]
 # Examples:
-./build.sh latest jvm
-./build.sh v1.0.0 native
+./build.sh latest
+./build.sh v1.0.0
 ```
 
 ## GitHub Actions Workflows
@@ -118,7 +118,7 @@ cd ../trouvaille-back
 ./ci-build.sh
 
 # Build Docker images (optional)
-./build.sh test jvm
+./build.sh test
 ```
 
 ### Testing Individual Components
@@ -143,7 +143,7 @@ npm run build
 
 ```bash
 # Build and start with Docker Compose
-./build.sh latest jvm
+./build.sh latest
 docker compose up -d
 ```
 
@@ -184,7 +184,6 @@ Monitor builds at:
 
 **Docker Build Times:**
 - JVM build: ~3-5 minutes
-- Native build: ~10-15 minutes
 
 ### Cache Optimization
 
@@ -218,7 +217,6 @@ The workflows use aggressive caching:
 ### Common Issues
 
 1. **Build timeouts:**
-   - Check memory usage (native builds need 4GB+)
    - Verify cache efficiency
    - Consider reducing test scope
 
@@ -245,7 +243,7 @@ cd trouvaille-back && ./mvnw clean compile -X
 cd trouvaille-front && npm run build -- --mode development
 
 # Docker build debugging
-./build.sh debug jvm
+./build.sh debug
 ```
 
 ## Configuration

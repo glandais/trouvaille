@@ -99,7 +99,7 @@ The main build script that:
 ### `build.sh`
 
 Docker image build script that:
-1. Builds backend with Maven (JVM or native)
+1. Builds backend with Maven
 2. Builds frontend with npm
 3. Creates Docker images
 4. Provides deployment information
@@ -113,7 +113,7 @@ Docker image build script that:
 ./ci-build.sh
 
 # Build Docker images
-./build.sh latest jvm
+./build.sh latest
 ```
 
 ### Creating a Release
@@ -186,7 +186,7 @@ Before pushing, test locally:
 ./ci-build.sh
 
 # Test Docker build
-./build.sh test jvm
+./build.sh test
 
 # Run specific checks
 cd trouvaille-back && ./mvnw spotless:check

@@ -16,7 +16,6 @@ NC='\033[0m' # No Color
 BACKEND_IMAGE="ghcr.io/glandais/trouvaille-backend"
 FRONTEND_IMAGE="ghcr.io/glandais/trouvaille-frontend"
 TAG="${1:-latest}"
-BUILD_TYPE="${2:-native}" # native or jvm
 
 # Functions
 log_info() {
@@ -70,52 +69,18 @@ if ! docker info &> /dev/null; then
 fi
 
 log_info "Using tag: $TAG"
-log_info "Backend build type: $BUILD_TYPE"
 
 # Build backend
 log_info "Building backend image..."
 cd trouvaille-back
 
-if [ "$BUILD_TYPE" = "native" ]; then
-    log_info "Building Quarkus native image (this may take several minutes)..."
-    
-    # Check if we have enough memory for native build
-    AVAILABLE_MEMORY=$(free -m | awk 'NR==2{printf "%.0f", $7}')
-    if [ "$AVAILABLE_MEMORY" -lt 4096 ]; then
-        log_warning "Available memory is ${AVAILABLE_MEMORY}MB. Native build requires at least 4GB."
-        log_warning "Consider using 'jvm' build type: ./build.sh latest jvm"
-    fi
-    
-    # Build native executable first
-    log_info "Compiling native executable with Maven..."
-    ./mvnw clean package -Dnative -DskipTests
-    
-    if [ $? -ne 0 ]; then
-        log_error "Failed to build native executable"
-        exit 1
-    fi
-    
-    # Build Docker image using our adapted native Dockerfile
-    log_info "Building native Docker image..."
-    docker build -f Dockerfile.native-trouvaille -t ${BACKEND_IMAGE}:${TAG} .
-else
-    log_info "Building Quarkus JVM image..."
-    
-    # Build JAR first
-    log_info "Compiling JAR with Maven..."
-    ./mvnw clean package -DskipTests
-    
-    if [ $? -ne 0 ]; then
-        log_error "Failed to build JAR"
-        exit 1
-    fi
-    
-    log_info "Resetting timestamps..."
-    find target/quarkus-app -exec touch -t 202401010000 {} \;
+log_info "Compiling Quarkus JVM image with Maven..."
+export QUARKUS_CONTAINER_IMAGE_IMAGE="${BACKEND_IMAGE}:${TAG}"
+./mvnw clean package -DskipTests -Dquarkus.container-image.build=true
 
-    # Build Docker image using our adapted JVM Dockerfile
-    log_info "Building JVM Docker image..."
-    docker build -f Dockerfile.jvm-trouvaille -t ${BACKEND_IMAGE}:${TAG} .
+if [ $? -ne 0 ]; then
+    log_error "Failed to build JAR"
+    exit 1
 fi
 
 if [ $? -eq 0 ]; then
@@ -157,7 +122,7 @@ log_info "  Backend:  $BACKEND_SIZE"
 log_info "  Frontend: $FRONTEND_SIZE"
 echo ""
 log_info "To start the application:"
-log_info "  ./deploy.sh up $BUILD_TYPE production (or development)"
+log_info "  ./deploy.sh up production (or development)"
 echo ""
 log_info "To access the application:"
 log_info "  Frontend: http://localhost"

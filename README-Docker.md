@@ -7,7 +7,7 @@ Ce guide explique comment déployer l'application Trouvaille avec Docker et Dock
 L'application est composée de plusieurs services :
 
 - **Frontend** : Application Vue.js servie par Nginx
-- **Backend** : API Quarkus (native ou JVM)
+- **Backend** : API Quarkus (JVM)
 - **MongoDB** : Base de données
 - **Traefik** : Reverse proxy et load balancer
 
@@ -15,7 +15,6 @@ L'application est composée de plusieurs services :
 
 - Docker >= 20.10
 - Docker Compose >= 2.0
-- Au moins 4GB de RAM libre (pour la compilation native)
 - Credentials OAuth configurés
 
 ## Installation rapide
@@ -30,13 +29,13 @@ L'application est composée de plusieurs services :
 
 2. **Builder et démarrer**
    ```bash
+   ./deploy.sh build
+
    # Production (sécurisé, ports non exposés)
-   ./deploy.sh build native
-   ./deploy.sh up native production
+   ./deploy.sh up production
    
    # Développement (avec outils de debug)
-   ./deploy.sh build jvm
-   ./deploy.sh up jvm development
+   ./deploy.sh up development
    ```
 
 3. **Accéder à l'application**
@@ -57,14 +56,11 @@ L'application est composée de plusieurs services :
 ### Script de build (`./build.sh`)
 
 ```bash
-# Build images natives (recommandé en production)
-./build.sh latest native
-
-# Build images JVM (plus rapide en développement)
-./build.sh latest jvm
+# Build images
+./build.sh latest
 
 # Build avec tag personnalisé
-./build.sh v1.0.0 native
+./build.sh v1.0.0
 ```
 
 ### Script de déploiement (`./deploy.sh`)
@@ -145,18 +141,6 @@ Les données sont stockées dans des volumes Docker :
 - `photos_data` : Photos uploadées
 - `jwt_keys` : Clés JWT
 
-## Modes de build
-
-### Native (recommandé)
-- **Avantages** : Startup rapide, faible consommation mémoire
-- **Inconvénients** : Build long (5-15 min), nécessite beaucoup de RAM
-- **Usage** : Production
-
-### JVM
-- **Avantages** : Build rapide (1-3 min)
-- **Inconvénients** : Startup plus lent, plus de mémoire
-- **Usage** : Développement, tests
-
 ## Surveillance et monitoring
 
 ### Logs
@@ -186,15 +170,6 @@ curl http://localhost/api/health
 ```
 
 ## Dépannage
-
-### Build native échoue
-```bash
-# Utiliser le mode JVM
-./deploy.sh build jvm
-
-# Ou augmenter la mémoire Docker
-# Docker Desktop : Settings > Resources > Memory
-```
 
 ### Services ne démarrent pas
 ```bash
@@ -240,10 +215,9 @@ docker volume rm trouvaille_mongodb_data
 4. Mettre à jour les images régulièrement
 
 ### Performance
-1. Utiliser le build native
-2. Configurer les limites de ressources
-3. Monitorer les métriques
-4. Implémenter un backup MongoDB
+1. Configurer les limites de ressources
+2. Monitorer les métriques
+3. Implémenter un backup MongoDB
 
 ### Exemple configuration production
 ```yaml

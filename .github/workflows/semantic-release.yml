@@ -82,7 +82,7 @@ jobs:
       if: steps.released.outputs.new_release_published == 'true'
       run: |
         TAG=${{ steps.released.outputs.version }}
-        ./build.sh ${TAG} jvm
+        ./build.sh ${TAG}
         
         # Tag images for GitHub Container Registry
         echo "tag ghcr.io/glandais/trouvaille-backend:${TAG} ghcr.io/glandais/trouvaille-backend:latest"
