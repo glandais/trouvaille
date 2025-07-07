@@ -26,7 +26,6 @@ import org.jboss.logging.Logger;
 public class CookieJwtHttpAuthenticationMechanism implements HttpAuthenticationMechanism {
 
   private static final Logger LOG = Logger.getLogger(CookieJwtHttpAuthenticationMechanism.class);
-  private static final String COOKIE_NAME = "auth_token";
   private static final String AUTHORIZATION_HEADER = "Authorization";
   private static final String BEARER_PREFIX = "Bearer ";
 
@@ -44,7 +43,15 @@ public class CookieJwtHttpAuthenticationMechanism implements HttpAuthenticationM
 
     TokenAuthenticationRequest authRequest =
         new TokenAuthenticationRequest(new JsonWebTokenCredential(token));
-    return identityProviderManager.authenticate(authRequest);
+    return identityProviderManager
+        .authenticate(authRequest)
+        .onFailure()
+        .recoverWithUni(
+            throwable -> {
+              LOG.warn("Token JWT invalide, suppression du cookie", throwable);
+              removeCookie(context);
+              return Uni.createFrom().nullItem();
+            });
   }
 
   @Override
@@ -78,12 +85,23 @@ public class CookieJwtHttpAuthenticationMechanism implements HttpAuthenticationM
     }
 
     // 2. Ensuite essayer le cookie auth_token
-    Cookie authCookie = context.request().getCookie(COOKIE_NAME);
+    Cookie authCookie = context.request().getCookie(AuthCookieUtils.COOKIE_NAME);
     if (authCookie != null && authCookie.getValue() != null && !authCookie.getValue().isEmpty()) {
       LOG.debug("Token trouvé dans le cookie auth_token");
       return authCookie.getValue();
     }
 
     return null;
+  }
+
+  /**
+   * Supprime le cookie d'authentification en cas de token invalide
+   */
+  private void removeCookie(RoutingContext context) {
+    Cookie authCookie = context.request().getCookie(AuthCookieUtils.COOKIE_NAME);
+    if (authCookie != null) {
+      LOG.debug("Suppression du cookie auth_token invalide");
+      context.response().addCookie(AuthCookieUtils.createExpiredVertxCookie());
+    }
   }
 }
