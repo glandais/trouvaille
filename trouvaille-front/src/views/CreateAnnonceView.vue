@@ -350,6 +350,9 @@
           </h2>
           {{ $t('location.privacy_note') }}
           <LocationField v-model="selectedLocation" @change="handleLocationChange" />
+          <p v-if="errors.selectedLocation" class="mt-1 text-sm text-red-600">
+            {{ errors.selectedLocation }}
+          </p>
         </div>
 
         <!-- Actions -->
@@ -404,6 +407,7 @@ import {
   ExclamationTriangleIcon,
 } from '@heroicons/vue/24/outline'
 import { SelectedLocation } from '@/types/location'
+import { useLocationStore } from '@/stores/location'
 
 interface Props {
   id?: string
@@ -412,6 +416,7 @@ interface Props {
 const props = defineProps<Props>()
 const router = useRouter()
 const route = useRoute()
+const locationStore = useLocationStore()
 const { t } = useI18n()
 
 const defaultForm: AnnonceBase & { statut: AnnonceStatut } = {
@@ -476,6 +481,9 @@ const validateForm = () => {
   }
   if (form.prix != 0 || form.prix < 0) {
     errors.value.prix = t('validation.price_invalid')
+  }
+  if (form.coordinates.longitude == 0 || form.coordinates.latitude == 0) {
+    errors.value.selectedLocation = t('validation.location_required')
   }
 
   return Object.keys(errors.value).length === 0
@@ -631,10 +639,23 @@ const init = async () => {
       }
     }
     copyToForm(existingAnnonce)
+    if (!isEditMode.value) {
+      if (!locationStore.hasUserLocation) {
+        await locationStore.initializeUserLocation()
+      }
+      selectedLocation.value = locationStore.userLocation
+      handleLocationChange(locationStore.userLocation)
+    }
     const savedAnnonceValue = savedAnnonce.value
       ? JSON.parse(JSON.stringify(toRaw(savedAnnonce.value)))
       : null
+    if (savedAnnonceValue) {
+      savedAnnonceValue.ville = null
+      savedAnnonceValue.coordinates = null
+    }
     const rawForm = JSON.parse(JSON.stringify(toRaw(form)))
+    rawForm.ville = null
+    rawForm.coordinates = null
     const testCanRestore = (savedAnnonceValue && !isEqual(savedAnnonceValue, rawForm)) || false
     canRestore.value = testCanRestore
   } catch (error) {

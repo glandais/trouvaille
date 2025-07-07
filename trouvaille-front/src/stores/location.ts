@@ -6,29 +6,16 @@ import { SelectedLocation } from '../types/location'
 export const useLocationStore = defineStore('location', () => {
   const { t } = useI18n()
   const userLocation = ref<SelectedLocation | null>(null)
-  const isDetecting = ref(false)
-  const hasAttemptedDetection = ref(false)
-  const detectionError = ref<string | null>(null)
 
   const hasUserLocation = computed(() => !!userLocation.value)
   const userCoordinates = computed(() => userLocation.value?.coordinates || null)
 
   // Initialize user location on first app load
   const initializeUserLocation = async (): Promise<void> => {
-    // Only detect once per session
-    if (hasAttemptedDetection.value) {
-      return
-    }
-
-    hasAttemptedDetection.value = true
-
     if (!navigator.geolocation) {
-      detectionError.value = t('location.error')
+      console.warn('No geolocation for navigator')
       return
     }
-
-    isDetecting.value = true
-    detectionError.value = null
 
     try {
       const position = await getCurrentPosition()
@@ -47,27 +34,7 @@ export const useLocationStore = defineStore('location', () => {
       console.log('User location initialized:', userLocation.value)
     } catch (error) {
       console.warn('Failed to detect user location:', error)
-      detectionError.value = getGeolocationErrorMessage(error as GeolocationPositionError)
-    } finally {
-      isDetecting.value = false
     }
-  }
-
-  // Manual location update (for when user explicitly sets their location)
-  const updateUserLocation = (location: SelectedLocation | null): void => {
-    userLocation.value = location
-  }
-
-  // Clear user location
-  const clearUserLocation = (): void => {
-    userLocation.value = null
-    detectionError.value = null
-  }
-
-  // Reset detection state (for testing or re-initialization)
-  const resetDetectionState = (): void => {
-    hasAttemptedDetection.value = false
-    detectionError.value = null
   }
 
   // Get current position as a Promise
@@ -110,26 +77,9 @@ export const useLocationStore = defineStore('location', () => {
     }
   }
 
-  // Get user-friendly error message
-  const getGeolocationErrorMessage = (error: GeolocationPositionError): string => {
-    switch (error.code) {
-      case error.PERMISSION_DENIED:
-        return t('location.permission_denied')
-      case error.POSITION_UNAVAILABLE:
-        return t('location.error')
-      case error.TIMEOUT:
-        return t('errors.timeout')
-      default:
-        return t('location.error')
-    }
-  }
-
   return {
     // State
     userLocation: computed(() => userLocation.value),
-    isDetecting: computed(() => isDetecting.value),
-    hasAttemptedDetection: computed(() => hasAttemptedDetection.value),
-    detectionError: computed(() => detectionError.value),
 
     // Computed
     hasUserLocation,
@@ -137,8 +87,5 @@ export const useLocationStore = defineStore('location', () => {
 
     // Actions
     initializeUserLocation,
-    updateUserLocation,
-    clearUserLocation,
-    resetDetectionState,
   }
 })
