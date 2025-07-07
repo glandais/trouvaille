@@ -13,7 +13,7 @@
         <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
         <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
         <quarkus.platform.version>3.24.2</quarkus.platform.version>
-        <spotless-maven-plugin.version>2.44.5</spotless-maven-plugin.version>
+        <spotless-maven-plugin.version>2.45.0</spotless-maven-plugin.version>
         <openapi-generator-maven-plugin.version>7.14.0</openapi-generator-maven-plugin.version>
         <build-helper-maven-plugin.version>3.6.1</build-helper-maven-plugin.version>
         <surefire-plugin.version>3.5.3</surefire-plugin.version>
