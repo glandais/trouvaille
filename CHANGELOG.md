@@ -1,3 +1,10 @@
+# [1.11.0](https://github.com/glandais/trouvaille/compare/v1.10.3...v1.11.0) (2025-07-07)
+
+
+### Features
+
+* price unit ([eb84d06](https://github.com/glandais/trouvaille/commit/eb84d06e6059a1e76909e4af4892dbdd98dc4ef7))
+
 ## [1.10.3](https://github.com/glandais/trouvaille/compare/v1.10.2...v1.10.3) (2025-07-07)
 
 
