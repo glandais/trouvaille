@@ -28,6 +28,8 @@ docs/Pagination.md
 docs/PeriodeLocation.md
 docs/Photo.md
 docs/PhotosApi.md
+docs/Prix.md
+docs/PrixUnite.md
 docs/Utilisateur.md
 git_push.sh
 index.ts

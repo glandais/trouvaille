@@ -1,3 +1,4 @@
+import { Prix, PrixUnite } from '@/api'
 import { useI18n } from 'vue-i18n'
 
 /**
@@ -99,22 +100,21 @@ export function useI18nFormatters() {
   /**
    * Format price with proper currency and locale
    */
-  const formatPrice = (
-    price: number | undefined,
-    periode?: string | null,
-    showCurrency = true,
-  ): string => {
+  const formatPrice = (price: Prix | undefined, periode?: string | null): string => {
     if (price === undefined || price === null) {
       return t('annonce.card.no_price')
     }
 
     // Format the number with locale-specific formatting
-    const formattedNumber = price.toLocaleString(locale.value === 'fr' ? 'fr-FR' : 'en-US', {
-      minimumFractionDigits: price % 1 === 0 ? 0 : 2,
-      maximumFractionDigits: 2,
-    })
+    const formattedNumber = price.montant.toLocaleString(
+      locale.value === 'fr' ? 'fr-FR' : 'en-US',
+      {
+        minimumFractionDigits: price.montant % 1 === 0 ? 0 : 2,
+        maximumFractionDigits: 2,
+      },
+    )
 
-    let result = showCurrency ? `${formattedNumber} €` : formattedNumber
+    let result = `${formattedNumber} ${t(`annonce.unite.${price.unite}`)}`
 
     // Add period suffix for rentals
     if (periode && ['jour', 'semaine', 'mois'].includes(periode)) {
@@ -124,14 +124,20 @@ export function useI18nFormatters() {
     return result
   }
 
+  const getPriceEuro = (montant: number): Prix => ({
+    montant,
+    unite: PrixUnite.Euro,
+  })
+
   /**
    * Format price range for filters
    */
   const formatPriceRange = (min?: number, max?: number): string => {
-    if (!min && !max) return ''
-    if (min && !max) return `> ${formatPrice(min, null, true)}`
-    if (!min && max) return `< ${formatPrice(max, null, true)}`
-    return `${formatPrice(min, null, true)} - ${formatPrice(max, null, true)}`
+    if (min && !max) return `> ${formatPrice(getPriceEuro(min), null)}`
+    if (!min && max) return `< ${formatPrice(getPriceEuro(max), null)}`
+    if (min && max)
+      return `${formatPrice(getPriceEuro(min), null)} - ${formatPrice(getPriceEuro(max), null)}`
+    return ''
   }
 
   /**

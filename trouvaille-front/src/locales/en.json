@@ -62,6 +62,11 @@
   },
   "annonce": {
     "title": "Listing | Listings",
+    "unite": {
+      "euro": "€",
+      "demi": "🍺",
+      "soft": "🍹"
+    },
     "types": {
       "vente": "Sale",
       "location": "Rental"
@@ -196,7 +201,8 @@
         "nature_required": "Listing nature *",
         "title_required": "Title *",
         "description_required": "Description *",
-        "price_required": "Price (€) *",
+        "price_required": "Price *",
+        "prix_unite_required": "Unit *",
         "period": "Rental period",
         "status_required": "Status *"
       },

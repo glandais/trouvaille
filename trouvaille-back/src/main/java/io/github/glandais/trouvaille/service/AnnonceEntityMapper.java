@@ -23,14 +23,38 @@ public abstract class AnnonceEntityMapper {
   @Mapping(target = "removePhotosItem", ignore = true)
   @Mapping(target = "utilisateur", source = "utilisateur", qualifiedByName = "mapUtilisateurId")
   @Mapping(target = "photos", source = "photos", qualifiedByName = "mapPhotos")
+  @Mapping(target = "prix.montant", source = "prix")
+  @Mapping(target = "prix.unite", source = "prixUnite")
   public abstract Annonce mapAnnonceEntity(AnnonceEntity annonceEntity);
+
+  @AfterMapping
+  public void afterMappingAnnonce(@MappingTarget Annonce annonce) {
+    if (annonce == null) {
+      return;
+    }
+    if (annonce.getPrix().getUnite() == null) {
+      annonce.getPrix().setUnite(PrixUnite.EURO);
+    }
+  }
 
   @Mapping(target = "removePhotosItem", ignore = true)
   @Mapping(target = "distance", source = "distance", qualifiedByName = "mapDistance")
   @Mapping(target = "utilisateur", source = "utilisateur", qualifiedByName = "mapUtilisateurId")
   @Mapping(target = "photos", source = "photos", qualifiedByName = "mapPhotos")
+  @Mapping(target = "prix.montant", source = "prix")
+  @Mapping(target = "prix.unite", source = "prixUnite")
   public abstract AnnonceList mapAnnonceEntityToAnnonceList(
       AnnonceEntityWithDistance annonceEntity);
+
+  @AfterMapping
+  public void afterMappingAnnonceList(@MappingTarget AnnonceList annonce) {
+    if (annonce == null) {
+      return;
+    }
+    if (annonce.getPrix().getUnite() == null) {
+      annonce.getPrix().setUnite(PrixUnite.EURO);
+    }
+  }
 
   protected String mapObjectId(ObjectId objectId) {
     return objectId.toHexString();
@@ -105,4 +129,9 @@ public abstract class AnnonceEntityMapper {
       nameTransformationStrategy = MappingConstants.CASE_TRANSFORMATION,
       configuration = "upper")
   public abstract PeriodeLocation mapStringToPeriodeLocation(PeriodeEntityLocation periodeLocation);
+
+  @EnumMapping(
+      nameTransformationStrategy = MappingConstants.CASE_TRANSFORMATION,
+      configuration = "upper")
+  public abstract PrixUnite mapPrixUnit(PrixEntityUnite unite);
 }

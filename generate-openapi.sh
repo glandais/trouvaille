@@ -76,6 +76,12 @@ npm run generate:api || {
     exit 1
 }
 
+# Format and fix issues
+npm run format || {
+    log_error "Failed to format frontend code"
+    exit 1
+}
+
 log_success "✅ TypeScript client generated successfully"
 
 cd ..
@@ -95,6 +101,12 @@ MVN_CMD="mvn"
 if [ -f "./mvnw" ]; then
     MVN_CMD="./mvnw"
 fi
+
+# Format code
+$MVN_CMD spotless:apply || {
+    log_error "Failed to format backend code"
+    exit 1
+}
 
 # Clean and generate code (compile triggers the generate-code phase)
 $MVN_CMD clean compile || {

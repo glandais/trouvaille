@@ -424,10 +424,7 @@ components:
           maxLength: 2000
           example: 'Vélo de course **Trek** en parfait état, utilisé seulement 2 fois. Idéal pour débutant.'
         prix:
-          type: number
-          format: double
-          minimum: 0
-          example: 350.00
+          $ref: '#/components/schemas/Prix'
         periode_location:
           $ref: '#/components/schemas/PeriodeLocation'
         photos:
@@ -448,6 +445,27 @@ components:
         - coordinates
         - photos
         - ville
+
+    Prix:
+      type: object
+      properties:
+        montant:
+          type: number
+          format: double
+          minimum: 0
+          example: 350.00
+        unite:
+          $ref: '#/components/schemas/PrixUnite'
+      required:
+        - montant
+        - unite
+
+    PrixUnite:
+      type: string
+      enum:
+        - euro
+        - demi
+        - soft
 
     AnnonceStatut:
       type: string
@@ -488,6 +506,7 @@ components:
             - statut
             - utilisateur
             - date_creation
+            - date_modification
 
     Annonces:
       type: object

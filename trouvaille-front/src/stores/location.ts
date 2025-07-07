@@ -30,8 +30,7 @@ export const useLocationStore = defineStore('location', () => {
         city: address.city,
         coordinates: [lon, lat], // [longitude, latitude]
       }
-
-      console.log('User location initialized:', userLocation.value)
+      console.log('User location initialized')
     } catch (error) {
       console.warn('Failed to detect user location:', error)
     }

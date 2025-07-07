@@ -161,7 +161,14 @@ import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '../stores/auth'
-import { AnnonceList, AnnonceType, AnnonceWithStatut, AnnonceStatut, PeriodeLocation } from '../api'
+import {
+  AnnonceList,
+  AnnonceType,
+  AnnonceWithStatut,
+  AnnonceStatut,
+  PeriodeLocation,
+  Prix,
+} from '../api'
 import { PhotoIcon, MapPinIcon, PencilIcon, TrashIcon } from '@heroicons/vue/24/outline'
 import { annoncesApi } from '../services/api'
 import { useI18nFormatters } from '@/composables/useI18nFormatters'
@@ -198,7 +205,7 @@ const firstPhoto = computed(() => props.annonce.photos[0] || null)
 const photoUrl = computed(() => (firstPhoto.value ? firstPhoto.value.thumbUrl : null))
 
 // Use i18n formatter for price
-const formatPrice = (prix?: number, periode?: PeriodeLocation) => {
+const formatPrice = (prix?: Prix, periode?: PeriodeLocation) => {
   return formatPriceI18n(prix, periode)
 }
 

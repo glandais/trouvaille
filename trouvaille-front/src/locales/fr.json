@@ -62,6 +62,11 @@
   },
   "annonce": {
     "title": "Annonce | Annonces",
+    "unite": {
+      "euro": "€",
+      "demi": "🍺",
+      "soft": "🍹"
+    },
     "types": {
       "vente": "Vente",
       "location": "Location"
@@ -196,7 +201,8 @@
         "nature_required": "Nature de l'annonce *",
         "title_required": "Titre *",
         "description_required": "Description *",
-        "price_required": "Prix (€) *",
+        "price_required": "Prix *",
+        "prix_unite_required": "Unité *",
         "period": "Période de location",
         "status_required": "Statut *"
       },

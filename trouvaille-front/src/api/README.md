@@ -88,6 +88,8 @@ All URIs are relative to _http://localhost_
 - [Pagination](docs/Pagination.md)
 - [PeriodeLocation](docs/PeriodeLocation.md)
 - [Photo](docs/Photo.md)
+- [Prix](docs/Prix.md)
+- [PrixUnite](docs/PrixUnite.md)
 - [Utilisateur](docs/Utilisateur.md)
 
 <a id="documentation-for-authorization"></a>

@@ -31,6 +31,8 @@ public class AnnonceEntity {
 
   public Double prix;
 
+  public PrixEntityUnite prixUnite;
+
   public PeriodeEntityLocation periodeLocation;
 
   public CoordinatesEntity coordinates;

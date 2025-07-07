@@ -1,6 +1,7 @@
 package io.github.glandais.trouvaille.service;
 
 import io.github.glandais.trouvaille.api.model.*;
+import io.github.glandais.trouvaille.api.model.PrixUnite;
 import io.github.glandais.trouvaille.entity.*;
 import java.util.List;
 import org.bson.types.ObjectId;
@@ -14,6 +15,8 @@ public abstract class AnnonceMapper {
   }
 
   @Mapping(source = "photos", target = "photos", qualifiedByName = "mapPhotos")
+  @Mapping(source = "prix.montant", target = "prix")
+  @Mapping(source = "prix.unite", target = "prixUnite")
   public abstract AnnonceEntity mapAnnonceCreate(AnnonceBase data);
 
   @Named("mapPhotos")
@@ -26,6 +29,8 @@ public abstract class AnnonceMapper {
     return mapObjectId(data.getId());
   }
 
+  @Mapping(source = "prix.montant", target = "prix")
+  @Mapping(source = "prix.unite", target = "prixUnite")
   public abstract void updateAnnonceEntity(
       @MappingTarget AnnonceEntity annonceEntity, AnnonceWithStatut data);
 
@@ -48,4 +53,9 @@ public abstract class AnnonceMapper {
       nameTransformationStrategy = MappingConstants.CASE_TRANSFORMATION,
       configuration = "lower")
   public abstract PeriodeEntityLocation mapPeriodeLocation(PeriodeLocation periodeLocation);
+
+  @EnumMapping(
+      nameTransformationStrategy = MappingConstants.CASE_TRANSFORMATION,
+      configuration = "lower")
+  public abstract PrixEntityUnite mapPrixUnite(PrixUnite prixUnite);
 }

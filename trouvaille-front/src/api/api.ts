@@ -65,10 +65,10 @@ export interface Annonce {
   description: string
   /**
    *
-   * @type {number}
+   * @type {Prix}
    * @memberof Annonce
    */
-  prix: number
+  prix: Prix
   /**
    *
    * @type {PeriodeLocation}
@@ -122,7 +122,7 @@ export interface Annonce {
    * @type {string}
    * @memberof Annonce
    */
-  date_modification?: string
+  date_modification: string
 }
 
 /**
@@ -157,10 +157,10 @@ export interface AnnonceBase {
   description: string
   /**
    *
-   * @type {number}
+   * @type {Prix}
    * @memberof AnnonceBase
    */
-  prix: number
+  prix: Prix
   /**
    *
    * @type {PeriodeLocation}
@@ -219,10 +219,10 @@ export interface AnnonceList {
   description: string
   /**
    *
-   * @type {number}
+   * @type {Prix}
    * @memberof AnnonceList
    */
-  prix: number
+  prix: Prix
   /**
    *
    * @type {PeriodeLocation}
@@ -276,7 +276,7 @@ export interface AnnonceList {
    * @type {string}
    * @memberof AnnonceList
    */
-  date_modification?: string
+  date_modification: string
   /**
    * Distance en kilomètres
    * @type {number}
@@ -468,10 +468,10 @@ export interface AnnonceWithStatut {
   description: string
   /**
    *
-   * @type {number}
+   * @type {Prix}
    * @memberof AnnonceWithStatut
    */
-  prix: number
+  prix: Prix
   /**
    *
    * @type {PeriodeLocation}
@@ -679,6 +679,38 @@ export interface Photo {
    */
   height: number
 }
+/**
+ *
+ * @export
+ * @interface Prix
+ */
+export interface Prix {
+  /**
+   *
+   * @type {number}
+   * @memberof Prix
+   */
+  montant: number
+  /**
+   *
+   * @type {PrixUnite}
+   * @memberof Prix
+   */
+  unite: PrixUnite
+}
+
+/**
+ *
+ * @export
+ * @enum {string}
+ */
+
+export enum PrixUnite {
+  Euro = 'euro',
+  Demi = 'demi',
+  Soft = 'soft',
+}
+
 /**
  *
  * @export

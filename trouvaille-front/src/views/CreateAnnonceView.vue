@@ -159,7 +159,7 @@
             {{ $t('annonce.form.sections.price') }}
           </h2>
 
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="grid grid-cols-2 md:grid-cols-3 gap-6">
             <!-- Price -->
             <div>
               <label for="prix" class="block text-sm font-medium text-gray-700 mb-2">
@@ -167,7 +167,7 @@
               </label>
               <input
                 id="prix"
-                v-model="form.prix"
+                v-model="form.prix.montant"
                 type="number"
                 step="0.01"
                 min="0"
@@ -177,6 +177,16 @@
                 :class="{ 'border-red-500': errors.prix }"
               />
               <p v-if="errors.prix" class="mt-1 text-sm text-red-600">{{ errors.prix }}</p>
+            </div>
+            <div>
+              <label for="prix_unite" class="block text-sm font-medium text-gray-700 mb-2">
+                {{ $t('annonce.form.labels.prix_unite_required') }}
+              </label>
+              <select id="prix_unite" v-model="form.prix.unite" required class="form-input">
+                <option :value="PrixUnite.Euro">{{ $t('annonce.unite.euro') }}</option>
+                <option :value="PrixUnite.Demi">{{ $t('annonce.unite.demi') }}</option>
+                <option :value="PrixUnite.Soft">{{ $t('annonce.unite.soft') }}</option>
+              </select>
             </div>
 
             <!-- Period (for rentals) -->
@@ -395,6 +405,7 @@ import {
   AnnonceNature,
   AnnonceStatut,
   PeriodeLocation,
+  PrixUnite,
 } from '../api'
 import AppLayout from '../components/AppLayout.vue'
 import MarkdownEditor from '../components/MarkdownEditor.vue'
@@ -424,7 +435,10 @@ const defaultForm: AnnonceBase & { statut: AnnonceStatut } = {
   nature: AnnonceNature.Offre,
   titre: '',
   description: '',
-  prix: 0,
+  prix: {
+    montant: 0,
+    unite: PrixUnite.Euro,
+  },
   periode_location: undefined,
   coordinates: { latitude: 0, longitude: 0 },
   ville: '',
@@ -479,7 +493,7 @@ const validateForm = () => {
   if (!form.titre || form.titre.length < 5) {
     errors.value.titre = t('validation.title_min_length')
   }
-  if (form.prix == null || form.prix < 0) {
+  if (form.prix.montant == null || form.prix.montant < 0) {
     errors.value.prix = t('validation.price_invalid')
   }
   if (form.coordinates.longitude == 0 || form.coordinates.latitude == 0) {
@@ -600,7 +614,10 @@ const copyToForm = (annonce: AnnonceBase & { statut: AnnonceStatut }) => {
   form.nature = annonce.nature
   form.titre = annonce.titre || ''
   form.description = annonce.description || ''
-  form.prix = annonce.prix
+  form.prix = {
+    montant: annonce.prix.montant,
+    unite: annonce.prix.unite,
+  }
   form.periode_location = annonce.periode_location
   form.coordinates = annonce.coordinates
   form.ville = annonce.ville
