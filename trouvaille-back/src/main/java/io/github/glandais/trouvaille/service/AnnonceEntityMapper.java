@@ -134,4 +134,13 @@ public abstract class AnnonceEntityMapper {
       nameTransformationStrategy = MappingConstants.CASE_TRANSFORMATION,
       configuration = "upper")
   public abstract PrixUnite mapPrixUnit(PrixEntityUnite unite);
+
+  @Mapping(target = "annonceId", source = "id")
+  @Mapping(target = "id", qualifiedByName = "generateId")
+  public abstract AnnonceHistoryEntity copy(AnnonceEntity annonceEntity);
+
+  @Named("generateId")
+  protected ObjectId generateId(ObjectId source) {
+    return new ObjectId();
+  }
 }

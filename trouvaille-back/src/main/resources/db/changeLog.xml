@@ -91,4 +91,13 @@
         </ext:runCommand>
     </changeSet>
 
+    <changeSet id="3" author="glandais">
+        <ext:createCollection collectionName="AnnonceHistory"/>
+
+        <ext:createIndex collectionName="AnnonceHistory">
+            <ext:keys>{annonceId: 1}</ext:keys>
+            <ext:options>{name: "annonceIdx"}</ext:options>
+        </ext:createIndex>
+    </changeSet>
+
 </databaseChangeLog>

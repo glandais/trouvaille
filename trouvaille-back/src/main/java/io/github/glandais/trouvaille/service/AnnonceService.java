@@ -3,6 +3,7 @@ package io.github.glandais.trouvaille.service;
 import com.mongodb.client.model.Aggregates;
 import io.github.glandais.trouvaille.api.model.*;
 import io.github.glandais.trouvaille.entity.*;
+import io.github.glandais.trouvaille.repository.AnnonceHistoryRepository;
 import io.github.glandais.trouvaille.repository.AnnonceRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.ForbiddenException;
@@ -20,6 +21,7 @@ import org.bson.types.ObjectId;
 public class AnnonceService {
 
   final AnnonceRepository annonceRepository;
+  final AnnonceHistoryRepository annonceHistoryRepository;
   final AnnonceEntityMapper annonceEntityMapper;
   final AnnonceMapper annonceMapper;
   final UserService userService;
@@ -57,6 +59,7 @@ public class AnnonceService {
     checkLocation(annonceEntity);
     mattermostService.createAnnonce(annonceEntity);
     annonceRepository.persist(annonceEntity);
+    addHistory(annonceEntity);
     return getAnnonce(annonceEntity.getId().toString());
   }
 
@@ -74,6 +77,7 @@ public class AnnonceService {
     checkLocation(annonceEntity);
     mattermostService.updateAnnonce(annonceEntity);
     annonceRepository.update(annonceEntity);
+    addHistory(annonceEntity);
     return getAnnonce(id);
   }
 
@@ -135,8 +139,7 @@ public class AnnonceService {
             .aggregate(countPipeline, Document.class)
             .into(new ArrayList<>());
 
-    int totalCount = countResult.isEmpty() ? 0 : countResult.getFirst().getInteger("total", 0);
-    return totalCount;
+    return countResult.isEmpty() ? 0 : countResult.getFirst().getInteger("total", 0);
   }
 
   private List<Bson> searchPipeline(AnnonceSearch data) {
@@ -315,5 +318,10 @@ public class AnnonceService {
     if (annonceEntity.getType() != AnnonceEntityType.location) {
       annonceEntity.setPeriodeLocation(null);
     }
+  }
+
+  private void addHistory(AnnonceEntity annonceEntity) {
+    AnnonceHistoryEntity annonceHistoryEntity = annonceEntityMapper.copy(annonceEntity);
+    annonceHistoryRepository.persist(annonceHistoryEntity);
   }
 }
