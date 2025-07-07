@@ -1,3 +1,10 @@
+## [1.10.2](https://github.com/glandais/trouvaille/compare/v1.10.1...v1.10.2) (2025-07-07)
+
+
+### Bug Fixes
+
+* check price fix ([0cb98ab](https://github.com/glandais/trouvaille/commit/0cb98abc994eaf3af5d8b56fc3fa82df21992b4f))
+
 ## [1.10.1](https://github.com/glandais/trouvaille/compare/v1.10.0...v1.10.1) (2025-07-07)
 
 
