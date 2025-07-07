@@ -1,3 +1,10 @@
+# [1.12.0](https://github.com/glandais/trouvaille/compare/v1.11.0...v1.12.0) (2025-07-07)
+
+
+### Features
+
+* save history ([0adf8ae](https://github.com/glandais/trouvaille/commit/0adf8ae0571deeee6eaadd39666adab37be35ebf))
+
 # [1.11.0](https://github.com/glandais/trouvaille/compare/v1.10.3...v1.11.0) (2025-07-07)
 
 
