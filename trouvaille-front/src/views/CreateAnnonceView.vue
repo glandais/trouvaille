@@ -479,7 +479,7 @@ const validateForm = () => {
   if (!form.titre || form.titre.length < 5) {
     errors.value.titre = t('validation.title_min_length')
   }
-  if (form.prix != 0 || form.prix < 0) {
+  if (form.prix == null || form.prix < 0) {
     errors.value.prix = t('validation.price_invalid')
   }
   if (form.coordinates.longitude == 0 || form.coordinates.latitude == 0) {
