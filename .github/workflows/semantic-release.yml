@@ -80,6 +80,8 @@ jobs:
 
     - name: Build and push Docker images
       if: steps.released.outputs.new_release_published == 'true'
+      env:
+        SOURCE_DATE_EPOCH: 0
       run: |
         TAG=${{ steps.released.outputs.version }}
         ./build.sh ${TAG}
