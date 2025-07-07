@@ -1,3 +1,12 @@
+## [1.10.1](https://github.com/glandais/trouvaille/compare/v1.10.0...v1.10.1) (2025-07-07)
+
+
+### Bug Fixes
+
+* allow prix == 0 ([b3eb763](https://github.com/glandais/trouvaille/commit/b3eb7634bb81dd6da8bb8526396f5fb341f8048a))
+* better handling of location in create/edit mode + price check >= 0 ([a710a4c](https://github.com/glandais/trouvaille/commit/a710a4cf690c956468456e1212b9ccdf17a0ed2c))
+* set periodeLocation to null if not location ([33d29b5](https://github.com/glandais/trouvaille/commit/33d29b5549ff93aede79404e17b2baab6e5f86ca))
+
 # [1.10.0](https://github.com/glandais/trouvaille/compare/v1.9.5...v1.10.0) (2025-07-07)
 
 
