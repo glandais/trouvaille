@@ -81,7 +81,7 @@ public class MattermostService {
     try {
       return mattermostClient.createPost("Bearer " + botConfig.token(), post);
     } catch (RuntimeException e) {
-      log.error("Failed to create post", e);
+      log.error("Failed to create post on Mattermost", e);
     }
     return null;
   }
