@@ -1,3 +1,10 @@
+# [1.10.0](https://github.com/glandais/trouvaille/compare/v1.9.5...v1.10.0) (2025-07-07)
+
+
+### Features
+
+* Mattermost bot ([#30](https://github.com/glandais/trouvaille/issues/30)) ([8b32fb7](https://github.com/glandais/trouvaille/commit/8b32fb7a6282eef675746a722774057917736c74))
+
 ## [1.9.5](https://github.com/glandais/trouvaille/compare/v1.9.4...v1.9.5) (2025-07-04)
 
 
