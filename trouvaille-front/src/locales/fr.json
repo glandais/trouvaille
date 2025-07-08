@@ -203,7 +203,7 @@
         "description_required": "Description *",
         "price_required": "Prix *",
         "prix_unite_required": "Unité *",
-        "period": "Période de location",
+        "period": "Période de location *",
         "status_required": "Statut *"
       },
       "placeholders": {
@@ -300,6 +300,7 @@
     "passwords_not_match": "Les mots de passe ne correspondent pas",
     "type_required": "Le type est requis",
     "nature_required": "La nature est requise",
+    "periode_location_required": "La période est requise",
     "title_min_length": "Le titre doit contenir au moins 5 caractères",
     "title_max_length": "Le titre ne peut pas dépasser 100 caractères",
     "description_required": "La description est requise",

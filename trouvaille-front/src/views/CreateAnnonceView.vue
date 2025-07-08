@@ -85,7 +85,6 @@
                 class="form-input"
                 :class="{ 'border-red-500': errors.type }"
               >
-                <option value="">{{ $t('annonce.form.placeholders.select_type') }}</option>
                 <option :value="AnnonceType.Vente">{{ $t('annonce.types.vente') }}</option>
                 <option :value="AnnonceType.Location">{{ $t('annonce.types.location') }}</option>
               </select>
@@ -104,7 +103,6 @@
                 class="form-input"
                 :class="{ 'border-red-500': errors.nature }"
               >
-                <option value="">{{ $t('annonce.form.placeholders.select_nature') }}</option>
                 <option :value="AnnonceNature.Offre">{{ $t('annonce.natures.offre') }}</option>
                 <option :value="AnnonceNature.Demande">{{ $t('annonce.natures.demande') }}</option>
               </select>
@@ -194,14 +192,21 @@
               <label for="periodeLocation" class="block text-sm font-medium text-gray-700 mb-2">
                 {{ $t('annonce.form.labels.period') }}
               </label>
-              <select id="periodeLocation" v-model="form.periode_location" class="form-input">
-                <option value="">{{ $t('annonce.periode.not_specified') }}</option>
+              <select
+                id="periodeLocation"
+                v-model="form.periode_location"
+                class="form-input"
+                :class="{ 'border-red-500': errors.periode_location }"
+              >
                 <option :value="PeriodeLocation.Jour">{{ $t('annonce.periode.jour') }}</option>
                 <option :value="PeriodeLocation.Semaine">
                   {{ $t('annonce.periode.semaine') }}
                 </option>
                 <option :value="PeriodeLocation.Mois">{{ $t('annonce.periode.mois') }}</option>
               </select>
+              <p v-if="errors.periode_location" class="mt-1 text-sm text-red-600">
+                {{ errors.periode_location }}
+              </p>
             </div>
           </div>
         </div>
@@ -490,6 +495,8 @@ const validateForm = () => {
 
   if (!form.type) errors.value.type = t('validation.type_required')
   if (!form.nature) errors.value.nature = t('validation.nature_required')
+  if (form.type === AnnonceType.Location && !form.periode_location)
+    errors.value.periode_location = t('validation.periode_location_required')
   if (!form.titre || form.titre.length < 5) {
     errors.value.titre = t('validation.title_min_length')
   }
@@ -619,6 +626,9 @@ const copyToForm = (annonce: AnnonceBase & { statut: AnnonceStatut }) => {
     unite: annonce.prix.unite,
   }
   form.periode_location = annonce.periode_location
+  if (!form.periode_location) {
+    form.periode_location = PeriodeLocation.Mois
+  }
   form.coordinates = annonce.coordinates
   form.ville = annonce.ville
   form.statut = annonce.statut

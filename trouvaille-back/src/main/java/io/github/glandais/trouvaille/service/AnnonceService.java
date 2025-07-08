@@ -8,6 +8,8 @@ import io.github.glandais.trouvaille.repository.AnnonceRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.NotFoundException;
+import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -315,7 +317,11 @@ public class AnnonceService {
   }
 
   private void checkLocation(AnnonceEntity annonceEntity) {
-    if (annonceEntity.getType() != AnnonceEntityType.location) {
+    if (annonceEntity.getType() == AnnonceEntityType.location) {
+      if (annonceEntity.getPeriodeLocation() == null) {
+        throw new WebApplicationException(Response.Status.BAD_REQUEST);
+      }
+    } else {
       annonceEntity.setPeriodeLocation(null);
     }
   }
