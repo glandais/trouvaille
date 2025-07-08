@@ -1,6 +1,6 @@
 {
   "name": "trouvaille",
-  "version": "1.12.7",
+  "version": "1.12.8",
   "private": true,
   "description": "Plateforme de petites annonces privée",
   "scripts": {

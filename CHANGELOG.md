@@ -1,3 +1,10 @@
+## [1.12.8](https://github.com/glandais/trouvaille/compare/v1.12.7...v1.12.8) (2025-07-08)
+
+
+### Bug Fixes
+
+* periode location obligatoire si location ([d0e3093](https://github.com/glandais/trouvaille/commit/d0e3093f325dc85929e12b60cf7ee2d3203ff7dd))
+
 ## [1.12.7](https://github.com/glandais/trouvaille/compare/v1.12.6...v1.12.7) (2025-07-07)
 
 
