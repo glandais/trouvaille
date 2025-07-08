@@ -29,7 +29,6 @@ log_error() {
 
 # Configuration
 ACTION="${1:-up}"
-ENVIRONMENT="${2:-production}"  # production, development
 
 case "$ACTION" in
     "build")
@@ -37,7 +36,7 @@ case "$ACTION" in
         ./build.sh latest
         ;;
     "up"|"start")
-        log_info "Starting services in $ENVIRONMENT mode..."
+        log_info "Starting services..."
         
         # Check if .env file exists
         if [ ! -f ".env" ]; then
@@ -50,17 +49,10 @@ case "$ACTION" in
         # Create necessary directories based
         mkdir -p data/{photos,mongodb,keys}
         
-        # Select compose files based on environment
-        COMPOSE_FILES="-f docker-compose.yml"
-        if [ "$ENVIRONMENT" = "production" ]; then
-            COMPOSE_FILES="$COMPOSE_FILES -f docker-compose.prod.yml"
-            log_info "Using production configuration with enhanced security"
-        fi
-        
-        log_info "Running docker compose $COMPOSE_FILES up -d"
+        log_info "Running docker compose up -d"
 
         # Start services
-        docker compose $COMPOSE_FILES up -d
+        docker compose up -d
         
         log_success "Services started!"
         log_info "Waiting for services to be ready..."
@@ -85,12 +77,6 @@ case "$ACTION" in
         log_info "Access points:"
         log_info "  Application: http://localhost:${HTTP_PORT}"
         log_info "  MongoDB: localhost:27017"
-        if [ "$ENVIRONMENT" = "production" ]; then
-            log_info "  Only accessible through Traefik on port ${HTTP_PORT}"
-            log_info "  Configure your Nginx to proxy to http://localhost:${HTTP_PORT}"
-        else
-            log_info "  Traefik Dashboard: http://localhost:28080"
-        fi
         
         echo ""
         log_info "To view logs: ./deploy.sh logs"
@@ -129,11 +115,11 @@ case "$ACTION" in
         cat << EOF
 Trouvaille Deployment Script
 
-Usage: $0 [ACTION] [ENVIRONMENT]
+Usage: $0 [ACTION]
 
 Actions:
   build                         Build Docker images
-  up|start [env]                Start all services
+  up|start                      Start all services
   down|stop                     Stop all services  
   restart                       Restart all services
   logs                          Show logs from all services
@@ -141,23 +127,11 @@ Actions:
   clean                         Remove all containers, images and volumes
   help                          Show this help message
 
-Environments:
-  production        Secure configuration, no exposed ports (default)
-  development       Development tools, localhost-only port exposure
-
 Examples:
   $0 build                          # Build images
-  $0 up production                  # Start in production mode
-  $0 up development                 # Start in development mode with debug tools
+  $0 up                             # Start
   $0 logs                           # View logs
   $0 clean                          # Clean everything
-
-Access in development mode:
-  - Application: http://localhost
-  - Backend API: http://localhost:8081/api
-  - Frontend: http://localhost:8082
-  - Mongo Express: http://localhost:8083
-  - Traefik Dashboard: http://localhost:8080
 
 Access in production mode:
   - Application: http://localhost (Traefik only)

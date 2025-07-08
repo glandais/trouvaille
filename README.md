@@ -104,7 +104,6 @@ A modern, private marketplace platform for classified ads allowing users to sell
 trouvaille/
 ├── contract.yaml                 # OpenAPI 3.0.3 specification
 ├── docker-compose.yml           # Development environment
-├── docker-compose.prod.yml      # Production environment
 ├── data/                        # Persistent data
 │   ├── keys/                   # JWT signing keys
 │   ├── photos/                 # Uploaded images
@@ -196,7 +195,7 @@ npm run dev
 ./deploy.sh
 
 # Or manually
-docker-compose -f docker-compose.prod.yml up -d
+docker-compose up -d
 ```
 
 ## 🛠️ Development
@@ -453,11 +452,11 @@ docker-compose build --no-cache
 **Production:**
 ```bash
 # Deploy to production
-docker-compose -f docker-compose.prod.yml up -d
+docker-compose up -d
 
 # Update images
-docker-compose -f docker-compose.prod.yml pull
-docker-compose -f docker-compose.prod.yml up -d
+docker-compose pull
+docker-compose up -d
 ```
 
 **Services:**

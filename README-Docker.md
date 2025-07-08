@@ -30,26 +30,13 @@ L'application est composée de plusieurs services :
 2. **Builder et démarrer**
    ```bash
    ./deploy.sh build
-
-   # Production (sécurisé, ports non exposés)
-   ./deploy.sh up production
-   
-   # Développement (avec outils de debug)
-   ./deploy.sh up development
+   ./deploy.sh up
    ```
 
 3. **Accéder à l'application**
    
    **Mode Production (avec Nginx):**
    - Application : http://localhost:8090 (port configurable via HTTP_PORT)
-   - Configurer Nginx pour proxy vers ce port
-   
-   **Mode Développement :**
-   - Application : http://localhost:8090
-   - Backend direct : http://localhost:8081/api
-   - Frontend direct : http://localhost:8082
-   - Mongo Express : http://localhost:8083
-   - Dashboard Traefik : http://localhost:8080
 
 ## Commandes disponibles
 

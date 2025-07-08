@@ -161,8 +161,7 @@ docker compose up -d
    docker pull ghcr.io/[owner]/trouvaille-backend:v1.0.0
    docker pull ghcr.io/[owner]/trouvaille-frontend:v1.0.0
    
-   # Update docker-compose.prod.yml and deploy
-   docker compose -f docker-compose.prod.yml up -d
+   docker compose up -d
    ```
 
 ## Monitoring and Maintenance
