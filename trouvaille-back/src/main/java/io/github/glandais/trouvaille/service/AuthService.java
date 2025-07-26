@@ -12,6 +12,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import java.time.Duration;
 import java.util.Set;
+import java.util.TreeSet;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
@@ -45,10 +46,16 @@ public class AuthService {
           userService.getUserEntity(user.getId(), user.getUsername(), user.getNickname());
 
       // Create JWT token for our application
+      Set<String> groups = new TreeSet<>();
+      groups.add("user");
+      if (Boolean.TRUE.equals(userEntity.admin)) {
+        groups.add("admin");
+      }
+
       String jwtToken =
           Jwt.issuer("trouvaille")
               .upn(user.getUsername())
-              .groups(Set.of("user"))
+              .groups(groups)
               .claim("sub", userEntity.getId())
               .claim("externalId", userEntity.getExternalId())
               .claim("username", userEntity.getUsername())

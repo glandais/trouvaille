@@ -2,8 +2,9 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { type OAuthTokenRequest, type Utilisateur } from '../api'
+import { type OAuthTokenRequest } from '../api'
 import { authentificationApi, configApi } from '../services/api'
+import { User } from '@/types/user'
 
 export const useAuthStore = defineStore('auth', () => {
   const redirectUri = window.location.origin
@@ -14,7 +15,7 @@ export const useAuthStore = defineStore('auth', () => {
   const { t } = useI18n()
 
   const accessToken = ref<string | null>(localStorage.getItem('access_token'))
-  const user = ref<Utilisateur | null>(null)
+  const user = ref<User | null>(null)
   const isAuthenticating = ref(false)
 
   const isAuthenticated = computed(() => !!accessToken.value)
@@ -90,6 +91,7 @@ export const useAuthStore = defineStore('auth', () => {
         id: payload.sub,
         username: payload.username,
         nickname: payload.nickname,
+        groups: payload.groups,
       }
     } catch (error) {
       console.error('Failed to decode JWT:', error)
@@ -147,6 +149,7 @@ export const useAuthStore = defineStore('auth', () => {
   interface JWTPayload {
     exp: number
     sub: string
+    groups: string[]
     username?: string
     nickname?: string
   }

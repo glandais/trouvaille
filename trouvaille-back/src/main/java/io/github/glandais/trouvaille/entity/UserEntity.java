@@ -19,4 +19,6 @@ public class UserEntity {
   public String username;
 
   public String nickname;
+
+  public Boolean admin;
 }
