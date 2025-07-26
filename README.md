@@ -1,7 +1,10 @@
 # 🏺 Trouvaille - Private Marketplace
 
+[![CI](https://github.com/glandais/trouvaille/actions/workflows/ci.yml/badge.svg)](https://github.com/glandais/trouvaille/actions/workflows/ci.yml)
+[![Code Quality](https://github.com/glandais/trouvaille/actions/workflows/code-quality.yml/badge.svg)](https://github.com/glandais/trouvaille/actions/workflows/code-quality.yml)
+[![Latest Release](https://img.shields.io/github/v/release/glandais/trouvaille)](https://github.com/glandais/trouvaille/releases)
 [![Java](https://img.shields.io/badge/Java-21-orange.svg)](https://openjdk.java.net/projects/jdk/21/)
-[![Quarkus](https://img.shields.io/badge/Quarkus-3.24.1-blue.svg)](https://quarkus.io/)
+[![Quarkus](https://img.shields.io/badge/Quarkus-3.24.3-blue.svg)](https://quarkus.io/)
 [![Vue.js](https://img.shields.io/badge/Vue.js-3.5-green.svg)](https://vuejs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8-blue.svg)](https://www.typescriptlang.org/)
 [![MongoDB](https://img.shields.io/badge/MongoDB-8.0-green.svg)](https://www.mongodb.com/)
@@ -33,7 +36,7 @@ A modern, private marketplace platform for classified ads allowing users to sell
   - [🐳 Docker](#-docker)
   - [🧪 Testing](#-testing)
   - [📝 Scripts](#-scripts)
-  - [🚀 Deployment](#-deployment)
+  - [🚀 CI/CD](#-cicd)
   - [🤝 Contributing](#-contributing)
   - [📄 License](#-license)
 
@@ -76,7 +79,7 @@ A modern, private marketplace platform for classified ads allowing users to sell
 ### Tech Stack
 
 **Backend:**
-- **Quarkus 3.24.1** - Supersonic Subatomic Java Framework
+- **Quarkus 3.24.3** - Supersonic Subatomic Java Framework
 - **Java 21** - Latest LTS with modern language features
 - **MongoDB 8.0** - Document database with geospatial capabilities
 - **Panache** - Simplified data access layer
@@ -91,6 +94,7 @@ A modern, private marketplace platform for classified ads allowing users to sell
 - **Pinia** - Modern state management
 - **Tailwind CSS** - Utility-first CSS framework
 - **Axios** - HTTP client with interceptors
+- **vue-i18n** - Internationalization
 
 **Infrastructure:**
 - **Docker** - Containerized deployment
@@ -316,8 +320,9 @@ The API is documented using OpenAPI 3.0.3 specification in `contract.yaml`.
 **OAuth2 Flow:**
 1. User clicks "Login" → Redirects to OAuth provider
 2. User authenticates → Receives authorization code
-3. Frontend exchanges code for JWT token
-4. JWT token used for API authentication
+3. Frontend exchanges code for JWT token via the backend
+4. The backend returns a JWT token in an `auth_token` cookie
+5. The frontend uses the cookie for subsequent API requests
 
 **Configuration:**
 ```properties
@@ -526,32 +531,28 @@ chmod +x *.sh
 ./deploy.sh
 ```
 
-## 🚀 Deployment
+## 🚀 CI/CD
 
-**Production Checklist:**
-- [ ] Configure environment variables in `.env`
-- [ ] Generate production JWT keys
-- [ ] Set up MongoDB replica set
-- [ ] Configure OAuth2 credentials
-- [ ] Set up SSL certificates
-- [ ] Configure backup strategy
-- [ ] Set up monitoring and logging
+This project uses **GitHub Actions** for CI/CD.
 
-**Environment Variables:**
-```bash
-# Required for production
-OAUTH_CLIENT_ID=your-oauth-client-id
-OAUTH_CLIENT_SECRET=your-oauth-client-secret
-OAUTH_BASE_URL=https://your-oauth-provider.com
+### Workflows
 
-# Optional configuration
-HTTP_PORT=8090
-MONGO_HOST_PORT=27017
-MONGO_HOST_DATA=./data/mongodb
-```
+- **`ci.yml`**: Runs on every push and pull request to `main` and `develop`.
+  - Builds and tests both backend and frontend.
+  - Performs code quality checks.
+- **`release.yml`**: Runs on new version tags (e.g., `v1.2.3`).
+  - Creates a GitHub release.
+  - Builds and pushes Docker images to `ghcr.io`.
+- **`code-quality.yml`**: Runs weekly and on pull requests.
+  - Performs security scans (Trivy, CodeQL, npm audit).
 
-**Nginx Integration:**
-See `nginx-integration.conf.example` for reverse proxy configuration.
+### Automated Dependency Management
+
+**Dependabot** is configured to automatically create pull requests for dependency updates for:
+- `maven` (backend)
+- `npm` (frontend)
+- `docker`
+- `github-actions`
 
 ## 🤝 Contributing
 
@@ -591,5 +592,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ---
 
 **Built with ❤️ using modern technologies for a seamless marketplace experience.**
-
-For more information, please refer to the individual README files in the `trouvaille-back/` and `trouvaille-front/` directories.

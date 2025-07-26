@@ -1,6 +1,6 @@
-# trouvaille-front
+# Trouvaille - Frontend
 
-This template should help get you started developing with Vue 3 in Vite.
+This directory contains the frontend code for the Trouvaille application, built with Vue 3 and Vite.
 
 ## Recommended IDE Setup
 
@@ -37,3 +37,5 @@ npm run build
 ```sh
 npm run lint
 ```
+
+For more information, please refer to the root [README.md](../README.md) file.

@@ -1,8 +1,6 @@
-# code-with-quarkus
+# Trouvaille - Backend
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
-
-If you want to learn more about Quarkus, please visit its website: <https://quarkus.io/>.
+This directory contains the backend code for the Trouvaille application, built with Quarkus.
 
 ## Running the application in dev mode
 
@@ -35,10 +33,4 @@ If you want to build an _über-jar_, execute the following command:
 
 The application, packaged as an _über-jar_, is now runnable using `java -jar target/*-runner.jar`.
 
-## Provided Code
-
-### REST
-
-Easily start your REST Web Services
-
-[Related guide section...](https://quarkus.io/guides/getting-started-reactive#reactive-jax-rs-resources)
+For more information, please refer to the root [README.md](../README.md) file.

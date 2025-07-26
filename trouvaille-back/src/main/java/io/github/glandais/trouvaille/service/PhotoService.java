@@ -53,9 +53,9 @@ public class PhotoService {
       Path fullSizePath = photoDir.resolve("full.jpg");
       Files.write(fullSizePath, full.bytes(), StandardOpenOption.CREATE);
 
-      // Resize and save thumbnail (256x256)
+      // Resize and save thumbnail (512x512)
       PhotoContent thumb =
-          imageService.resizeImage(new java.io.ByteArrayInputStream(imageData), 256, 256, "jpg");
+          imageService.resizeImage(new java.io.ByteArrayInputStream(imageData), 512, 512, "jpg");
       Path thumbnailPath = photoDir.resolve("thumb.jpg");
       Files.write(thumbnailPath, thumb.bytes(), StandardOpenOption.CREATE);
 
