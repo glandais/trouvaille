@@ -1,7 +1,6 @@
 # 🏺 Trouvaille - Private Marketplace
 
 [![CI](https://github.com/glandais/trouvaille/actions/workflows/ci.yml/badge.svg)](https://github.com/glandais/trouvaille/actions/workflows/ci.yml)
-[![Code Quality](https://github.com/glandais/trouvaille/actions/workflows/code-quality.yml/badge.svg)](https://github.com/glandais/trouvaille/actions/workflows/code-quality.yml)
 [![Latest Release](https://img.shields.io/github/v/release/glandais/trouvaille)](https://github.com/glandais/trouvaille/releases)
 [![Java](https://img.shields.io/badge/Java-21-orange.svg)](https://openjdk.java.net/projects/jdk/21/)
 [![Quarkus](https://img.shields.io/badge/Quarkus-3.24.3-blue.svg)](https://quarkus.io/)
@@ -79,17 +78,17 @@ A modern, private marketplace platform for classified ads allowing users to sell
 ### Tech Stack
 
 **Backend:**
-- **Quarkus 3.24.3** - Supersonic Subatomic Java Framework
+- **Quarkus 3** - Supersonic Subatomic Java Framework
 - **Java 21** - Latest LTS with modern language features
-- **MongoDB 8.0** - Document database with geospatial capabilities
+- **MongoDB 8** - Document database with geospatial capabilities
 - **Panache** - Simplified data access layer
 - **JWT** - JSON Web Tokens for authentication
 - **MapStruct** - Type-safe bean mapping
-- **OpenAPI 3.0.3** - API-first development
+- **OpenAPI 3** - API-first development
 
 **Frontend:**
 - **Vue 3** - Progressive JavaScript framework with Composition API
-- **TypeScript 5.8** - Type-safe JavaScript development
+- **TypeScript 5** - Type-safe JavaScript development
 - **Vite** - Lightning-fast build tool
 - **Pinia** - Modern state management
 - **Tailwind CSS** - Utility-first CSS framework
@@ -147,13 +146,14 @@ trouvaille/
 
 1. **Clone the repository:**
    ```bash
-   git clone <repository-url>
+   git clone git@github.com:glandais/trouvaille.git
    cd trouvaille
    ```
 
 2. **Create environment file:**
    ```bash
    cp .env.example .env
+   cp trouvaille-back/.env.example trouvaille-back/.env
    # Edit .env with your configuration
    ```
 
@@ -162,41 +162,12 @@ trouvaille/
    ./generate-keys.sh
    ```
 
-### Development Mode
-
-**Option 1: Docker Compose (Recommended)**
-```bash
-# Start all services
-docker-compose up -d
-
-# View logs
-docker-compose logs -f
-
-# Access the application
-open http://localhost:8090
-```
-
-**Option 2: Local Development**
-```bash
-# Terminal 1: Start MongoDB
-docker-compose up -d mongodb
-
-# Terminal 2: Start backend
-cd trouvaille-back
-mvn quarkus:dev
-
-# Terminal 3: Start frontend
-cd trouvaille-front
-npm install
-npm run dev
-```
-
 ### Production Deployment
 
 ```bash
 # Build and deploy
-./build.sh
-./deploy.sh
+./deploy.sh build
+./deploy.sh up
 
 # Or manually
 docker-compose up -d
@@ -219,9 +190,6 @@ mvn clean package
 
 # Run tests
 mvn test
-
-# Run integration tests
-mvn verify
 
 # Generate code from OpenAPI
 mvn quarkus:generate-code
@@ -260,9 +228,6 @@ npm run build
 
 # Preview production build
 npm run preview
-
-# Generate API client
-npm run generate:api
 ```
 
 **Development Features:**
@@ -278,23 +243,16 @@ The project follows **Contract-First Development**:
 1. **Edit the contract:**
    ```bash
    # Edit the OpenAPI specification
-   vim contract.yaml
+   code contract.yaml
    ```
 
-2. **Generate backend interfaces:**
+2. **Generate backend interfaces and frontend client:**
    ```bash
-   cd trouvaille-back
-   mvn quarkus:generate-code
-   ```
-
-3. **Generate frontend client:**
-   ```bash
-   cd trouvaille-front
-   npm run generate:api
+   ./generate-openapi.sh
    ```
 
 4. **Implement the interfaces:**
-   - Backend: Implement generated interfaces in `resource/` package
+   - Backend: Implement generated interfaces in `io.github.glandais.trouvaille.resource` package
    - Frontend: Use generated API client in services
 
 ## 📡 API Documentation
@@ -325,12 +283,7 @@ The API is documented using OpenAPI 3.0.3 specification in `contract.yaml`.
 5. The frontend uses the cookie for subsequent API requests
 
 **Configuration:**
-```properties
-# Backend (application.properties)
-trouvaille.oauth.client-id=${OAUTH_CLIENT_ID}
-trouvaille.oauth.client-secret=${OAUTH_CLIENT_SECRET}
-quarkus.rest-client.oauth2.url=${OAUTH_BASE_URL}
-```
+In .env files (root and/or trouvaille-back for dev back server)
 
 ## 🗄️ Database
 
@@ -441,27 +394,14 @@ db.Annonce.aggregate([
 
 **Development:**
 ```bash
-# Start all services
-docker-compose up -d
-
-# View logs
-docker-compose logs -f [service-name]
-
-# Stop all services
-docker-compose down
-
-# Rebuild services
-docker-compose build --no-cache
+./deploy.sh build
+./deploy.sh up
 ```
 
 **Production:**
 ```bash
-# Deploy to production
-docker-compose up -d
-
-# Update images
-docker-compose pull
-docker-compose up -d
+docker compose pull
+./deploy.sh up
 ```
 
 **Services:**
