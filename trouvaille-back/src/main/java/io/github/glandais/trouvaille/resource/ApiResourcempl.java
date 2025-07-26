@@ -7,10 +7,12 @@ import io.github.glandais.trouvaille.config.FrontConfig;
 import io.github.glandais.trouvaille.service.AnnonceService;
 import io.github.glandais.trouvaille.service.AuthService;
 import io.github.glandais.trouvaille.service.PhotoService;
+import io.github.glandais.trouvaille.service.UserService;
 import io.quarkus.security.Authenticated;
 import io.vertx.core.http.Cookie;
 import io.vertx.ext.web.RoutingContext;
 import jakarta.annotation.security.PermitAll;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.ws.rs.core.*;
 import java.io.File;
 import java.io.IOException;
@@ -28,6 +30,7 @@ public class ApiResourcempl implements ApiApi {
   final AnnonceService annonceService;
   final PhotoService photoService;
   final AuthService authService;
+  final UserService userService;
   final FrontConfig frontConfig;
 
   @Context Request request;
@@ -117,6 +120,27 @@ public class ApiResourcempl implements ApiApi {
     configuration.setAuthorizeUri(frontConfig.authorizeUri());
     configuration.setClientId(frontConfig.clientId());
     return Response.ok(configuration).build();
+  }
+
+  @Override
+  @RolesAllowed("admin")
+  public Response listUsers(Integer page, Integer limit, String search) {
+    if (page == null) page = 1;
+    if (limit == null) limit = 20;
+
+    Response.ResponseBuilder responseBuilder =
+        Response.ok(userService.listUsers(page, limit, search));
+    setAuthCookieIfFromHeader(responseBuilder);
+    return responseBuilder.build();
+  }
+
+  @Override
+  @RolesAllowed("admin")
+  public Response updateUserAdmin(String userId, UserAdminUpdate data) {
+    Response.ResponseBuilder responseBuilder =
+        Response.ok(userService.updateUserAdmin(userId, data.getAdmin()));
+    setAuthCookieIfFromHeader(responseBuilder);
+    return responseBuilder.build();
   }
 
   /**

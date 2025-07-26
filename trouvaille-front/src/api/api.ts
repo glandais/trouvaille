@@ -714,6 +714,38 @@ export enum PrixUnite {
 /**
  *
  * @export
+ * @interface UserAdminUpdate
+ */
+export interface UserAdminUpdate {
+  /**
+   * Statut administrateur
+   * @type {boolean}
+   * @memberof UserAdminUpdate
+   */
+  admin: boolean
+}
+/**
+ *
+ * @export
+ * @interface Users
+ */
+export interface Users {
+  /**
+   *
+   * @type {Array<Utilisateur>}
+   * @memberof Users
+   */
+  data: Array<Utilisateur>
+  /**
+   *
+   * @type {Pagination}
+   * @memberof Users
+   */
+  pagination: Pagination
+}
+/**
+ *
+ * @export
  * @interface Utilisateur
  */
 export interface Utilisateur {
@@ -735,6 +767,302 @@ export interface Utilisateur {
    * @memberof Utilisateur
    */
   nickname?: string
+  /**
+   *
+   * @type {boolean}
+   * @memberof Utilisateur
+   */
+  admin: boolean
+}
+
+/**
+ * AdminApi - axios parameter creator
+ * @export
+ */
+export const AdminApiAxiosParamCreator = function (configuration?: Configuration) {
+  return {
+    /**
+     *
+     * @summary Lister tous les utilisateurs (admin uniquement)
+     * @param {number} [page]
+     * @param {number} [limit]
+     * @param {string} [search]
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    listUsers: async (
+      page?: number,
+      limit?: number,
+      search?: string,
+      options: RawAxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      const localVarPath = `/api/v1/admin/users`
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
+      let baseOptions
+      if (configuration) {
+        baseOptions = configuration.baseOptions
+      }
+
+      const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options }
+      const localVarHeaderParameter = {} as any
+      const localVarQueryParameter = {} as any
+
+      // authentication BearerAuth required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+      if (page !== undefined) {
+        localVarQueryParameter['page'] = page
+      }
+
+      if (limit !== undefined) {
+        localVarQueryParameter['limit'] = limit
+      }
+
+      if (search !== undefined) {
+        localVarQueryParameter['search'] = search
+      }
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter)
+      let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      }
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      }
+    },
+    /**
+     *
+     * @summary Modifier le statut administrateur d\'un utilisateur (admin uniquement)
+     * @param {string} userId
+     * @param {UserAdminUpdate} userAdminUpdate
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    updateUserAdmin: async (
+      userId: string,
+      userAdminUpdate: UserAdminUpdate,
+      options: RawAxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'userId' is not null or undefined
+      assertParamExists('updateUserAdmin', 'userId', userId)
+      // verify required parameter 'userAdminUpdate' is not null or undefined
+      assertParamExists('updateUserAdmin', 'userAdminUpdate', userAdminUpdate)
+      const localVarPath = `/api/v1/admin/users/{userId}/admin`.replace(
+        `{${'userId'}}`,
+        encodeURIComponent(String(userId)),
+      )
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
+      let baseOptions
+      if (configuration) {
+        baseOptions = configuration.baseOptions
+      }
+
+      const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options }
+      const localVarHeaderParameter = {} as any
+      const localVarQueryParameter = {} as any
+
+      // authentication BearerAuth required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+      localVarHeaderParameter['Content-Type'] = 'application/json'
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter)
+      let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      }
+      localVarRequestOptions.data = serializeDataIfNeeded(
+        userAdminUpdate,
+        localVarRequestOptions,
+        configuration,
+      )
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      }
+    },
+  }
+}
+
+/**
+ * AdminApi - functional programming interface
+ * @export
+ */
+export const AdminApiFp = function (configuration?: Configuration) {
+  const localVarAxiosParamCreator = AdminApiAxiosParamCreator(configuration)
+  return {
+    /**
+     *
+     * @summary Lister tous les utilisateurs (admin uniquement)
+     * @param {number} [page]
+     * @param {number} [limit]
+     * @param {string} [search]
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async listUsers(
+      page?: number,
+      limit?: number,
+      search?: string,
+      options?: RawAxiosRequestConfig,
+    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Users>> {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.listUsers(
+        page,
+        limit,
+        search,
+        options,
+      )
+      const localVarOperationServerIndex = configuration?.serverIndex ?? 0
+      const localVarOperationServerBasePath =
+        operationServerMap['AdminApi.listUsers']?.[localVarOperationServerIndex]?.url
+      return (axios, basePath) =>
+        createRequestFunction(
+          localVarAxiosArgs,
+          globalAxios,
+          BASE_PATH,
+          configuration,
+        )(axios, localVarOperationServerBasePath || basePath)
+    },
+    /**
+     *
+     * @summary Modifier le statut administrateur d\'un utilisateur (admin uniquement)
+     * @param {string} userId
+     * @param {UserAdminUpdate} userAdminUpdate
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async updateUserAdmin(
+      userId: string,
+      userAdminUpdate: UserAdminUpdate,
+      options?: RawAxiosRequestConfig,
+    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Utilisateur>> {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.updateUserAdmin(
+        userId,
+        userAdminUpdate,
+        options,
+      )
+      const localVarOperationServerIndex = configuration?.serverIndex ?? 0
+      const localVarOperationServerBasePath =
+        operationServerMap['AdminApi.updateUserAdmin']?.[localVarOperationServerIndex]?.url
+      return (axios, basePath) =>
+        createRequestFunction(
+          localVarAxiosArgs,
+          globalAxios,
+          BASE_PATH,
+          configuration,
+        )(axios, localVarOperationServerBasePath || basePath)
+    },
+  }
+}
+
+/**
+ * AdminApi - factory interface
+ * @export
+ */
+export const AdminApiFactory = function (
+  configuration?: Configuration,
+  basePath?: string,
+  axios?: AxiosInstance,
+) {
+  const localVarFp = AdminApiFp(configuration)
+  return {
+    /**
+     *
+     * @summary Lister tous les utilisateurs (admin uniquement)
+     * @param {number} [page]
+     * @param {number} [limit]
+     * @param {string} [search]
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    listUsers(
+      page?: number,
+      limit?: number,
+      search?: string,
+      options?: RawAxiosRequestConfig,
+    ): AxiosPromise<Users> {
+      return localVarFp
+        .listUsers(page, limit, search, options)
+        .then((request) => request(axios, basePath))
+    },
+    /**
+     *
+     * @summary Modifier le statut administrateur d\'un utilisateur (admin uniquement)
+     * @param {string} userId
+     * @param {UserAdminUpdate} userAdminUpdate
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    updateUserAdmin(
+      userId: string,
+      userAdminUpdate: UserAdminUpdate,
+      options?: RawAxiosRequestConfig,
+    ): AxiosPromise<Utilisateur> {
+      return localVarFp
+        .updateUserAdmin(userId, userAdminUpdate, options)
+        .then((request) => request(axios, basePath))
+    },
+  }
+}
+
+/**
+ * AdminApi - object-oriented interface
+ * @export
+ * @class AdminApi
+ * @extends {BaseAPI}
+ */
+export class AdminApi extends BaseAPI {
+  /**
+   *
+   * @summary Lister tous les utilisateurs (admin uniquement)
+   * @param {number} [page]
+   * @param {number} [limit]
+   * @param {string} [search]
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof AdminApi
+   */
+  public listUsers(
+    page?: number,
+    limit?: number,
+    search?: string,
+    options?: RawAxiosRequestConfig,
+  ) {
+    return AdminApiFp(this.configuration)
+      .listUsers(page, limit, search, options)
+      .then((request) => request(this.axios, this.basePath))
+  }
+
+  /**
+   *
+   * @summary Modifier le statut administrateur d\'un utilisateur (admin uniquement)
+   * @param {string} userId
+   * @param {UserAdminUpdate} userAdminUpdate
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof AdminApi
+   */
+  public updateUserAdmin(
+    userId: string,
+    userAdminUpdate: UserAdminUpdate,
+    options?: RawAxiosRequestConfig,
+  ) {
+    return AdminApiFp(this.configuration)
+      .updateUserAdmin(userId, userAdminUpdate, options)
+      .then((request) => request(this.axios, this.basePath))
+  }
 }
 
 /**

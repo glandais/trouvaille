@@ -2,11 +2,12 @@
 
 ## Properties
 
-| Name         | Type       | Description | Notes                             |
-| ------------ | ---------- | ----------- | --------------------------------- |
-| **id**       | **string** |             | [default to undefined]            |
-| **username** | **string** |             | [optional] [default to undefined] |
-| **nickname** | **string** |             | [optional] [default to undefined] |
+| Name         | Type        | Description | Notes                             |
+| ------------ | ----------- | ----------- | --------------------------------- |
+| **id**       | **string**  |             | [default to undefined]            |
+| **username** | **string**  |             | [optional] [default to undefined] |
+| **nickname** | **string**  |             | [optional] [default to undefined] |
+| **admin**    | **boolean** |             | [default to false]                |
 
 ## Example
 
@@ -17,6 +18,7 @@ const instance: Utilisateur = {
   id,
   username,
   nickname,
+  admin,
 }
 ```
 

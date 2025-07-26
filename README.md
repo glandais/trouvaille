@@ -208,6 +208,7 @@ mvn spotless:apply
 **Start development server:**
 ```bash
 cd trouvaille-front
+npm ci
 npm run dev
 ```
 

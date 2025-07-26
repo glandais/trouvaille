@@ -241,6 +241,74 @@ paths:
               schema:
                 $ref: '#/components/schemas/FrontConfiguration'
 
+  /api/v1/admin/users:
+    get:
+      summary: Lister tous les utilisateurs (admin uniquement)
+      operationId: listUsers
+      tags:
+        - Admin
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+            description: Recherche par username ou nickname
+      responses:
+        '200':
+          description: Liste des utilisateurs
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Users'
+        '403':
+          description: Accès refusé - droits administrateur requis
+
+  /api/v1/admin/users/{userId}/admin:
+    put:
+      summary: Modifier le statut administrateur d'un utilisateur (admin uniquement)
+      operationId: updateUserAdmin
+      tags:
+        - Admin
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserAdminUpdate'
+      responses:
+        '200':
+          description: Statut administrateur mis à jour
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Utilisateur'
+        '403':
+          description: Accès refusé - droits administrateur requis
+        '404':
+          description: Utilisateur non trouvé
+
 components:
   schemas:
     FrontConfiguration:
@@ -263,8 +331,12 @@ components:
           type: string
         nickname:
           type: string
+        admin:
+          type: boolean
+          default: false
       required:
         - id
+        - admin
 
     AnnonceType:
       type: string
@@ -579,6 +651,28 @@ components:
           description: Token d'accès JWT
       required:
         - access_token
+
+    Users:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Utilisateur'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+      required:
+        - data
+        - pagination
+
+    UserAdminUpdate:
+      type: object
+      properties:
+        admin:
+          type: boolean
+          description: Statut administrateur
+      required:
+        - admin
 
   securitySchemes:
     BearerAuth:

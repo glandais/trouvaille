@@ -6,6 +6,7 @@ api.ts
 base.ts
 common.ts
 configuration.ts
+docs/AdminApi.md
 docs/Annonce.md
 docs/AnnonceBase.md
 docs/AnnonceList.md
@@ -30,6 +31,8 @@ docs/Photo.md
 docs/PhotosApi.md
 docs/Prix.md
 docs/PrixUnite.md
+docs/UserAdminUpdate.md
+docs/Users.md
 docs/Utilisateur.md
 git_push.sh
 index.ts

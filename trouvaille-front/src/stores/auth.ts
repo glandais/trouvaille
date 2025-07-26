@@ -92,6 +92,7 @@ export const useAuthStore = defineStore('auth', () => {
         username: payload.username,
         nickname: payload.nickname,
         groups: payload.groups,
+        admin: payload.groups.includes('admin'),
       }
     } catch (error) {
       console.error('Failed to decode JWT:', error)

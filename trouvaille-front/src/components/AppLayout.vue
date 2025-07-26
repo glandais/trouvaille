@@ -115,6 +115,29 @@
                     {{ $t('nav.my_annonces') }}
                   </router-link>
 
+                  <!-- Admin Menu Item -->
+                  <router-link
+                    v-if="authStore.user?.admin"
+                    to="/admin/users"
+                    class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                    @click="closeUserMenu"
+                  >
+                    <svg
+                      class="mr-3 h-4 w-4 text-gray-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"
+                      />
+                    </svg>
+                    Administration
+                  </router-link>
+
                   <button
                     @click="handleLogout"
                     class="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
@@ -167,6 +190,14 @@
             @click="showMobileMenu = false"
           >
             Mes annonces
+          </router-link>
+          <router-link
+            v-if="authStore.isAuthenticated && authStore.user?.admin"
+            to="/admin/users"
+            class="text-gray-700 hover:text-gray-900 block px-3 py-2 rounded-md text-base font-medium"
+            @click="showMobileMenu = false"
+          >
+            Administration
           </router-link>
         </div>
       </div>

@@ -1,6 +1,13 @@
 import axios from 'axios'
 import type { AxiosInstance } from 'axios'
-import { Configuration, AnnoncesApi, PhotosApi, AuthentificationApi, ConfigApi } from '../api'
+import {
+  Configuration,
+  AnnoncesApi,
+  PhotosApi,
+  AuthentificationApi,
+  ConfigApi,
+  AdminApi,
+} from '../api'
 import { useAuthStore } from '../stores/auth'
 
 const baseURL = window.location.origin
@@ -51,5 +58,6 @@ export const authentificationApi = new AuthentificationApi(
   axiosInstance,
 )
 export const configApi = new ConfigApi(apiConfiguration, undefined, undefined)
+export const adminApi = new AdminApi(apiConfiguration, undefined, axiosInstance)
 
 export { axiosInstance }
