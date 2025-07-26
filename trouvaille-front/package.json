@@ -27,7 +27,7 @@
     "localstorage-slim": "^2.7.1",
     "lodash-es": "^4.17.21",
     "pinia": "^3.0.3",
-    "vue": "^3.5.17",
+    "vue": "^3.5.18",
     "vue-i18n": "^11.1.9",
     "vue-preview-imgs": "^2.0.1",
     "vue-router": "^4.5.1"
@@ -52,7 +52,7 @@
     "typescript": "~5.8.3",
     "vite": "^7.0.4",
     "vite-plugin-vue-devtools": "^7.7.7",
-    "vue-tsc": "^3.0.1"
+    "vue-tsc": "^3.0.4"
   },
   "overrides": {
     "dompurify": "^3.2.6"
