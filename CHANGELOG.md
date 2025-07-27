@@ -1,3 +1,10 @@
+# [1.14.0](https://github.com/glandais/trouvaille/compare/v1.13.1...v1.14.0) (2025-07-27)
+
+
+### Features
+
+* filter by tag ([3c96b82](https://github.com/glandais/trouvaille/commit/3c96b82354f2c77135074ce25973ce6de71dd6ac))
+
 ## [1.13.1](https://github.com/glandais/trouvaille/compare/v1.13.0...v1.13.1) (2025-07-27)
 
 
