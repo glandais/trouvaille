@@ -81,6 +81,28 @@
         </span>
       </div>
 
+      <!-- Tags -->
+      <div v-if="annonce.tags && annonce.tags.length > 0" class="flex flex-wrap gap-1">
+        <span
+          v-for="tag in annonce.tags.slice(0, 3)"
+          :key="tag.id"
+          class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium text-white"
+          :style="{ backgroundColor: tag.couleur }"
+        >
+          <span
+            class="w-1.5 h-1.5 rounded-full mr-1"
+            :style="{ backgroundColor: tag.couleur }"
+          ></span>
+          {{ tag.nom }}
+        </span>
+        <span
+          v-if="annonce.tags.length > 3"
+          class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600"
+        >
+          +{{ annonce.tags.length - 3 }}
+        </span>
+      </div>
+
       <!-- Location & Distance -->
       <div
         v-if="annonce.ville || annonce.distance || annonce.coordinates"

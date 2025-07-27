@@ -3,6 +3,7 @@ package io.github.glandais.trouvaille.service;
 import io.github.glandais.trouvaille.api.model.*;
 import io.github.glandais.trouvaille.entity.*;
 import io.github.glandais.trouvaille.repository.PhotoRepository;
+import io.github.glandais.trouvaille.repository.TagRepository;
 import io.github.glandais.trouvaille.repository.UserRepository;
 import jakarta.inject.Inject;
 import java.time.OffsetDateTime;
@@ -20,9 +21,13 @@ public abstract class AnnonceEntityMapper {
 
   @Inject PhotoRepository photoRepository;
 
+  @Inject TagRepository tagRepository;
+
   @Mapping(target = "removePhotosItem", ignore = true)
+  @Mapping(target = "removeTagsItem", ignore = true)
   @Mapping(target = "utilisateur", source = "utilisateur", qualifiedByName = "mapUtilisateurId")
   @Mapping(target = "photos", source = "photos", qualifiedByName = "mapPhotos")
+  @Mapping(target = "tags", source = "tags", qualifiedByName = "mapTags")
   @Mapping(target = "prix.montant", source = "prix")
   @Mapping(target = "prix.unite", source = "prixUnite")
   public abstract Annonce mapAnnonceEntity(AnnonceEntity annonceEntity);
@@ -38,9 +43,11 @@ public abstract class AnnonceEntityMapper {
   }
 
   @Mapping(target = "removePhotosItem", ignore = true)
+  @Mapping(target = "removeTagsItem", ignore = true)
   @Mapping(target = "distance", source = "distance", qualifiedByName = "mapDistance")
   @Mapping(target = "utilisateur", source = "utilisateur", qualifiedByName = "mapUtilisateurId")
   @Mapping(target = "photos", source = "photos", qualifiedByName = "mapPhotos")
+  @Mapping(target = "tags", source = "tags", qualifiedByName = "mapTags")
   @Mapping(target = "prix.montant", source = "prix")
   @Mapping(target = "prix.unite", source = "prixUnite")
   public abstract AnnonceList mapAnnonceEntityToAnnonceList(
@@ -109,6 +116,15 @@ public abstract class AnnonceEntityMapper {
   }
 
   protected abstract Utilisateur mapUserEntity(UserEntity userEntity);
+
+  @Named("mapTags")
+  protected List<Tag> mapTagsFromIds(List<ObjectId> tagIds) {
+    return mapTags(tagRepository.list("_id in ?1", tagIds));
+  }
+
+  protected abstract List<Tag> mapTags(List<TagEntity> list);
+
+  public abstract Tag mapTagEntity(TagEntity tagEntity);
 
   @EnumMapping(
       nameTransformationStrategy = MappingConstants.CASE_TRANSFORMATION,

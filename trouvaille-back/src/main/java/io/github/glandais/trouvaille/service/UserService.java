@@ -70,13 +70,12 @@ public class UserService {
     long totalCount;
 
     if (search != null && !search.trim().isEmpty()) {
-      String searchPattern = "(?i).*" + search.trim() + ".*";
-      userEntities =
-          userRepository
-              .find("username regex ?1 or nickname regex ?1", searchPattern)
-              .page(pageRequest)
-              .list();
-      totalCount = userRepository.count("username regex ?1 or nickname regex ?1", searchPattern);
+      String searchTerm = search.trim();
+      String query =
+          "{$or: [{'username': {$regex: ?1, $options: 'i'}}, {'nickname': {$regex: ?1, $options:"
+              + " 'i'}}]}";
+      userEntities = userRepository.find(query, searchTerm).page(pageRequest).list();
+      totalCount = userRepository.count(query, searchTerm);
     } else {
       userEntities = userRepository.findAll().page(pageRequest).list();
       totalCount = userRepository.count();

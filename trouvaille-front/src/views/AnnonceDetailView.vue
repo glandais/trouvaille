@@ -98,6 +98,25 @@
             <MarkdownViewer :model-value="annonce.description || ''" />
           </div>
 
+          <!-- Tags -->
+          <div v-if="annonce.tags && annonce.tags.length > 0">
+            <h3 class="text-lg font-medium text-gray-900 mb-3">Tags</h3>
+            <div class="flex flex-wrap gap-2">
+              <span
+                v-for="tag in annonce.tags"
+                :key="tag.id"
+                class="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium text-white"
+                :style="{ backgroundColor: tag.couleur }"
+              >
+                <span
+                  class="w-2 h-2 rounded-full mr-2"
+                  :style="{ backgroundColor: tag.couleur }"
+                ></span>
+                {{ tag.nom }}
+              </span>
+            </div>
+          </div>
+
           <!-- Location -->
           <div v-if="annonce.ville || annonce.coordinates">
             <h3 class="text-lg font-medium text-gray-900 mb-3">

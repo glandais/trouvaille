@@ -15,6 +15,7 @@ public abstract class AnnonceMapper {
   }
 
   @Mapping(source = "photos", target = "photos", qualifiedByName = "mapPhotos")
+  @Mapping(source = "tags", target = "tags", qualifiedByName = "mapTags")
   @Mapping(source = "prix.montant", target = "prix")
   @Mapping(source = "prix.unite", target = "prixUnite")
   public abstract AnnonceEntity mapAnnonceCreate(AnnonceBase data);
@@ -29,6 +30,17 @@ public abstract class AnnonceMapper {
     return mapObjectId(data.getId());
   }
 
+  @Named("mapTags")
+  public abstract List<ObjectId> mapTags(List<Tag> data);
+
+  public ObjectId mapTag(Tag data) {
+    if (data == null) {
+      return null;
+    }
+    return mapObjectId(data.getId());
+  }
+
+  @Mapping(source = "tags", target = "tags", qualifiedByName = "mapTags")
   @Mapping(source = "prix.montant", target = "prix")
   @Mapping(source = "prix.unite", target = "prixUnite")
   public abstract void updateAnnonceEntity(

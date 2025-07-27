@@ -7,6 +7,7 @@ import io.github.glandais.trouvaille.config.FrontConfig;
 import io.github.glandais.trouvaille.service.AnnonceService;
 import io.github.glandais.trouvaille.service.AuthService;
 import io.github.glandais.trouvaille.service.PhotoService;
+import io.github.glandais.trouvaille.service.TagService;
 import io.github.glandais.trouvaille.service.UserService;
 import io.quarkus.security.Authenticated;
 import io.vertx.core.http.Cookie;
@@ -31,6 +32,7 @@ public class ApiResourcempl implements ApiApi {
   final PhotoService photoService;
   final AuthService authService;
   final UserService userService;
+  final TagService tagService;
   final FrontConfig frontConfig;
 
   @Context Request request;
@@ -139,6 +141,44 @@ public class ApiResourcempl implements ApiApi {
   public Response updateUserAdmin(String userId, UserAdminUpdate data) {
     Response.ResponseBuilder responseBuilder =
         Response.ok(userService.updateUserAdmin(userId, data.getAdmin()));
+    setAuthCookieIfFromHeader(responseBuilder);
+    return responseBuilder.build();
+  }
+
+  @Override
+  @RolesAllowed("admin")
+  public Response listTags() {
+    Response.ResponseBuilder responseBuilder = Response.ok(tagService.getAllTags());
+    setAuthCookieIfFromHeader(responseBuilder);
+    return responseBuilder.build();
+  }
+
+  @Override
+  @RolesAllowed("admin")
+  public Response createTag(TagCreateUpdate data) {
+    Response.ResponseBuilder responseBuilder =
+        Response.status(Response.Status.CREATED).entity(tagService.createTag(data));
+    setAuthCookieIfFromHeader(responseBuilder);
+    return responseBuilder.build();
+  }
+
+  @Override
+  @RolesAllowed("admin")
+  public Response updateTag(String tagId, TagCreateUpdate data) {
+    return tagService
+        .updateTag(tagId, data)
+        .map(
+            tag -> {
+              Response.ResponseBuilder responseBuilder = Response.ok(tag);
+              setAuthCookieIfFromHeader(responseBuilder);
+              return responseBuilder.build();
+            })
+        .orElse(Response.status(Response.Status.NOT_FOUND).build());
+  }
+
+  @Override
+  public Response getAvailableTags() {
+    Response.ResponseBuilder responseBuilder = Response.ok(tagService.getAllActiveTags());
     setAuthCookieIfFromHeader(responseBuilder);
     return responseBuilder.build();
   }

@@ -151,6 +151,71 @@
           </div>
         </div>
 
+        <!-- Tags -->
+        <div class="bg-white rounded-lg shadow-xs border border-gray-200 p-6">
+          <h2 class="text-xl font-semibold text-gray-900 mb-6">Tags</h2>
+
+          <!-- Tag Selection -->
+          <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              Ajouter des tags (optionnel)
+            </label>
+            <div class="flex flex-wrap gap-2">
+              <button
+                v-for="tag in availableTags"
+                :key="tag.id"
+                type="button"
+                @click="toggleTag(tag)"
+                :class="[
+                  'inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium border transition-colors',
+                  isTagSelected(tag.id)
+                    ? 'border-transparent text-white'
+                    : 'border-gray-300 text-gray-700 bg-white hover:bg-gray-50',
+                ]"
+                :style="isTagSelected(tag.id) ? { backgroundColor: tag.couleur } : {}"
+              >
+                <span
+                  class="w-2 h-2 rounded-full mr-2"
+                  :style="{ backgroundColor: tag.couleur }"
+                ></span>
+                {{ tag.nom }}
+              </button>
+            </div>
+          </div>
+
+          <!-- Selected Tags -->
+          <div v-if="form.tags && form.tags.length > 0" class="mt-4">
+            <label class="block text-sm font-medium text-gray-700 mb-2"> Tags sélectionnés </label>
+            <div class="flex flex-wrap gap-2">
+              <span
+                v-for="tag in form.tags"
+                :key="tag.id"
+                class="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium text-white"
+                :style="{ backgroundColor: tag.couleur }"
+              >
+                <span
+                  class="w-2 h-2 rounded-full mr-2"
+                  :style="{ backgroundColor: tag.couleur }"
+                ></span>
+                {{ tag.nom }}
+                <button
+                  type="button"
+                  @click="removeTag(tag.id)"
+                  class="ml-2 inline-flex items-center justify-center w-4 h-4 rounded-full text-white hover:bg-black hover:bg-opacity-20 transition-colors"
+                >
+                  <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                    <path
+                      fill-rule="evenodd"
+                      d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </button>
+              </span>
+            </div>
+          </div>
+        </div>
+
         <!-- Price -->
         <div class="bg-white rounded-lg shadow-xs border border-gray-200 p-6">
           <h2 class="text-xl font-semibold text-gray-900 mb-6">
@@ -402,7 +467,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { isEqual } from 'lodash-es'
 import ls from 'localstorage-slim'
-import { annoncesApi, photosApi } from '../services/api'
+import { annoncesApi, photosApi, tagsApi } from '../services/api'
 import {
   AnnonceBase,
   AnnonceWithStatut,
@@ -411,6 +476,7 @@ import {
   AnnonceStatut,
   PeriodeLocation,
   PrixUnite,
+  Tag,
 } from '../api'
 import AppLayout from '../components/AppLayout.vue'
 import MarkdownEditor from '../components/MarkdownEditor.vue'
@@ -449,6 +515,7 @@ const defaultForm: AnnonceBase & { statut: AnnonceStatut } = {
   ville: '',
   photos: [],
   statut: AnnonceStatut.Active,
+  tags: [],
 }
 
 const form = reactive<AnnonceBase & { statut: AnnonceStatut }>({
@@ -487,6 +554,7 @@ const submitting = ref(false)
 const uploadingPhotos = ref<Array<{ name: string; progress: number }>>([])
 const selectedLocation = ref<SelectedLocation | null>(null)
 const loading = ref(false)
+const availableTags = ref<Tag[]>([])
 
 const isEditMode = computed(() => !!props.id)
 
@@ -615,6 +683,36 @@ const handleLocationChange = (location: SelectedLocation | null) => {
   }
 }
 
+// Tag management functions
+const fetchAvailableTags = async () => {
+  try {
+    const response = await tagsApi.getAvailableTags()
+    availableTags.value = response.data || []
+  } catch (error) {
+    console.error('Failed to fetch available tags:', error)
+  }
+}
+
+const isTagSelected = (tagId: string): boolean => {
+  return form.tags.some((tag) => tag.id === tagId)
+}
+
+const toggleTag = (tag: Tag) => {
+  const index = form.tags.findIndex((t) => t.id === tag.id)
+  if (index > -1) {
+    form.tags.splice(index, 1)
+  } else {
+    form.tags.push(tag)
+  }
+}
+
+const removeTag = (tagId: string) => {
+  const index = form.tags.findIndex((t) => t.id === tagId)
+  if (index > -1) {
+    form.tags.splice(index, 1)
+  }
+}
+
 const copyToForm = (annonce: AnnonceBase & { statut: AnnonceStatut }) => {
   // Populate form with existing data
   form.type = annonce.type
@@ -632,6 +730,7 @@ const copyToForm = (annonce: AnnonceBase & { statut: AnnonceStatut }) => {
   form.coordinates = annonce.coordinates
   form.ville = annonce.ville
   form.statut = annonce.statut
+  form.tags = annonce.tags ? [...annonce.tags] : []
 
   // Set selected location if coordinates exist
   if (annonce.coordinates?.latitude && annonce.coordinates?.longitude) {
@@ -655,6 +754,8 @@ const copyToForm = (annonce: AnnonceBase & { statut: AnnonceStatut }) => {
 const init = async () => {
   loading.value = true
   try {
+    // Fetch available tags
+    await fetchAvailableTags()
     savedAnnonce.value = getSavedAnnonce()
     let existingAnnonce: (AnnonceBase & { statut: AnnonceStatut }) | null = null
     if (isEditMode.value && props.id) {
@@ -714,6 +815,7 @@ const handleSubmit = async () => {
         ville: form.ville,
         statut: form.statut,
         photos: form.photos,
+        tags: form.tags,
       }
       response = await annoncesApi.putAnnonce(props.id, updateData)
     } else {

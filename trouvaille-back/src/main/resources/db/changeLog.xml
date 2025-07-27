@@ -100,4 +100,26 @@
         </ext:createIndex>
     </changeSet>
 
+    <changeSet id="4" author="glandais">
+        <ext:createCollection collectionName="Tag"/>
+
+        <!-- Index for tag name uniqueness -->
+        <ext:createIndex collectionName="Tag">
+            <ext:keys>{nom: 1}</ext:keys>
+            <ext:options>{name: "tagNomIdx", unique: true}</ext:options>
+        </ext:createIndex>
+
+        <!-- Index for tag creation date -->
+        <ext:createIndex collectionName="Tag">
+            <ext:keys>{dateCreation: -1}</ext:keys>
+            <ext:options>{name: "tagDateCreationIdx"}</ext:options>
+        </ext:createIndex>
+
+        <!-- Index on Annonce collection for tags field -->
+        <ext:createIndex collectionName="Annonce">
+            <ext:keys>{tags: 1}</ext:keys>
+            <ext:options>{name: "tagsIdx"}</ext:options>
+        </ext:createIndex>
+    </changeSet>
+
 </databaseChangeLog>

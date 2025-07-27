@@ -31,6 +31,9 @@ docs/Photo.md
 docs/PhotosApi.md
 docs/Prix.md
 docs/PrixUnite.md
+docs/Tag.md
+docs/TagCreateUpdate.md
+docs/TagsApi.md
 docs/UserAdminUpdate.md
 docs/Users.md
 docs/Utilisateur.md

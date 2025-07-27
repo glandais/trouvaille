@@ -309,6 +309,98 @@ paths:
         '404':
           description: Utilisateur non trouvé
 
+  /api/v1/admin/tags:
+    get:
+      summary: Lister tous les tags (admin uniquement)
+      operationId: listTags
+      tags:
+        - Admin
+      responses:
+        '200':
+          description: Liste des tags
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Tag'
+        '403':
+          description: Accès refusé - droits administrateur requis
+    post:
+      summary: Créer un nouveau tag (admin uniquement)
+      operationId: createTag
+      tags:
+        - Admin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TagCreateUpdate'
+      responses:
+        '201':
+          description: Tag créé avec succès
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tag'
+        '400':
+          description: Données invalides
+        '403':
+          description: Accès refusé - droits administrateur requis
+        '409':
+          description: Un tag avec ce nom existe déjà
+
+  /api/v1/admin/tags/{tagId}:
+    put:
+      summary: Modifier un tag (admin uniquement)
+      operationId: updateTag
+      tags:
+        - Admin
+      parameters:
+        - name: tagId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TagCreateUpdate'
+      responses:
+        '200':
+          description: Tag modifié avec succès
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tag'
+        '400':
+          description: Données invalides
+        '403':
+          description: Accès refusé - droits administrateur requis
+        '404':
+          description: Tag non trouvé
+        '409':
+          description: Un tag avec ce nom existe déjà
+
+  /api/v1/tags:
+    get:
+      summary: Lister tous les tags disponibles
+      operationId: getAvailableTags
+      tags:
+        - Tags
+      responses:
+        '200':
+          description: Liste des tags
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Tag'
+
 components:
   schemas:
     FrontConfiguration:
@@ -508,6 +600,11 @@ components:
           $ref: '#/components/schemas/Coordinates'
         ville:
           type: string
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tag'
+          description: Tags associés à l'annonce
       required:
         - type
         - nature
@@ -517,6 +614,7 @@ components:
         - coordinates
         - photos
         - ville
+        - tags
 
     Prix:
       type: object
@@ -672,6 +770,60 @@ components:
           description: Statut administrateur
       required:
         - admin
+
+    Tag:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Identifiant unique du tag
+        nom:
+          type: string
+          description: Nom du tag
+          minLength: 1
+          maxLength: 50
+        couleur:
+          type: string
+          description: Couleur hexadécimale du tag
+          pattern: '^#[0-9A-Fa-f]{6}$'
+          example: '#3B82F6'
+        active:
+          type: boolean
+        date_creation:
+          type: string
+          format: date-time
+          description: Date de création du tag
+        date_modification:
+          type: string
+          format: date-time
+          description: Date de dernière modification du tag
+      required:
+        - id
+        - nom
+        - couleur
+        - active
+        - date_creation
+        - date_modification
+
+    TagCreateUpdate:
+      type: object
+      properties:
+        nom:
+          type: string
+          description: Nom du tag
+          minLength: 1
+          maxLength: 50
+        couleur:
+          type: string
+          description: Couleur hexadécimale du tag
+          pattern: '^#[0-9A-Fa-f]{6}$'
+          example: '#3B82F6'
+        active:
+          type: boolean
+      required:
+        - nom
+        - couleur
+        - active
 
   securitySchemes:
     BearerAuth:

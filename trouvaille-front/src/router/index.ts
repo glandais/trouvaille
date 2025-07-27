@@ -40,6 +40,11 @@ const router = createRouter({
       component: () => import('../views/AdminUsersView.vue'),
     },
     {
+      path: '/admin/tags',
+      name: 'admin-tags',
+      component: () => import('../views/AdminTagsView.vue'),
+    },
+    {
       path: '/:pathMatch(.*)*',
       name: 'not-found',
       component: () => import('../views/NotFoundView.vue'),

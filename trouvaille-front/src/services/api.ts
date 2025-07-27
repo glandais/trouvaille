@@ -7,6 +7,7 @@ import {
   AuthentificationApi,
   ConfigApi,
   AdminApi,
+  TagsApi,
 } from '../api'
 import { useAuthStore } from '../stores/auth'
 
@@ -59,5 +60,6 @@ export const authentificationApi = new AuthentificationApi(
 )
 export const configApi = new ConfigApi(apiConfiguration, undefined, undefined)
 export const adminApi = new AdminApi(apiConfiguration, undefined, axiosInstance)
+export const tagsApi = new TagsApi(apiConfiguration, undefined, axiosInstance)
 
 export { axiosInstance }

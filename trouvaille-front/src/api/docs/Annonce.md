@@ -2,22 +2,23 @@
 
 ## Properties
 
-| Name                  | Type                                      | Description | Notes                             |
-| --------------------- | ----------------------------------------- | ----------- | --------------------------------- |
-| **type**              | [**AnnonceType**](AnnonceType.md)         |             | [default to undefined]            |
-| **nature**            | [**AnnonceNature**](AnnonceNature.md)     |             | [default to undefined]            |
-| **titre**             | **string**                                |             | [default to undefined]            |
-| **description**       | **string**                                |             | [default to undefined]            |
-| **prix**              | [**Prix**](Prix.md)                       |             | [default to undefined]            |
-| **periode_location**  | [**PeriodeLocation**](PeriodeLocation.md) |             | [optional] [default to undefined] |
-| **photos**            | [**Array&lt;Photo&gt;**](Photo.md)        |             | [default to undefined]            |
-| **coordinates**       | [**Coordinates**](Coordinates.md)         |             | [default to undefined]            |
-| **ville**             | **string**                                |             | [default to undefined]            |
-| **id**                | **string**                                |             | [default to undefined]            |
-| **statut**            | [**AnnonceStatut**](AnnonceStatut.md)     |             | [default to undefined]            |
-| **utilisateur**       | [**Utilisateur**](Utilisateur.md)         |             | [default to undefined]            |
-| **date_creation**     | **string**                                |             | [default to undefined]            |
-| **date_modification** | **string**                                |             | [default to undefined]            |
+| Name                  | Type                                      | Description                    | Notes                             |
+| --------------------- | ----------------------------------------- | ------------------------------ | --------------------------------- |
+| **type**              | [**AnnonceType**](AnnonceType.md)         |                                | [default to undefined]            |
+| **nature**            | [**AnnonceNature**](AnnonceNature.md)     |                                | [default to undefined]            |
+| **titre**             | **string**                                |                                | [default to undefined]            |
+| **description**       | **string**                                |                                | [default to undefined]            |
+| **prix**              | [**Prix**](Prix.md)                       |                                | [default to undefined]            |
+| **periode_location**  | [**PeriodeLocation**](PeriodeLocation.md) |                                | [optional] [default to undefined] |
+| **photos**            | [**Array&lt;Photo&gt;**](Photo.md)        |                                | [default to undefined]            |
+| **coordinates**       | [**Coordinates**](Coordinates.md)         |                                | [default to undefined]            |
+| **ville**             | **string**                                |                                | [default to undefined]            |
+| **tags**              | [**Array&lt;Tag&gt;**](Tag.md)            | Tags associés à l\&#39;annonce | [default to undefined]            |
+| **id**                | **string**                                |                                | [default to undefined]            |
+| **statut**            | [**AnnonceStatut**](AnnonceStatut.md)     |                                | [default to undefined]            |
+| **utilisateur**       | [**Utilisateur**](Utilisateur.md)         |                                | [default to undefined]            |
+| **date_creation**     | **string**                                |                                | [default to undefined]            |
+| **date_modification** | **string**                                |                                | [default to undefined]            |
 
 ## Example
 
@@ -34,6 +35,7 @@ const instance: Annonce = {
   photos,
   coordinates,
   ville,
+  tags,
   id,
   statut,
   utilisateur,

@@ -37,6 +37,8 @@ public class AnnonceBaseEntity {
 
   public List<ObjectId> photos = new ArrayList<>();
 
+  public List<ObjectId> tags = new ArrayList<>();
+
   public Date dateCreation;
 
   public Date dateModification;

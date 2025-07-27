@@ -115,7 +115,7 @@
                     {{ $t('nav.my_annonces') }}
                   </router-link>
 
-                  <!-- Admin Menu Item -->
+                  <!-- Admin Menu Items -->
                   <router-link
                     v-if="authStore.user?.admin"
                     to="/admin/users"
@@ -135,7 +135,35 @@
                         d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"
                       />
                     </svg>
-                    Administration
+                    Gestion des utilisateurs
+                  </router-link>
+
+                  <router-link
+                    v-if="authStore.user?.admin"
+                    to="/admin/tags"
+                    class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                    @click="closeUserMenu"
+                  >
+                    <svg
+                      class="mr-3 h-4 w-4 text-gray-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z"
+                      />
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M6 6h.008v.008H6V6z"
+                      />
+                    </svg>
+                    Gestion des tags
                   </router-link>
 
                   <button
@@ -197,7 +225,15 @@
             class="text-gray-700 hover:text-gray-900 block px-3 py-2 rounded-md text-base font-medium"
             @click="showMobileMenu = false"
           >
-            Administration
+            Gestion des utilisateurs
+          </router-link>
+          <router-link
+            v-if="authStore.isAuthenticated && authStore.user?.admin"
+            to="/admin/tags"
+            class="text-gray-700 hover:text-gray-900 block px-3 py-2 rounded-md text-base font-medium"
+            @click="showMobileMenu = false"
+          >
+            Gestion des tags
           </router-link>
         </div>
       </div>

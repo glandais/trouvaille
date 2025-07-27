@@ -94,6 +94,12 @@ export interface Annonce {
    */
   ville: string
   /**
+   * Tags associés à l\'annonce
+   * @type {Array<Tag>}
+   * @memberof Annonce
+   */
+  tags: Array<Tag>
+  /**
    *
    * @type {string}
    * @memberof Annonce
@@ -185,6 +191,12 @@ export interface AnnonceBase {
    * @memberof AnnonceBase
    */
   ville: string
+  /**
+   * Tags associés à l\'annonce
+   * @type {Array<Tag>}
+   * @memberof AnnonceBase
+   */
+  tags: Array<Tag>
 }
 
 /**
@@ -247,6 +259,12 @@ export interface AnnonceList {
    * @memberof AnnonceList
    */
   ville: string
+  /**
+   * Tags associés à l\'annonce
+   * @type {Array<Tag>}
+   * @memberof AnnonceList
+   */
+  tags: Array<Tag>
   /**
    *
    * @type {string}
@@ -497,6 +515,12 @@ export interface AnnonceWithStatut {
    */
   ville: string
   /**
+   * Tags associés à l\'annonce
+   * @type {Array<Tag>}
+   * @memberof AnnonceWithStatut
+   */
+  tags: Array<Tag>
+  /**
    *
    * @type {AnnonceStatut}
    * @memberof AnnonceWithStatut
@@ -714,6 +738,74 @@ export enum PrixUnite {
 /**
  *
  * @export
+ * @interface Tag
+ */
+export interface Tag {
+  /**
+   * Identifiant unique du tag
+   * @type {string}
+   * @memberof Tag
+   */
+  id: string
+  /**
+   * Nom du tag
+   * @type {string}
+   * @memberof Tag
+   */
+  nom: string
+  /**
+   * Couleur hexadécimale du tag
+   * @type {string}
+   * @memberof Tag
+   */
+  couleur: string
+  /**
+   *
+   * @type {boolean}
+   * @memberof Tag
+   */
+  active: boolean
+  /**
+   * Date de création du tag
+   * @type {string}
+   * @memberof Tag
+   */
+  date_creation: string
+  /**
+   * Date de dernière modification du tag
+   * @type {string}
+   * @memberof Tag
+   */
+  date_modification: string
+}
+/**
+ *
+ * @export
+ * @interface TagCreateUpdate
+ */
+export interface TagCreateUpdate {
+  /**
+   * Nom du tag
+   * @type {string}
+   * @memberof TagCreateUpdate
+   */
+  nom: string
+  /**
+   * Couleur hexadécimale du tag
+   * @type {string}
+   * @memberof TagCreateUpdate
+   */
+  couleur: string
+  /**
+   *
+   * @type {boolean}
+   * @memberof TagCreateUpdate
+   */
+  active: boolean
+}
+/**
+ *
+ * @export
  * @interface UserAdminUpdate
  */
 export interface UserAdminUpdate {
@@ -783,6 +875,91 @@ export const AdminApiAxiosParamCreator = function (configuration?: Configuration
   return {
     /**
      *
+     * @summary Créer un nouveau tag (admin uniquement)
+     * @param {TagCreateUpdate} tagCreateUpdate
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    createTag: async (
+      tagCreateUpdate: TagCreateUpdate,
+      options: RawAxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'tagCreateUpdate' is not null or undefined
+      assertParamExists('createTag', 'tagCreateUpdate', tagCreateUpdate)
+      const localVarPath = `/api/v1/admin/tags`
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
+      let baseOptions
+      if (configuration) {
+        baseOptions = configuration.baseOptions
+      }
+
+      const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options }
+      const localVarHeaderParameter = {} as any
+      const localVarQueryParameter = {} as any
+
+      // authentication BearerAuth required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+      localVarHeaderParameter['Content-Type'] = 'application/json'
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter)
+      let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      }
+      localVarRequestOptions.data = serializeDataIfNeeded(
+        tagCreateUpdate,
+        localVarRequestOptions,
+        configuration,
+      )
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      }
+    },
+    /**
+     *
+     * @summary Lister tous les tags (admin uniquement)
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    listTags: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+      const localVarPath = `/api/v1/admin/tags`
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
+      let baseOptions
+      if (configuration) {
+        baseOptions = configuration.baseOptions
+      }
+
+      const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options }
+      const localVarHeaderParameter = {} as any
+      const localVarQueryParameter = {} as any
+
+      // authentication BearerAuth required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter)
+      let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      }
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      }
+    },
+    /**
+     *
      * @summary Lister tous les utilisateurs (admin uniquement)
      * @param {number} [page]
      * @param {number} [limit]
@@ -831,6 +1008,62 @@ export const AdminApiAxiosParamCreator = function (configuration?: Configuration
         ...headersFromBaseOptions,
         ...options.headers,
       }
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      }
+    },
+    /**
+     *
+     * @summary Modifier un tag (admin uniquement)
+     * @param {string} tagId
+     * @param {TagCreateUpdate} tagCreateUpdate
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    updateTag: async (
+      tagId: string,
+      tagCreateUpdate: TagCreateUpdate,
+      options: RawAxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'tagId' is not null or undefined
+      assertParamExists('updateTag', 'tagId', tagId)
+      // verify required parameter 'tagCreateUpdate' is not null or undefined
+      assertParamExists('updateTag', 'tagCreateUpdate', tagCreateUpdate)
+      const localVarPath = `/api/v1/admin/tags/{tagId}`.replace(
+        `{${'tagId'}}`,
+        encodeURIComponent(String(tagId)),
+      )
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
+      let baseOptions
+      if (configuration) {
+        baseOptions = configuration.baseOptions
+      }
+
+      const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options }
+      const localVarHeaderParameter = {} as any
+      const localVarQueryParameter = {} as any
+
+      // authentication BearerAuth required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+      localVarHeaderParameter['Content-Type'] = 'application/json'
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter)
+      let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      }
+      localVarRequestOptions.data = serializeDataIfNeeded(
+        tagCreateUpdate,
+        localVarRequestOptions,
+        configuration,
+      )
 
       return {
         url: toPathString(localVarUrlObj),
@@ -905,6 +1138,50 @@ export const AdminApiFp = function (configuration?: Configuration) {
   return {
     /**
      *
+     * @summary Créer un nouveau tag (admin uniquement)
+     * @param {TagCreateUpdate} tagCreateUpdate
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async createTag(
+      tagCreateUpdate: TagCreateUpdate,
+      options?: RawAxiosRequestConfig,
+    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Tag>> {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.createTag(tagCreateUpdate, options)
+      const localVarOperationServerIndex = configuration?.serverIndex ?? 0
+      const localVarOperationServerBasePath =
+        operationServerMap['AdminApi.createTag']?.[localVarOperationServerIndex]?.url
+      return (axios, basePath) =>
+        createRequestFunction(
+          localVarAxiosArgs,
+          globalAxios,
+          BASE_PATH,
+          configuration,
+        )(axios, localVarOperationServerBasePath || basePath)
+    },
+    /**
+     *
+     * @summary Lister tous les tags (admin uniquement)
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async listTags(
+      options?: RawAxiosRequestConfig,
+    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<Tag>>> {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.listTags(options)
+      const localVarOperationServerIndex = configuration?.serverIndex ?? 0
+      const localVarOperationServerBasePath =
+        operationServerMap['AdminApi.listTags']?.[localVarOperationServerIndex]?.url
+      return (axios, basePath) =>
+        createRequestFunction(
+          localVarAxiosArgs,
+          globalAxios,
+          BASE_PATH,
+          configuration,
+        )(axios, localVarOperationServerBasePath || basePath)
+    },
+    /**
+     *
      * @summary Lister tous les utilisateurs (admin uniquement)
      * @param {number} [page]
      * @param {number} [limit]
@@ -927,6 +1204,35 @@ export const AdminApiFp = function (configuration?: Configuration) {
       const localVarOperationServerIndex = configuration?.serverIndex ?? 0
       const localVarOperationServerBasePath =
         operationServerMap['AdminApi.listUsers']?.[localVarOperationServerIndex]?.url
+      return (axios, basePath) =>
+        createRequestFunction(
+          localVarAxiosArgs,
+          globalAxios,
+          BASE_PATH,
+          configuration,
+        )(axios, localVarOperationServerBasePath || basePath)
+    },
+    /**
+     *
+     * @summary Modifier un tag (admin uniquement)
+     * @param {string} tagId
+     * @param {TagCreateUpdate} tagCreateUpdate
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async updateTag(
+      tagId: string,
+      tagCreateUpdate: TagCreateUpdate,
+      options?: RawAxiosRequestConfig,
+    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Tag>> {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.updateTag(
+        tagId,
+        tagCreateUpdate,
+        options,
+      )
+      const localVarOperationServerIndex = configuration?.serverIndex ?? 0
+      const localVarOperationServerBasePath =
+        operationServerMap['AdminApi.updateTag']?.[localVarOperationServerIndex]?.url
       return (axios, basePath) =>
         createRequestFunction(
           localVarAxiosArgs,
@@ -980,6 +1286,30 @@ export const AdminApiFactory = function (
   return {
     /**
      *
+     * @summary Créer un nouveau tag (admin uniquement)
+     * @param {TagCreateUpdate} tagCreateUpdate
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    createTag(
+      tagCreateUpdate: TagCreateUpdate,
+      options?: RawAxiosRequestConfig,
+    ): AxiosPromise<Tag> {
+      return localVarFp
+        .createTag(tagCreateUpdate, options)
+        .then((request) => request(axios, basePath))
+    },
+    /**
+     *
+     * @summary Lister tous les tags (admin uniquement)
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    listTags(options?: RawAxiosRequestConfig): AxiosPromise<Array<Tag>> {
+      return localVarFp.listTags(options).then((request) => request(axios, basePath))
+    },
+    /**
+     *
      * @summary Lister tous les utilisateurs (admin uniquement)
      * @param {number} [page]
      * @param {number} [limit]
@@ -995,6 +1325,23 @@ export const AdminApiFactory = function (
     ): AxiosPromise<Users> {
       return localVarFp
         .listUsers(page, limit, search, options)
+        .then((request) => request(axios, basePath))
+    },
+    /**
+     *
+     * @summary Modifier un tag (admin uniquement)
+     * @param {string} tagId
+     * @param {TagCreateUpdate} tagCreateUpdate
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    updateTag(
+      tagId: string,
+      tagCreateUpdate: TagCreateUpdate,
+      options?: RawAxiosRequestConfig,
+    ): AxiosPromise<Tag> {
+      return localVarFp
+        .updateTag(tagId, tagCreateUpdate, options)
         .then((request) => request(axios, basePath))
     },
     /**
@@ -1026,6 +1373,33 @@ export const AdminApiFactory = function (
 export class AdminApi extends BaseAPI {
   /**
    *
+   * @summary Créer un nouveau tag (admin uniquement)
+   * @param {TagCreateUpdate} tagCreateUpdate
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof AdminApi
+   */
+  public createTag(tagCreateUpdate: TagCreateUpdate, options?: RawAxiosRequestConfig) {
+    return AdminApiFp(this.configuration)
+      .createTag(tagCreateUpdate, options)
+      .then((request) => request(this.axios, this.basePath))
+  }
+
+  /**
+   *
+   * @summary Lister tous les tags (admin uniquement)
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof AdminApi
+   */
+  public listTags(options?: RawAxiosRequestConfig) {
+    return AdminApiFp(this.configuration)
+      .listTags(options)
+      .then((request) => request(this.axios, this.basePath))
+  }
+
+  /**
+   *
    * @summary Lister tous les utilisateurs (admin uniquement)
    * @param {number} [page]
    * @param {number} [limit]
@@ -1042,6 +1416,25 @@ export class AdminApi extends BaseAPI {
   ) {
     return AdminApiFp(this.configuration)
       .listUsers(page, limit, search, options)
+      .then((request) => request(this.axios, this.basePath))
+  }
+
+  /**
+   *
+   * @summary Modifier un tag (admin uniquement)
+   * @param {string} tagId
+   * @param {TagCreateUpdate} tagCreateUpdate
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof AdminApi
+   */
+  public updateTag(
+    tagId: string,
+    tagCreateUpdate: TagCreateUpdate,
+    options?: RawAxiosRequestConfig,
+  ) {
+    return AdminApiFp(this.configuration)
+      .updateTag(tagId, tagCreateUpdate, options)
       .then((request) => request(this.axios, this.basePath))
   }
 
@@ -2382,6 +2775,126 @@ export class PhotosApi extends BaseAPI {
   public getPhotoThumb(photoId: string, options?: RawAxiosRequestConfig) {
     return PhotosApiFp(this.configuration)
       .getPhotoThumb(photoId, options)
+      .then((request) => request(this.axios, this.basePath))
+  }
+}
+
+/**
+ * TagsApi - axios parameter creator
+ * @export
+ */
+export const TagsApiAxiosParamCreator = function (configuration?: Configuration) {
+  return {
+    /**
+     *
+     * @summary Lister tous les tags disponibles
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    getAvailableTags: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+      const localVarPath = `/api/v1/tags`
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
+      let baseOptions
+      if (configuration) {
+        baseOptions = configuration.baseOptions
+      }
+
+      const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options }
+      const localVarHeaderParameter = {} as any
+      const localVarQueryParameter = {} as any
+
+      // authentication BearerAuth required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter)
+      let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      }
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      }
+    },
+  }
+}
+
+/**
+ * TagsApi - functional programming interface
+ * @export
+ */
+export const TagsApiFp = function (configuration?: Configuration) {
+  const localVarAxiosParamCreator = TagsApiAxiosParamCreator(configuration)
+  return {
+    /**
+     *
+     * @summary Lister tous les tags disponibles
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async getAvailableTags(
+      options?: RawAxiosRequestConfig,
+    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<Tag>>> {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.getAvailableTags(options)
+      const localVarOperationServerIndex = configuration?.serverIndex ?? 0
+      const localVarOperationServerBasePath =
+        operationServerMap['TagsApi.getAvailableTags']?.[localVarOperationServerIndex]?.url
+      return (axios, basePath) =>
+        createRequestFunction(
+          localVarAxiosArgs,
+          globalAxios,
+          BASE_PATH,
+          configuration,
+        )(axios, localVarOperationServerBasePath || basePath)
+    },
+  }
+}
+
+/**
+ * TagsApi - factory interface
+ * @export
+ */
+export const TagsApiFactory = function (
+  configuration?: Configuration,
+  basePath?: string,
+  axios?: AxiosInstance,
+) {
+  const localVarFp = TagsApiFp(configuration)
+  return {
+    /**
+     *
+     * @summary Lister tous les tags disponibles
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    getAvailableTags(options?: RawAxiosRequestConfig): AxiosPromise<Array<Tag>> {
+      return localVarFp.getAvailableTags(options).then((request) => request(axios, basePath))
+    },
+  }
+}
+
+/**
+ * TagsApi - object-oriented interface
+ * @export
+ * @class TagsApi
+ * @extends {BaseAPI}
+ */
+export class TagsApi extends BaseAPI {
+  /**
+   *
+   * @summary Lister tous les tags disponibles
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof TagsApi
+   */
+  public getAvailableTags(options?: RawAxiosRequestConfig) {
+    return TagsApiFp(this.configuration)
+      .getAvailableTags(options)
       .then((request) => request(this.axios, this.basePath))
   }
 }

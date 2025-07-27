@@ -55,7 +55,10 @@ All URIs are relative to _http://localhost_
 
 | Class                 | Method                                                                   | HTTP request                                 | Description                                                                |
 | --------------------- | ------------------------------------------------------------------------ | -------------------------------------------- | -------------------------------------------------------------------------- |
+| _AdminApi_            | [**createTag**](docs/AdminApi.md#createtag)                              | **POST** /api/v1/admin/tags                  | Créer un nouveau tag (admin uniquement)                                    |
+| _AdminApi_            | [**listTags**](docs/AdminApi.md#listtags)                                | **GET** /api/v1/admin/tags                   | Lister tous les tags (admin uniquement)                                    |
 | _AdminApi_            | [**listUsers**](docs/AdminApi.md#listusers)                              | **GET** /api/v1/admin/users                  | Lister tous les utilisateurs (admin uniquement)                            |
+| _AdminApi_            | [**updateTag**](docs/AdminApi.md#updatetag)                              | **PUT** /api/v1/admin/tags/{tagId}           | Modifier un tag (admin uniquement)                                         |
 | _AdminApi_            | [**updateUserAdmin**](docs/AdminApi.md#updateuseradmin)                  | **PUT** /api/v1/admin/users/{userId}/admin   | Modifier le statut administrateur d\&#39;un utilisateur (admin uniquement) |
 | _AnnoncesApi_         | [**countAnnonces**](docs/AnnoncesApi.md#countannonces)                   | **POST** /api/v1/annonces/search/count       | Récupérer le nombre d\&#39;annonces                                        |
 | _AnnoncesApi_         | [**createAnnonce**](docs/AnnoncesApi.md#createannonce)                   | **POST** /api/v1/annonces                    | Créer une nouvelle annonce                                                 |
@@ -69,6 +72,7 @@ All URIs are relative to _http://localhost_
 | _PhotosApi_           | [**deletePhoto**](docs/PhotosApi.md#deletephoto)                         | **DELETE** /api/v1/annonces/photos/{photoId} | Supprimer une photo                                                        |
 | _PhotosApi_           | [**getPhotoFull**](docs/PhotosApi.md#getphotofull)                       | **GET** /api/v1/photos/{photoId}/full        | Récupérer le contenu d\&#39;une photo en taille réelle                     |
 | _PhotosApi_           | [**getPhotoThumb**](docs/PhotosApi.md#getphotothumb)                     | **GET** /api/v1/photos/{photoId}/thumb       | Récupérer le contenu d\&#39;une photo en miniature                         |
+| _TagsApi_             | [**getAvailableTags**](docs/TagsApi.md#getavailabletags)                 | **GET** /api/v1/tags                         | Lister tous les tags disponibles                                           |
 
 ### Documentation For Models
 
@@ -92,6 +96,8 @@ All URIs are relative to _http://localhost_
 - [Photo](docs/Photo.md)
 - [Prix](docs/Prix.md)
 - [PrixUnite](docs/PrixUnite.md)
+- [Tag](docs/Tag.md)
+- [TagCreateUpdate](docs/TagCreateUpdate.md)
 - [UserAdminUpdate](docs/UserAdminUpdate.md)
 - [Users](docs/Users.md)
 - [Utilisateur](docs/Utilisateur.md)
