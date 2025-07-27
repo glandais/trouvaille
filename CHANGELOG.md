@@ -1,3 +1,12 @@
+# [1.13.0](https://github.com/glandais/trouvaille/compare/v1.12.8...v1.13.0) (2025-07-27)
+
+
+### Features
+
+* admin role ([836f921](https://github.com/glandais/trouvaille/commit/836f9211e71d102ac7b8a84bcb87292414fea795))
+* annonce tags ([89eb58a](https://github.com/glandais/trouvaille/commit/89eb58a6880fd31227dda409c7c23a6316c5a7ae))
+* users page ([c2123a1](https://github.com/glandais/trouvaille/commit/c2123a1c47a277ac664bd133f424be8d7b0127fe))
+
 ## [1.12.8](https://github.com/glandais/trouvaille/compare/v1.12.7...v1.12.8) (2025-07-08)
 
 
