@@ -404,6 +404,12 @@ export interface AnnonceSearch {
    * @memberof AnnonceSearch
    */
   sort_order?: AnnonceSearchSortOrder
+  /**
+   * Filtrer par tags (les annonces doivent avoir tous les tags spécifiés)
+   * @type {Array<string>}
+   * @memberof AnnonceSearch
+   */
+  tags?: Array<string>
 }
 
 /**

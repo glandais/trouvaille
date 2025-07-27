@@ -101,6 +101,28 @@
           </div>
         </div>
 
+        <!-- Tags Filter -->
+        <div class="mt-4">
+          <label class="block text-sm font-medium text-gray-700 mb-2"> Filtrer par tags </label>
+          <div class="flex flex-wrap gap-2">
+            <button
+              v-for="tag in availableTags"
+              :key="tag.id"
+              @click="toggleTag(tag.id)"
+              :class="[
+                'inline-flex items-center px-3 py-1 rounded-full text-sm font-medium transition-colors',
+                tags.includes(tag.id || '')
+                  ? 'text-white border border-transparent'
+                  : 'bg-gray-100 text-gray-700 border border-gray-300 hover:bg-gray-200',
+              ]"
+              :style="tags.includes(tag.id || '') ? { backgroundColor: tag.couleur } : {}"
+            >
+              {{ tag.nom }}
+              <XMarkIcon v-if="tags.includes(tag.id || '')" class="h-4 w-4 ml-1" />
+            </button>
+          </div>
+        </div>
+
         <!-- Location Filters -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
           <LocationField v-model="selectedLocation" @change="handleLocationChange" />
@@ -184,6 +206,16 @@
             class="inline-flex items-center px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full"
           >
             Nature: {{ getNatureLabel(filters.nature) }}
+            <XMarkIcon class="h-3 w-3 ml-1" />
+          </button>
+          <button
+            v-for="tagId in tags"
+            :key="tagId"
+            @click="toggleTag(tagId)"
+            class="inline-flex items-center px-2 py-1 text-xs rounded-full text-white"
+            :style="{ backgroundColor: getTagById(tagId)?.couleur || '#6B7280' }"
+          >
+            Tag: {{ getTagById(tagId)?.nom }}
             <XMarkIcon class="h-3 w-3 ml-1" />
           </button>
           <button
@@ -287,7 +319,7 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useDebounceFn } from '@vueuse/core'
-import { annoncesApi } from '../services/api'
+import { annoncesApi, tagsApi } from '../services/api'
 import {
   AnnonceList,
   AnnonceType,
@@ -296,6 +328,7 @@ import {
   AnnonceSearch,
   AnnonceSearchSortBy,
   AnnonceSearchSortOrder,
+  Tag,
 } from '../api'
 import DistanceDisplay from '../components/DistanceDisplay.vue'
 import { useAnnonceLabels } from '@/composables/useAnnonceLabels'
@@ -318,6 +351,13 @@ const sortOption = ref('date_creation!desc')
 const currentPage = ref<number>(1)
 const selectedLocation = ref<SelectedLocation | null>(null)
 const updatingRoute = ref(false)
+const availableTags = ref<Tag[]>([])
+const tags = computed(() => {
+  if (filters.value.tags && filters.value.tags.length > 0) {
+    return filters.value.tags
+  }
+  return []
+})
 
 const filterInitial: AnnonceSearch = {
   search: undefined,
@@ -328,6 +368,7 @@ const filterInitial: AnnonceSearch = {
   distance_max: undefined,
   latitude: undefined,
   longitude: undefined,
+  tags: [],
 }
 
 const filters = ref<AnnonceSearch>({
@@ -367,6 +408,21 @@ const routerParams = [
     undefined,
     (s) => (filters.value.nature = s as AnnonceNature),
     () => filters.value.nature,
+  ),
+  new RouterParam<string[] | undefined>(
+    'tags',
+    [],
+    (s) => {
+      if (s && s.length > 0) {
+        filters.value.tags = s.split(',')
+      }
+    },
+    () => {
+      if (tags.value.length > 0) {
+        return tags.value.join(',')
+      }
+      return undefined
+    },
   ),
   new RouterParam<string | undefined>(
     'prix_min',
@@ -449,7 +505,8 @@ const hasActiveFilters = computed(() => {
     filters.value.nature ||
     filters.value.prix_min ||
     filters.value.prix_max ||
-    filters.value.distance_max
+    filters.value.distance_max ||
+    tags.value.length > 0
   )
 })
 
@@ -500,7 +557,7 @@ const changePage = (page: number) => {
 }
 
 const clearFilter = (filterKey: keyof typeof filters.value) => {
-  ;(filters.value[filterKey] as string) = ''
+  ;(filters.value[filterKey] as undefined) = undefined
   currentPage.value = 1
   fetchAnnonces()
 }
@@ -513,6 +570,37 @@ const clearAllFilters = () => {
   sortOption.value = 'date_creation!desc'
   currentPage.value = 1
   fetchAnnonces()
+}
+
+// Tag-related functions
+const toggleTag = (tagId: string | undefined) => {
+  if (!tagId) return
+
+  const currentTags = [...tags.value]
+  const index = currentTags.indexOf(tagId)
+  if (index > -1) {
+    currentTags.splice(index, 1)
+  } else {
+    currentTags.push(tagId)
+  }
+
+  // Update filters.tags and trigger search
+  filters.value.tags = currentTags
+  currentPage.value = 1
+  fetchAnnonces()
+}
+
+const getTagById = (tagId: string): Tag | undefined => {
+  return availableTags.value.find((tag) => tag.id === tagId)
+}
+
+const loadAvailableTags = async () => {
+  try {
+    const response = await tagsApi.getAvailableTags()
+    availableTags.value = response.data
+  } catch (error) {
+    console.error('Failed to load available tags:', error)
+  }
 }
 
 const clearDistanceFilter = () => {
@@ -568,6 +656,7 @@ const getVisiblePages = () => {
 
 onMounted(() => {
   initFromQuery()
+  loadAvailableTags()
 })
 
 // Watch for route changes

@@ -268,6 +268,20 @@ public class AnnonceService {
       }
     }
 
+    // Filter by tags - announcements must have ALL specified tags
+    if (data.getTags() != null && !data.getTags().isEmpty()) {
+      List<ObjectId> tagIds =
+          data.getTags().stream()
+              .filter(tag -> tag != null && !tag.trim().isEmpty())
+              .map(String::trim)
+              .map(ObjectId::new)
+              .toList();
+
+      if (!tagIds.isEmpty()) {
+        matchStage.append("tags", new Document("$all", tagIds));
+      }
+    }
+
     return matchStage;
   }
 

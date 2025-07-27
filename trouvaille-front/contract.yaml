@@ -534,6 +534,12 @@ components:
         sort_order:
           description: Ordre de tri
           $ref: '#/components/schemas/AnnonceSearchSortOrder'
+        tags:
+          description: Filtrer par tags (les annonces doivent avoir tous les tags spécifiés)
+          type: array
+          items:
+            type: string
+          example: ['507f1f77bcf86cd799439011', '507f191e810c19729de860ea']
 
     AnnonceSearchSortBy:
       type: string
