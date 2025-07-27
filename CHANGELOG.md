@@ -1,3 +1,10 @@
+## [1.13.1](https://github.com/glandais/trouvaille/compare/v1.13.0...v1.13.1) (2025-07-27)
+
+
+### Bug Fixes
+
+* build without .env ([014b577](https://github.com/glandais/trouvaille/commit/014b577599de74b95b36a26b2a53934f36e348e2))
+
 # [1.13.0](https://github.com/glandais/trouvaille/compare/v1.12.8...v1.13.0) (2025-07-27)
 
 
