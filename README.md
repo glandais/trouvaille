@@ -29,6 +29,8 @@ A modern, private marketplace platform for classified ads allowing users to sell
     - [API Contract Development](#api-contract-development)
   - [📡 API Documentation](#-api-documentation)
   - [🔐 Authentication](#-authentication)
+  - [👑 Administration](#-administration)
+  - [🏷️ Tag System](#️-tag-system)
   - [🗄️ Database](#️-database)
   - [📸 Photo Management](#-photo-management)
   - [🌍 Geolocation](#-geolocation)
@@ -44,13 +46,14 @@ A modern, private marketplace platform for classified ads allowing users to sell
 ### 🏪 Marketplace Core
 - **Sell & Rent**: Create ads for selling or renting items
 - **Offer & Demand**: Post offers or search for specific needs
-- **Categories**: Organized listing system with flexible categorization
+- **Tag System**: Organize listings with colored tags for better categorization
 - **Photo Gallery**: Up to 10 photos per listing with automatic thumbnail generation
 - **Status Management**: Active, suspended, and sold status tracking
 
 ### 🔍 Advanced Search & Filtering
 - **Text Search**: Full-text search across titles and descriptions
-- **Smart Filters**: Filter by type, nature, price range, and location
+- **Smart Filters**: Filter by type, nature, price range, location, and tags
+- **Tag Filtering**: Filter listings by one or multiple tags
 - **Geolocation**: Distance-based search up to 100km radius
 - **Sorting Options**: Sort by date, price, title, or proximity
 - **Real-time Results**: Debounced search with instant feedback
@@ -64,8 +67,15 @@ A modern, private marketplace platform for classified ads allowing users to sell
 ### 🔐 Security & Authentication
 - **OAuth2 Integration**: Secure authentication with external provider
 - **JWT Tokens**: Stateless authentication with automatic expiration
+- **Role-Based Access**: Admin users with elevated privileges
 - **Ownership Validation**: Users can only modify their own listings
 - **CORS Protection**: Configured for secure cross-origin requests
+
+### 👑 Administration Features
+- **User Management**: Admin interface to manage users and assign admin roles
+- **Tag Management**: Create, edit, and manage colored tags for categorization
+- **Admin Dashboard**: Dedicated admin pages with search and management tools
+- **Role Assignment**: Promote/demote users to/from admin status
 
 ### 📱 User Experience
 - **Responsive Design**: Mobile-first approach with Tailwind CSS
@@ -261,7 +271,10 @@ The project follows **Contract-First Development**:
 The API is documented using OpenAPI 3.0.3 specification in `contract.yaml`.
 
 **Key Endpoints:**
-- `GET /api/v1/annonces` - List ads with filtering and pagination
+
+*Annonces:*
+- `POST /api/v1/annonces/search/list` - List ads with filtering and pagination
+- `POST /api/v1/annonces/search/count` - Get count of ads matching criteria
 - `POST /api/v1/annonces` - Create new ad
 - `GET /api/v1/annonces/{id}` - Get ad details
 - `PUT /api/v1/annonces/{id}` - Update ad
@@ -269,6 +282,16 @@ The API is documented using OpenAPI 3.0.3 specification in `contract.yaml`.
 - `POST /api/v1/annonces/photos` - Upload photo
 - `GET /api/v1/photos/{id}/full` - Get full-size photo
 - `GET /api/v1/photos/{id}/thumb` - Get thumbnail
+
+*Tags:*
+- `GET /api/v1/tags` - List all available tags
+
+*Admin (requires admin role):*
+- `GET /api/v1/admin/users` - List all users with search
+- `PUT /api/v1/admin/users/{userId}/admin` - Update user admin status
+- `GET /api/v1/admin/tags` - List all tags (admin view)
+- `POST /api/v1/admin/tags` - Create new tag
+- `PUT /api/v1/admin/tags/{tagId}` - Update existing tag
 
 **Interactive Documentation:**
 - Swagger UI: `http://localhost:8080/q/swagger-ui/`
@@ -286,11 +309,55 @@ The API is documented using OpenAPI 3.0.3 specification in `contract.yaml`.
 **Configuration:**
 In .env files (root and/or trouvaille-back for dev back server)
 
+## 👑 Administration
+
+The platform includes comprehensive administration features for managing users and system configuration.
+
+**Admin Role System:**
+- Admin users have elevated privileges to manage the platform
+- Admins can promote/demote other users to/from admin status
+- All admin operations are protected by role-based access control
+
+**Admin Features:**
+- **User Management**: View all users, search by username/nickname, and modify admin status
+- **Tag Management**: Create, edit, and manage colored tags for ad categorization
+- **System Control**: Full administrative control over platform content
+
+**Admin Pages:**
+- `/admin/users` - User management interface with search functionality
+- `/admin/tags` - Tag management with color picker and CRUD operations
+
+**Access Control:**
+- Admin routes are protected and only accessible to users with admin role
+- Backend endpoints validate admin permissions before allowing operations
+- Non-admin users receive 403 Forbidden responses for admin-only operations
+
+## 🏷️ Tag System
+
+Tags provide a flexible categorization system for organizing ads with visual color coding.
+
+**Tag Features:**
+- **Colored Tags**: Each tag has a customizable color for visual organization
+- **Tag Filtering**: Users can filter ads by one or multiple tags
+- **Tag Assignment**: Ads can have multiple tags assigned during creation/editing
+- **Admin Management**: Admins can create, edit, and manage all tags
+
+**Tag Structure:**
+- **Name**: Unique identifier for the tag
+- **Color**: Hex color code for visual representation  
+- **Status**: Active/inactive state for tag availability
+- **Timestamps**: Creation and modification dates
+
+**Usage in Search:**
+- Tags can be included in the search criteria via `AnnonceSearch.tags` array
+- Multiple tags act as an AND filter (ads must have ALL specified tags)
+- Tag-based filtering integrates with other search filters (type, nature, price, location)
+
 ## 🗄️ Database
 
 **MongoDB Configuration:**
 - Database: `trouvaille`
-- Collections: `Annonce`, `User`, `Photo`
+- Collections: `Annonce`, `User`, `Photo`, `Tag`
 - **Automatic Schema Management**: Liquibase MongoDB automatically creates collections and indexes at startup
 - Geospatial indexing for location-based queries
 - Full-text search indexing with French language support
@@ -306,6 +373,9 @@ db.getCollectionNames()
 # Query ads
 db.Annonce.find().limit(5)
 
+# Query tags
+db.Tag.find()
+
 # View existing indexes
 db.Annonce.getIndexes()
 ```
@@ -313,7 +383,7 @@ db.Annonce.getIndexes()
 **Automated Database Setup:**
 The application automatically creates and manages the database schema using **Liquibase MongoDB**:
 
-- **Collections**: `Annonce`, `User`, `Photo` are created automatically
+- **Collections**: `Annonce`, `User`, `Photo`, `Tag` are created automatically
 - **Indexes**: Comprehensive indexing strategy applied at startup:
   - **Performance indexes**: `utilisateur`, `statut`, `type`, `nature`, `prix`
   - **Date indexes**: `dateCreation`, `dateModification` (descending)
