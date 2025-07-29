@@ -1,3 +1,11 @@
+# [1.15.0](https://github.com/glandais/trouvaille/compare/v1.14.0...v1.15.0) (2025-07-29)
+
+
+### Features
+
+* improve images ([e88fdf4](https://github.com/glandais/trouvaille/commit/e88fdf479880fc1d604a4cde98c40fe350354813))
+* mattermost message ([e498a40](https://github.com/glandais/trouvaille/commit/e498a4088a66efdd246410fc864e52e492c491d2))
+
 # [1.14.0](https://github.com/glandais/trouvaille/compare/v1.13.1...v1.14.0) (2025-07-27)
 
 
