@@ -9,6 +9,10 @@ import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.List;
+import java.util.Locale;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
@@ -16,6 +20,8 @@ import org.eclipse.microprofile.rest.client.inject.RestClient;
 @Slf4j
 @ApplicationScoped
 public class MattermostService {
+
+  @Inject AnnonceEntityMapper annonceEntityMapper;
 
   @Inject @RestClient MattermostClient mattermostClient;
 
@@ -64,17 +70,26 @@ public class MattermostService {
   }
 
   private String getPost(AnnonceEntity annonceEntity, boolean creation) {
+    List<String> tags = annonceEntityMapper.mapTagsLabelsFromIds(annonceEntity.getTags());
+    String prixString = formatDouble(annonceEntity.getPrix());
     return postTemplate
-        .data(
-            "annonce",
-            annonceEntity,
-            "creation",
-            creation,
-            "username",
-            userService.getCurrentUser().getUsername(),
-            "frontUrl",
-            frontUrl)
+        .data("annonce", annonceEntity)
+        .data("tags", tags)
+        .data("prix", prixString)
+        .data("creation", creation)
+        .data("username", userService.getCurrentUser().getUsername())
+        .data("frontUrl", frontUrl)
         .render();
+  }
+
+  public static String formatDouble(double value) {
+    if (value == Math.floor(value)) {
+      return String.valueOf((int) value);
+    } else {
+      DecimalFormat df =
+          new DecimalFormat("#0.00", DecimalFormatSymbols.getInstance(Locale.FRANCE));
+      return df.format(value);
+    }
   }
 
   private PostResponse callCreatePost(CreatePostRequest post) {

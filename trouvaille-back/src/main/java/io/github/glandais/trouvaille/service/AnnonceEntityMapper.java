@@ -101,8 +101,18 @@ public abstract class AnnonceEntityMapper {
 
   protected abstract Utilisateur mapUserEntity(UserEntity userEntity);
 
+  public List<String> mapTagsLabelsFromIds(List<ObjectId> tagIds) {
+    if (tagIds == null) {
+      return List.of();
+    }
+    return mapTags(tagRepository.list("_id in ?1", tagIds)).stream().map(Tag::getNom).toList();
+  }
+
   @Named("mapTags")
   protected List<Tag> mapTagsFromIds(List<ObjectId> tagIds) {
+    if (tagIds == null) {
+      return List.of();
+    }
     return mapTags(tagRepository.list("_id in ?1", tagIds));
   }
 
