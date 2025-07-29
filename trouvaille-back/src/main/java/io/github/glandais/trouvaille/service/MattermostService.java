@@ -1,8 +1,8 @@
 package io.github.glandais.trouvaille.service;
 
-import io.github.glandais.trouvaille.client.MattermostClient;
-import io.github.glandais.trouvaille.client.dto.CreatePostRequest;
-import io.github.glandais.trouvaille.client.dto.PostResponse;
+import io.github.glandais.trouvaille.client.mattermost.MattermostClient;
+import io.github.glandais.trouvaille.client.mattermost.dto.CreatePostRequest;
+import io.github.glandais.trouvaille.client.mattermost.dto.PostResponse;
 import io.github.glandais.trouvaille.config.BotConfig;
 import io.github.glandais.trouvaille.entity.AnnonceEntity;
 import io.quarkus.qute.Location;

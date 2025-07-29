@@ -164,44 +164,37 @@ paths:
         '204':
           description: Photo supprimée
 
-  /api/v1/photos/{photoId}/full:
+  /api/v1/photos/{photoId}/{width}/{height}:
     get:
-      summary: Récupérer le contenu d'une photo en taille réelle
-      operationId: getPhotoFull
+      summary: Récupérer le contenu d'une photo
+      operationId: getPhoto
       tags:
         - Photos
       parameters:
+        - name: Accept
+          in: header
+          schema:
+            type: string
         - name: photoId
           in: path
           required: true
           schema:
             type: string
-      responses:
-        '200':
-          description: Contenu de la photo en taille réelle
-          content:
-            image/jpeg:
-              schema:
-                type: string
-                format: binary
-
-  /api/v1/photos/{photoId}/thumb:
-    get:
-      summary: Récupérer le contenu d'une photo en miniature
-      operationId: getPhotoThumb
-      tags:
-        - Photos
-      parameters:
-        - name: photoId
+        - name: width
           in: path
           required: true
           schema:
-            type: string
+            type: integer
+        - name: height
+          in: path
+          required: true
+          schema:
+            type: integer
       responses:
         '200':
-          description: Contenu de la photo en miniature
+          description: Contenu de la photo
           content:
-            image/jpeg:
+            image/*:
               schema:
                 type: string
                 format: binary
@@ -561,20 +554,15 @@ components:
       properties:
         id:
           type: string
-        thumbUrl:
-          type: string
-        fullUrl:
-          type: string
         width:
           type: integer
         height:
           type: integer
       required:
         - id
-        - thumbUrl
-        - fullUrl
         - width
         - height
+        - urls
 
     AnnonceBase:
       type: object

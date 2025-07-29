@@ -116,7 +116,7 @@ A modern, private marketplace platform for classified ads allowing users to sell
 ```
 trouvaille/
 ├── contract.yaml                 # OpenAPI 3.0.3 specification
-├── docker-compose.yml           # Development environment
+├── docker-compose.yml           # Production environment
 ├── data/                        # Persistent data
 │   ├── keys/                   # JWT signing keys
 │   ├── photos/                 # Uploaded images
@@ -130,6 +130,7 @@ trouvaille/
 │   │       ├── resource/       # REST endpoints
 │   │       └── config/         # Configuration classes
 │   ├── src/main/resources/     # Configuration files
+│   ├── docker-compose.yml      # Dev environment
 │   └── pom.xml                 # Maven dependencies
 └── trouvaille-front/            # Frontend (Vue 3)
     ├── src/                    # TypeScript source code
@@ -190,6 +191,10 @@ docker-compose up -d
 **Start development server:**
 ```bash
 cd trouvaille-back
+# start services
+docker compose up -d
+# generate keys
+./generate-keys.sh
 mvn quarkus:dev
 ```
 

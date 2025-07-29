@@ -1,0 +1,59 @@
+services:
+  imgproxy:
+    image: ghcr.io/imgproxy/imgproxy:v3.29.1
+    restart: unless-stopped
+    networks:
+      - trouvaille-back
+    volumes:
+      - "./data/photos:/mnt/data"
+    environment:
+      IMGPROXY_AUTO_WEBP: "true"
+      IMGPROXY_AUTO_AVIF: "true"
+      IMGPROXY_AUTO_JXL: "true"
+      IMGPROXY_QUALITY: "85"
+      IMGPROXY_MAX_SRC_RESOLUTION: "50000000"
+      IMGPROXY_LOCAL_FILESYSTEM_ROOT: "/mnt/data"
+
+  varnish:
+    image: varnish:6.0.14
+    restart: unless-stopped
+    networks:
+      - trouvaille-back
+    volumes:
+      - "../varnish.vcl:/etc/varnish/default.vcl"
+    tmpfs:
+      - /var/lib/varnish:exec
+    environment:
+      - VARNISH_SIZE=20G
+    command: "-p default_ttl=86400"
+    ports:
+      - "127.0.0.1:38080:80"
+
+  # MongoDB
+  mongodb:
+    image: mongo:8.0.12
+    restart: unless-stopped
+    networks:
+      - trouvaille-back
+    env_file:
+      - .env
+    volumes:
+      - "./data/mongodb:/data/db"
+    ports:
+      - "127.0.0.1:27016:27017"    # MongoDB (localhost only)
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+    # Add resource limits
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 512M
+
+networks:
+  trouvaille-back:

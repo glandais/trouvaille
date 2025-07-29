@@ -1,7 +1,6 @@
 package io.github.glandais.trouvaille.service;
 
 import io.github.glandais.trouvaille.api.model.*;
-import io.github.glandais.trouvaille.api.model.PrixUnite;
 import io.github.glandais.trouvaille.entity.*;
 import java.util.List;
 import org.bson.types.ObjectId;

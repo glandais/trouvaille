@@ -255,6 +255,7 @@
                                 <useJakartaEe>true</useJakartaEe>
                                 <apiPackage>io.github.glandais.trouvaille.api</apiPackage>
                                 <modelPackage>io.github.glandais.trouvaille.api.model</modelPackage>
+                                <generateBuilders>true</generateBuilders>
                                 <returnResponse>true</returnResponse>
                                 <useSwaggerAnnotations>false</useSwaggerAnnotations>
                                 <hideGenerationTimestamp>true</hideGenerationTimestamp>

@@ -21,22 +21,8 @@ public class AuthCookieUtils {
         .path(COOKIE_PATH)
         .httpOnly(true)
         .secure(true)
-        .sameSite(NewCookie.SameSite.STRICT)
+        .sameSite(NewCookie.SameSite.NONE)
         .maxAge(COOKIE_MAX_AGE_SECONDS)
-        .build();
-  }
-
-  /**
-   * Crée un cookie d'authentification expiré pour supprimer le cookie existant
-   */
-  public static NewCookie createExpiredAuthCookie() {
-    return new NewCookie.Builder(COOKIE_NAME)
-        .value("")
-        .path(COOKIE_PATH)
-        .httpOnly(true)
-        .secure(true)
-        .sameSite(NewCookie.SameSite.STRICT)
-        .maxAge(0) // Expire immédiatement
         .build();
   }
 
@@ -48,7 +34,7 @@ public class AuthCookieUtils {
         .setPath(COOKIE_PATH)
         .setHttpOnly(true)
         .setSecure(true)
-        .setSameSite(io.vertx.core.http.CookieSameSite.STRICT)
+        .setSameSite(io.vertx.core.http.CookieSameSite.NONE)
         .setMaxAge(0); // Expire immédiatement
   }
 }

@@ -2,9 +2,9 @@ package io.github.glandais.trouvaille.service;
 
 import io.github.glandais.trouvaille.api.model.OAuthTokenRequest;
 import io.github.glandais.trouvaille.api.model.OAuthTokenResponse;
-import io.github.glandais.trouvaille.client.MattermostClient;
-import io.github.glandais.trouvaille.client.dto.TokenResponse;
-import io.github.glandais.trouvaille.client.dto.User;
+import io.github.glandais.trouvaille.client.mattermost.MattermostClient;
+import io.github.glandais.trouvaille.client.mattermost.dto.TokenResponse;
+import io.github.glandais.trouvaille.client.mattermost.dto.User;
 import io.github.glandais.trouvaille.config.OAuthConfig;
 import io.github.glandais.trouvaille.entity.UserEntity;
 import io.smallrye.jwt.build.Jwt;

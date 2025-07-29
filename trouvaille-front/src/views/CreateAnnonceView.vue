@@ -325,7 +325,7 @@
                 ref="fileInput"
                 type="file"
                 multiple
-                accept="image/*"
+                accept="image/*,.heic,.heif,.avif"
                 class="hidden"
                 @change="handleFileSelect"
               />
@@ -347,14 +347,13 @@
           </div>
 
           <!-- Photo Preview Grid -->
-          <div v-if="form.photos.length > 0" class="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div v-for="(photo, index) in form.photos" :key="photo.id" class="relative group">
-              <img
-                :src="photo.thumbUrl"
-                :alt="`Photo ${index + 1}`"
-                class="w-full h-32 object-cover rounded-lg border border-gray-200"
-              />
-
+          <div v-if="form.photos.length > 0" class="space-y-4 vpis-gallery">
+            <div
+              v-for="(photo, index) in form.photos"
+              :key="photo.id"
+              class="vpis-item-figure group relative"
+            >
+              <PhotoThumb :photo="photo" :alt="`Photo ${index + 1}`" class="vpis-item" />
               <!-- Photo Actions -->
               <div
                 class="absolute inset-0 bg-opacity-0 group-hover:bg-opacity-50 transition-all rounded-lg flex items-center justify-center"
@@ -490,6 +489,7 @@ import {
 } from '@heroicons/vue/24/outline'
 import { SelectedLocation } from '@/types/location'
 import { useLocationStore } from '@/stores/location'
+import PhotoThumb from '@/components/PhotoThumb.vue'
 
 interface Props {
   id?: string
@@ -592,6 +592,26 @@ const handleDrop = (event: DragEvent) => {
   }
 }
 
+const validExtensions = [
+  '.jpg',
+  '.jpeg',
+  '.png',
+  '.gif',
+  '.bmp',
+  '.webp',
+  '.heic',
+  '.heif',
+  '.avif',
+]
+
+const isValidImageFile = (file: File): boolean => {
+  if (file.type.startsWith('image/')) {
+    return true
+  }
+  const fileName = file.name.toLowerCase()
+  return validExtensions.some((ext) => fileName.endsWith(ext))
+}
+
 const handleFiles = async (files: File[]) => {
   if (form.photos.length + files.length > 10) {
     alert(t('photos.upload.max_files_exceeded'))
@@ -599,12 +619,12 @@ const handleFiles = async (files: File[]) => {
   }
 
   for (const file of files) {
-    if (!file.type.startsWith('image/')) {
+    if (!isValidImageFile(file)) {
       alert(t('photos.upload.invalid_file', { filename: file.name }))
       continue
     }
 
-    if (file.size > 5 * 1024 * 1024) {
+    if (file.size > 10 * 1024 * 1024) {
       alert(t('photos.upload.file_too_large', { filename: file.name }))
       continue
     }

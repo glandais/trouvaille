@@ -1,4 +1,4 @@
-package io.github.glandais.trouvaille.client.dto;
+package io.github.glandais.trouvaille.client.mattermost.dto;
 
 import lombok.Data;
 

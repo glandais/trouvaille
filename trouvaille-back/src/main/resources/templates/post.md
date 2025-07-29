@@ -9,4 +9,4 @@ Mise à jour !
 
 {annonce.description}
 
-{#for photo in annonce.photos}![photo]({frontUrl}/api/v1/photos/{photo}/thumb){/for}
+{#for photo in annonce.photos}![photo]({frontUrl}/api/v1/photos/{photo}/256/256){/for}

@@ -1,9 +1,9 @@
-package io.github.glandais.trouvaille.client;
+package io.github.glandais.trouvaille.client.mattermost;
 
-import io.github.glandais.trouvaille.client.dto.CreatePostRequest;
-import io.github.glandais.trouvaille.client.dto.PostResponse;
-import io.github.glandais.trouvaille.client.dto.TokenResponse;
-import io.github.glandais.trouvaille.client.dto.User;
+import io.github.glandais.trouvaille.client.mattermost.dto.CreatePostRequest;
+import io.github.glandais.trouvaille.client.mattermost.dto.PostResponse;
+import io.github.glandais.trouvaille.client.mattermost.dto.TokenResponse;
+import io.github.glandais.trouvaille.client.mattermost.dto.User;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;

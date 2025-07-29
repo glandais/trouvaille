@@ -686,18 +686,6 @@ export interface Photo {
   id: string
   /**
    *
-   * @type {string}
-   * @memberof Photo
-   */
-  thumbUrl: string
-  /**
-   *
-   * @type {string}
-   * @memberof Photo
-   */
-  fullUrl: string
-  /**
-   *
    * @type {number}
    * @memberof Photo
    */
@@ -2474,21 +2462,31 @@ export const PhotosApiAxiosParamCreator = function (configuration?: Configuratio
     },
     /**
      *
-     * @summary Récupérer le contenu d\'une photo en taille réelle
+     * @summary Récupérer le contenu d\'une photo
      * @param {string} photoId
+     * @param {number} width
+     * @param {number} height
+     * @param {string} [accept]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    getPhotoFull: async (
+    getPhoto: async (
       photoId: string,
+      width: number,
+      height: number,
+      accept?: string,
       options: RawAxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
       // verify required parameter 'photoId' is not null or undefined
-      assertParamExists('getPhotoFull', 'photoId', photoId)
-      const localVarPath = `/api/v1/photos/{photoId}/full`.replace(
-        `{${'photoId'}}`,
-        encodeURIComponent(String(photoId)),
-      )
+      assertParamExists('getPhoto', 'photoId', photoId)
+      // verify required parameter 'width' is not null or undefined
+      assertParamExists('getPhoto', 'width', width)
+      // verify required parameter 'height' is not null or undefined
+      assertParamExists('getPhoto', 'height', height)
+      const localVarPath = `/api/v1/photos/{photoId}/{width}/{height}`
+        .replace(`{${'photoId'}}`, encodeURIComponent(String(photoId)))
+        .replace(`{${'width'}}`, encodeURIComponent(String(width)))
+        .replace(`{${'height'}}`, encodeURIComponent(String(height)))
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
       const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
       let baseOptions
@@ -2504,51 +2502,9 @@ export const PhotosApiAxiosParamCreator = function (configuration?: Configuratio
       // http bearer authentication required
       await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
-      setSearchParams(localVarUrlObj, localVarQueryParameter)
-      let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
-      localVarRequestOptions.headers = {
-        ...localVarHeaderParameter,
-        ...headersFromBaseOptions,
-        ...options.headers,
+      if (accept != null) {
+        localVarHeaderParameter['Accept'] = String(accept)
       }
-
-      return {
-        url: toPathString(localVarUrlObj),
-        options: localVarRequestOptions,
-      }
-    },
-    /**
-     *
-     * @summary Récupérer le contenu d\'une photo en miniature
-     * @param {string} photoId
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    getPhotoThumb: async (
-      photoId: string,
-      options: RawAxiosRequestConfig = {},
-    ): Promise<RequestArgs> => {
-      // verify required parameter 'photoId' is not null or undefined
-      assertParamExists('getPhotoThumb', 'photoId', photoId)
-      const localVarPath = `/api/v1/photos/{photoId}/thumb`.replace(
-        `{${'photoId'}}`,
-        encodeURIComponent(String(photoId)),
-      )
-      // use dummy base URL string because the URL constructor only accepts absolute URLs.
-      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
-      let baseOptions
-      if (configuration) {
-        baseOptions = configuration.baseOptions
-      }
-
-      const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options }
-      const localVarHeaderParameter = {} as any
-      const localVarQueryParameter = {} as any
-
-      // authentication BearerAuth required
-      // http bearer authentication required
-      await setBearerAuthToObject(localVarHeaderParameter, configuration)
-
       setSearchParams(localVarUrlObj, localVarQueryParameter)
       let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {}
       localVarRequestOptions.headers = {
@@ -2620,42 +2576,31 @@ export const PhotosApiFp = function (configuration?: Configuration) {
     },
     /**
      *
-     * @summary Récupérer le contenu d\'une photo en taille réelle
+     * @summary Récupérer le contenu d\'une photo
      * @param {string} photoId
+     * @param {number} width
+     * @param {number} height
+     * @param {string} [accept]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    async getPhotoFull(
+    async getPhoto(
       photoId: string,
+      width: number,
+      height: number,
+      accept?: string,
       options?: RawAxiosRequestConfig,
     ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<File>> {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.getPhotoFull(photoId, options)
+      const localVarAxiosArgs = await localVarAxiosParamCreator.getPhoto(
+        photoId,
+        width,
+        height,
+        accept,
+        options,
+      )
       const localVarOperationServerIndex = configuration?.serverIndex ?? 0
       const localVarOperationServerBasePath =
-        operationServerMap['PhotosApi.getPhotoFull']?.[localVarOperationServerIndex]?.url
-      return (axios, basePath) =>
-        createRequestFunction(
-          localVarAxiosArgs,
-          globalAxios,
-          BASE_PATH,
-          configuration,
-        )(axios, localVarOperationServerBasePath || basePath)
-    },
-    /**
-     *
-     * @summary Récupérer le contenu d\'une photo en miniature
-     * @param {string} photoId
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    async getPhotoThumb(
-      photoId: string,
-      options?: RawAxiosRequestConfig,
-    ): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<File>> {
-      const localVarAxiosArgs = await localVarAxiosParamCreator.getPhotoThumb(photoId, options)
-      const localVarOperationServerIndex = configuration?.serverIndex ?? 0
-      const localVarOperationServerBasePath =
-        operationServerMap['PhotosApi.getPhotoThumb']?.[localVarOperationServerIndex]?.url
+        operationServerMap['PhotosApi.getPhoto']?.[localVarOperationServerIndex]?.url
       return (axios, basePath) =>
         createRequestFunction(
           localVarAxiosArgs,
@@ -2700,23 +2645,24 @@ export const PhotosApiFactory = function (
     },
     /**
      *
-     * @summary Récupérer le contenu d\'une photo en taille réelle
+     * @summary Récupérer le contenu d\'une photo
      * @param {string} photoId
+     * @param {number} width
+     * @param {number} height
+     * @param {string} [accept]
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    getPhotoFull(photoId: string, options?: RawAxiosRequestConfig): AxiosPromise<File> {
-      return localVarFp.getPhotoFull(photoId, options).then((request) => request(axios, basePath))
-    },
-    /**
-     *
-     * @summary Récupérer le contenu d\'une photo en miniature
-     * @param {string} photoId
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    getPhotoThumb(photoId: string, options?: RawAxiosRequestConfig): AxiosPromise<File> {
-      return localVarFp.getPhotoThumb(photoId, options).then((request) => request(axios, basePath))
+    getPhoto(
+      photoId: string,
+      width: number,
+      height: number,
+      accept?: string,
+      options?: RawAxiosRequestConfig,
+    ): AxiosPromise<File> {
+      return localVarFp
+        .getPhoto(photoId, width, height, accept, options)
+        .then((request) => request(axios, basePath))
     },
   }
 }
@@ -2758,29 +2704,24 @@ export class PhotosApi extends BaseAPI {
 
   /**
    *
-   * @summary Récupérer le contenu d\'une photo en taille réelle
+   * @summary Récupérer le contenu d\'une photo
    * @param {string} photoId
+   * @param {number} width
+   * @param {number} height
+   * @param {string} [accept]
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
    * @memberof PhotosApi
    */
-  public getPhotoFull(photoId: string, options?: RawAxiosRequestConfig) {
+  public getPhoto(
+    photoId: string,
+    width: number,
+    height: number,
+    accept?: string,
+    options?: RawAxiosRequestConfig,
+  ) {
     return PhotosApiFp(this.configuration)
-      .getPhotoFull(photoId, options)
-      .then((request) => request(this.axios, this.basePath))
-  }
-
-  /**
-   *
-   * @summary Récupérer le contenu d\'une photo en miniature
-   * @param {string} photoId
-   * @param {*} [options] Override http request option.
-   * @throws {RequiredError}
-   * @memberof PhotosApi
-   */
-  public getPhotoThumb(photoId: string, options?: RawAxiosRequestConfig) {
-    return PhotosApiFp(this.configuration)
-      .getPhotoThumb(photoId, options)
+      .getPhoto(photoId, width, height, accept, options)
       .then((request) => request(this.axios, this.basePath))
   }
 }

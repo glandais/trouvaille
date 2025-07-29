@@ -55,41 +55,42 @@
         </ol>
       </nav>
 
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <!-- Annonce Details -->
+      <div class="space-y-6">
+        <!-- Header -->
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <div class="flex items-center space-x-2">
+              <span class="badge bg-blue-100 text-blue-800">
+                {{ getTypeLabel(annonce.type) }}
+              </span>
+              <span class="badge bg-green-100 text-green-800">
+                {{ getNatureLabel(annonce.nature) }}
+              </span>
+              <span :class="getStatutBadgeClass(annonce.statut)">
+                {{ getStatusLabel(annonce.statut) }}
+              </span>
+            </div>
+          </div>
+
+          <h1 class="text-3xl font-bold text-gray-900 mb-4">{{ annonce.titre }}</h1>
+
+          <div class="text-3xl font-bold text-blue-600 mb-4">
+            {{ formatPrice(annonce.prix, annonce.periode_location) }}
+          </div>
+        </div>
+
         <!-- Photo Gallery -->
         <div class="space-y-4 gallery-container">
           <Gallery :options="galleryOptions">
             <figure v-for="photo in photos" :key="photo.id" class="vpis-item-figure">
-              <Item v-bind="photo" />
+              <GalleryItem :photo="photo" />
             </figure>
           </Gallery>
         </div>
 
         <!-- Annonce Details -->
         <div class="space-y-6">
-          <!-- Header -->
-          <div>
-            <div class="flex items-center justify-between mb-2">
-              <div class="flex items-center space-x-2">
-                <span class="badge bg-blue-100 text-blue-800">
-                  {{ getTypeLabel(annonce.type) }}
-                </span>
-                <span class="badge bg-green-100 text-green-800">
-                  {{ getNatureLabel(annonce.nature) }}
-                </span>
-                <span :class="getStatutBadgeClass(annonce.statut)">
-                  {{ getStatusLabel(annonce.statut) }}
-                </span>
-              </div>
-            </div>
-
-            <h1 class="text-3xl font-bold text-gray-900 mb-4">{{ annonce.titre }}</h1>
-
-            <div class="text-3xl font-bold text-blue-600 mb-4">
-              {{ formatPrice(annonce.prix, annonce.periode_location) }}
-            </div>
-          </div>
-
           <!-- Description -->
           <div>
             <h3 class="text-lg font-medium text-gray-900 mb-3">
@@ -227,7 +228,8 @@ import {
 } from '@heroicons/vue/24/outline'
 import { useI18nFormatters } from '../composables/useI18nFormatters'
 import { useAnnonceLabels } from '../composables/useAnnonceLabels'
-import { Gallery, Item } from 'vue-preview-imgs'
+import { Gallery } from 'vue-preview-imgs'
+import GalleryItem from '@/components/GalleryItem.vue'
 
 interface Props {
   id: string
@@ -248,17 +250,7 @@ const isOwner = computed(() => {
   return authStore.user?.id === annonce.value?.utilisateur?.id
 })
 
-const photos = computed(
-  () =>
-    annonce.value?.photos.map((photo) => ({
-      id: photo.id,
-      href: photo.fullUrl,
-      thumbnail: photo.thumbUrl,
-      width: photo.width,
-      height: photo.height,
-      cropped: true,
-    })) || [],
-)
+const photos = computed(() => annonce.value?.photos || [])
 
 const galleryOptions = {}
 

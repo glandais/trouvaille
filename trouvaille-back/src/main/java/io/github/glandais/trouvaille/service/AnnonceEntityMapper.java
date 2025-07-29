@@ -23,8 +23,6 @@ public abstract class AnnonceEntityMapper {
 
   @Inject TagRepository tagRepository;
 
-  @Mapping(target = "removePhotosItem", ignore = true)
-  @Mapping(target = "removeTagsItem", ignore = true)
   @Mapping(target = "utilisateur", source = "utilisateur", qualifiedByName = "mapUtilisateurId")
   @Mapping(target = "photos", source = "photos", qualifiedByName = "mapPhotos")
   @Mapping(target = "tags", source = "tags", qualifiedByName = "mapTags")
@@ -42,8 +40,6 @@ public abstract class AnnonceEntityMapper {
     }
   }
 
-  @Mapping(target = "removePhotosItem", ignore = true)
-  @Mapping(target = "removeTagsItem", ignore = true)
   @Mapping(target = "distance", source = "distance", qualifiedByName = "mapDistance")
   @Mapping(target = "utilisateur", source = "utilisateur", qualifiedByName = "mapUtilisateurId")
   @Mapping(target = "photos", source = "photos", qualifiedByName = "mapPhotos")
@@ -101,19 +97,7 @@ public abstract class AnnonceEntityMapper {
         .toList();
   }
 
-  public Photo mapPhoto(PhotoEntity photoEntity) {
-    if (photoEntity == null) {
-      return null;
-    }
-    Photo photo = new Photo();
-    String id = mapObjectId(photoEntity.getId());
-    photo.setId(id);
-    photo.setWidth(photoEntity.getWidth());
-    photo.setHeight(photoEntity.getHeight());
-    photo.setFullUrl("/api/v1/photos/" + id + "/full");
-    photo.setThumbUrl("/api/v1/photos/" + id + "/thumb");
-    return photo;
-  }
+  public abstract Photo mapPhoto(PhotoEntity photoEntity);
 
   protected abstract Utilisateur mapUserEntity(UserEntity userEntity);
 

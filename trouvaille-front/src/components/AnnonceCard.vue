@@ -4,13 +4,13 @@
   >
     <!-- Image Container -->
     <div class="relative aspect-[4/3] bg-gray-100" @click="goToDetail()">
-      <img
-        v-if="photoUrl"
-        :src="photoUrl"
+      <PhotoThumb
+        v-if="firstPhoto"
+        :photo="firstPhoto"
         :alt="annonce.titre"
-        class="w-full h-full object-cover cursor-pointer"
+        class="w-full cursor-pointer object-cover"
       />
-      <div v-else class="w-full h-full flex items-center justify-center cursor-pointer">
+      <div v-else class="w-full cursor-pointer flex items-center justify-center">
         <PhotoIcon class="h-12 w-12 text-gray-400" />
       </div>
 
@@ -196,6 +196,7 @@ import { annoncesApi } from '../services/api'
 import { useI18nFormatters } from '@/composables/useI18nFormatters'
 import { useAnnonceLabels } from '@/composables/useAnnonceLabels'
 import DistanceDisplay from './DistanceDisplay.vue'
+import PhotoThumb from './PhotoThumb.vue'
 const authStore = useAuthStore()
 const { t } = useI18n()
 const { formatSmartDate, formatPrice: formatPriceI18n } = useI18nFormatters()
@@ -224,7 +225,6 @@ const goToDetail = () => {
 
 // Utiliser le composable pour charger la première photo
 const firstPhoto = computed(() => props.annonce.photos[0] || null)
-const photoUrl = computed(() => (firstPhoto.value ? firstPhoto.value.thumbUrl : null))
 
 // Use i18n formatter for price
 const formatPrice = (prix?: Prix, periode?: PeriodeLocation) => {
