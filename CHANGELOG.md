@@ -1,3 +1,10 @@
+# [1.16.0](https://github.com/glandais/trouvaille/compare/v1.15.0...v1.16.0) (2025-07-29)
+
+
+### Features
+
+* support ([9085925](https://github.com/glandais/trouvaille/commit/9085925eda0246356a3c830eb9821b64711bd6bb))
+
 # [1.15.0](https://github.com/glandais/trouvaille/compare/v1.14.0...v1.15.0) (2025-07-29)
 
 
