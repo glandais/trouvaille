@@ -243,6 +243,29 @@
     <main>
       <slot />
     </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div class="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
+          <!-- Left Side - App Info -->
+          <div class="flex items-center space-x-4 text-sm text-gray-600">
+            <span>{{ $t('app.name') }}</span>
+            <span>•</span>
+            <span>{{ $t('app.description', 'Plateforme de petites annonces privée') }}</span>
+          </div>
+
+          <!-- Right Side - Support & Links -->
+          <div class="flex items-center space-x-6 text-sm">
+            <SupportButton variant="footer" />
+            <span class="text-gray-400">|</span>
+            <span class="text-gray-500">
+              {{ $t('app.made_with_love', 'Fait avec 🦊❤️🦊❤️') }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </footer>
   </div>
 </template>
 
@@ -250,6 +273,7 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useAuthStore } from '../stores/auth'
 import { PlusIcon, ChevronDownIcon, Bars3Icon, XMarkIcon } from '@heroicons/vue/24/outline'
+import SupportButton from './SupportButton.vue'
 
 const authStore = useAuthStore()
 const showUserMenu = ref(false)

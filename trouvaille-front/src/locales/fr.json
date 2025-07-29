@@ -2,6 +2,8 @@
   "app": {
     "name": "Ventes NP",
     "tagline": "Plateforme de petites annonces privée",
+    "description": "Plateforme de petites annonces privée",
+    "made_with_love": "Fait avec 🦊❤️🦊❤️",
     "auth": {
       "authenticating": "Authentification en cours...",
       "login": "Se connecter",
@@ -45,7 +47,11 @@
       "publishing": "Publication...",
       "suspend": "Suspendre",
       "activate": "Activer",
-      "markSold": "Marquer vendue"
+      "markSold": "Marquer vendue",
+      "dismiss": "Fermer"
+    },
+    "support": {
+      "footer_text": "Soutenir le projet"
     },
     "status": {
       "success": "Succès",
