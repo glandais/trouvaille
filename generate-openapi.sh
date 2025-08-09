@@ -39,18 +39,6 @@ echo ""
 log_info "🔄 Generating OpenAPI client and server code from contract.yaml"
 echo ""
 
-# 1. Copy contract file to both projects
-log_info "📋 Copying contract file to frontend and backend..."
-cp contract.yaml trouvaille-front/ || {
-    log_error "Failed to copy contract.yaml to trouvaille-front/"
-    exit 1
-}
-
-cp contract.yaml trouvaille-back/src/main/resources/openapi/ || {
-    log_error "Failed to copy contract.yaml to trouvaille-back/src/main/resources/openapi/"
-    exit 1
-}
-
 # 2. Generate TypeScript client for frontend
 log_info "🎨 Generating TypeScript client for frontend..."
 cd trouvaille-front

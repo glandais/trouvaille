@@ -2379,7 +2379,7 @@ export const PhotosApiAxiosParamCreator = function (configuration?: Configuratio
     createPhoto: async (body: File, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
       // verify required parameter 'body' is not null or undefined
       assertParamExists('createPhoto', 'body', body)
-      const localVarPath = `/api/v1/annonces/photos`
+      const localVarPath = `/api/v1/photos`
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
       const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL)
       let baseOptions
@@ -2428,7 +2428,7 @@ export const PhotosApiAxiosParamCreator = function (configuration?: Configuratio
     ): Promise<RequestArgs> => {
       // verify required parameter 'photoId' is not null or undefined
       assertParamExists('deletePhoto', 'photoId', photoId)
-      const localVarPath = `/api/v1/annonces/photos/{photoId}`.replace(
+      const localVarPath = `/api/v1/photos/{photoId}`.replace(
         `{${'photoId'}}`,
         encodeURIComponent(String(photoId)),
       )

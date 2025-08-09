@@ -68,8 +68,8 @@ All URIs are relative to _http://localhost_
 | _AnnoncesApi_         | [**putAnnonce**](docs/AnnoncesApi.md#putannonce)                         | **PUT** /api/v1/annonces/{id}                     | Mettre à jour une annonce                                                  |
 | _AuthentificationApi_ | [**exchangeOAuthToken**](docs/AuthentificationApi.md#exchangeoauthtoken) | **POST** /api/v1/auth/token                       | Échanger le code OAuth pour un token                                       |
 | _ConfigApi_           | [**getConfig**](docs/ConfigApi.md#getconfig)                             | **GET** /api/v1/config                            | Récupérer la configuration                                                 |
-| _PhotosApi_           | [**createPhoto**](docs/PhotosApi.md#createphoto)                         | **POST** /api/v1/annonces/photos                  | Ajouter une photo                                                          |
-| _PhotosApi_           | [**deletePhoto**](docs/PhotosApi.md#deletephoto)                         | **DELETE** /api/v1/annonces/photos/{photoId}      | Supprimer une photo                                                        |
+| _PhotosApi_           | [**createPhoto**](docs/PhotosApi.md#createphoto)                         | **POST** /api/v1/photos                           | Ajouter une photo                                                          |
+| _PhotosApi_           | [**deletePhoto**](docs/PhotosApi.md#deletephoto)                         | **DELETE** /api/v1/photos/{photoId}               | Supprimer une photo                                                        |
 | _PhotosApi_           | [**getPhoto**](docs/PhotosApi.md#getphoto)                               | **GET** /api/v1/photos/{photoId}/{width}/{height} | Récupérer le contenu d\&#39;une photo                                      |
 | _TagsApi_             | [**getAvailableTags**](docs/TagsApi.md#getavailabletags)                 | **GET** /api/v1/tags                              | Lister tous les tags disponibles                                           |
 

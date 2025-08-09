@@ -77,7 +77,7 @@ public class PhotoService {
       // Save to database
       photoRepository.persist(photoEntity);
       return annonceEntityMapper.mapPhoto(photoEntity);
-    } catch (IOException e) {
+    } catch (Exception e) {
       throw new BadRequestException("Failed to process image: " + e.getMessage(), e);
     }
   }

@@ -127,7 +127,7 @@ paths:
         '204':
           description: Annonce supprimée
 
-  /api/v1/annonces/photos:
+  /api/v1/photos:
     post:
       summary: Ajouter une photo
       operationId: createPhoto
@@ -148,7 +148,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Photo'
 
-  /api/v1/annonces/photos/{photoId}:
+  /api/v1/photos/{photoId}:
     delete:
       summary: Supprimer une photo
       operationId: deletePhoto
