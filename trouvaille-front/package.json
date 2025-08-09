@@ -11,11 +11,11 @@
     "type-check": "vue-tsc --build",
     "lint": "eslint . --fix",
     "lint:check": "eslint .",
-    "format": "prettier --write src/ public/ *.json *.md contract.yaml",
-    "format:check": "prettier --check src/ public/ *.json *.md contract.yaml",
+    "format": "prettier --write src/ public/ *.json *.md",
+    "format:check": "prettier --check src/ public/ *.json *.md",
     "generate:api": "npm run generate:api:clean && npm run generate:api:generate",
     "generate:api:clean": "rm -rf src/api",
-    "generate:api:generate": "openapi-generator-cli generate -i contract.yaml -g typescript-axios -o src/api --additional-properties=supportsES6=true,npmName=@trouvaille/api,modelPropertyNaming=snake_case,stringEnums=true"
+    "generate:api:generate": "openapi-generator-cli generate -i ../contract.yaml -g typescript-axios -o src/api --additional-properties=supportsES6=true,npmName=@trouvaille/api,modelPropertyNaming=snake_case,stringEnums=true"
   },
   "dependencies": {
     "@heroicons/vue": "^2.2.0",

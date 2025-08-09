@@ -36,9 +36,6 @@ public class MattermostService {
   Template postTemplate;
 
   public void createAnnonce(AnnonceEntity annonceEntity) {
-    if (!isPublishMattermost()) {
-      return;
-    }
     CreatePostRequest post = initPost(annonceEntity, true);
     PostResponse postResponse = callCreatePost(post);
     if (postResponse != null) {
@@ -47,18 +44,11 @@ public class MattermostService {
   }
 
   public void updateAnnonce(AnnonceEntity annonceEntity) {
-    if (!isPublishMattermost()) {
-      return;
-    }
     CreatePostRequest post = initPost(annonceEntity, false);
     if (annonceEntity.getMattermostRootId() != null) {
       post.setRootId(annonceEntity.getMattermostRootId());
     }
     callCreatePost(post);
-  }
-
-  private boolean isPublishMattermost() {
-    return (!botConfig.channelId().isEmpty() && !botConfig.token().isEmpty());
   }
 
   private CreatePostRequest initPost(AnnonceEntity annonceEntity, boolean creation) {

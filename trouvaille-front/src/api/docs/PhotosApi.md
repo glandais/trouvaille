@@ -4,8 +4,8 @@ All URIs are relative to _http://localhost_
 
 | Method                          | HTTP request                                      | Description                           |
 | ------------------------------- | ------------------------------------------------- | ------------------------------------- |
-| [**createPhoto**](#createphoto) | **POST** /api/v1/annonces/photos                  | Ajouter une photo                     |
-| [**deletePhoto**](#deletephoto) | **DELETE** /api/v1/annonces/photos/{photoId}      | Supprimer une photo                   |
+| [**createPhoto**](#createphoto) | **POST** /api/v1/photos                           | Ajouter une photo                     |
+| [**deletePhoto**](#deletephoto) | **DELETE** /api/v1/photos/{photoId}               | Supprimer une photo                   |
 | [**getPhoto**](#getphoto)       | **GET** /api/v1/photos/{photoId}/{width}/{height} | Récupérer le contenu d\&#39;une photo |
 
 # **createPhoto**
