@@ -1,5 +1,5 @@
 /* tslint:disable */
- 
+
 /**
  * API Petites Annonces
  * API pour une plateforme privée de petites annonces permettant la vente, location et demandes d\'objets
