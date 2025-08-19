@@ -1,7 +1,7 @@
 ####
 # Build stage
 ####
-FROM node:24.5.0-alpine AS build
+FROM node:24.6.0-alpine AS build
 
 WORKDIR /app
 
