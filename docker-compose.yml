@@ -45,7 +45,7 @@ services:
       IMGPROXY_LOCAL_FILESYSTEM_ROOT: "/mnt/data"
 
   varnish:
-    image: varnish:6.0.14
+    image: varnish:7.7.2
     restart: unless-stopped
     networks:
       - trouvaille
