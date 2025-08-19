@@ -669,6 +669,9 @@ const uploadPhoto = async (file: File) => {
 
 const removePhoto = async (index: number) => {
   const photo = form.photos[index]
+  if (!photo) {
+    return
+  }
 
   try {
     await photosApi.deletePhoto(photo.id)
@@ -681,6 +684,12 @@ const removePhoto = async (index: number) => {
 
 const movePhoto = (fromIndex: number, toIndex: number) => {
   const photos = [...(form.photos || [])]
+  if (!photos[fromIndex]) {
+    return
+  }
+  if (!photos[toIndex]) {
+    return
+  }
 
   // Swap photos
   const temp = photos[fromIndex]
