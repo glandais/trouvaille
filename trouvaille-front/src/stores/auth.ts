@@ -164,7 +164,7 @@ export const useAuthStore = defineStore('auth', () => {
       }
 
       // Decode payload (second part)
-      const payload = parts[1]
+      const payload: string = parts[1] || ''
       const decodedPayload = atob(payload.replace(/-/g, '+').replace(/_/g, '/'))
 
       return JSON.parse(decodedPayload)
