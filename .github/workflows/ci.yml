@@ -23,7 +23,7 @@ jobs:
         cache-dependency-path: 'trouvaille-back/pom.xml'
         
     - name: Set up Node.js 24
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v5
       with:
         node-version: '24'
         cache: 'npm'
