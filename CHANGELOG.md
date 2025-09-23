@@ -1,3 +1,10 @@
+# [1.17.0](https://github.com/glandais/trouvaille/compare/v1.16.1...v1.17.0) (2025-09-23)
+
+
+### Features
+
+* retry without rootId ([b2f9e99](https://github.com/glandais/trouvaille/commit/b2f9e996ab6e5c86d36d77ea6f32817853667af2))
+
 ## [1.16.1](https://github.com/glandais/trouvaille/compare/v1.16.0...v1.16.1) (2025-09-23)
 
 
