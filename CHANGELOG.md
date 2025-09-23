@@ -1,3 +1,10 @@
+## [1.16.1](https://github.com/glandais/trouvaille/compare/v1.16.0...v1.16.1) (2025-09-23)
+
+
+### Bug Fixes
+
+* dependabot updates ([95a4cbb](https://github.com/glandais/trouvaille/commit/95a4cbb81c15210516ccbe2d5100794e42e36f98))
+
 # [1.16.0](https://github.com/glandais/trouvaille/compare/v1.15.0...v1.16.0) (2025-07-29)
 
 
