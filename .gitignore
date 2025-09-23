@@ -1,6 +1,3 @@
 data/
 .env
-
-trouvaille-front/.env.production
-
 node_modules
