@@ -70,48 +70,8 @@ updates:
       - "frontend"
       - "npm"
     groups:
-      vue:
-        patterns:
-          - "vue*"
-          - "@vue/*"
-        update-types:
-          - "minor"
-          - "patch"
-      vite:
-        patterns:
-          - "vite*"
-          - "@vitejs/*"
-        update-types:
-          - "minor"
-          - "patch"
-      typescript:
-        patterns:
-          - "typescript*"
-          - "@types/*"
-        update-types:
-          - "minor"
-          - "patch"
-      eslint:
-        patterns:
-          - "eslint*"
-          - "@eslint/*"
-          - "eslint-*"
-        update-types:
-          - "minor"
-          - "patch"
-      tailwind:
-        patterns:
-          - "tailwindcss*"
-          - "@tailwindcss/*"
-        update-types:
-          - "minor"
-          - "patch"
-      build-tools:
-        patterns:
-          - "prettier*"
-          - "postcss*"
-          - "autoprefixer*"
-          - "@openapi-generator-cli/*"
+      # Group all minor and patch updates together
+      minor-and-patch:
         update-types:
           - "minor"
           - "patch"
@@ -135,6 +95,12 @@ updates:
     labels:
       - "dependencies"
       - "npm"
+    groups:
+      # Group all minor and patch updates together
+      minor-and-patch:
+        update-types:
+          - "minor"
+          - "patch"
 
   # Docker dependencies (Frontend)
   - package-ecosystem: "docker"
