@@ -27,13 +27,13 @@
     "localstorage-slim": "^2.7.1",
     "lodash-es": "^4.17.21",
     "pinia": "^3.0.3",
-    "vue": "^3.5.21",
+    "vue": "^3.5.22",
     "vue-i18n": "^11.1.12",
     "vue-preview-imgs": "^2.0.1",
     "vue-router": "^4.5.1"
   },
   "devDependencies": {
-    "@openapitools/openapi-generator-cli": "^2.23.4",
+    "@openapitools/openapi-generator-cli": "^2.24.0",
     "@tailwindcss/postcss": "^4.1.13",
     "@tsconfig/node22": "^22.0.2",
     "@types/lodash-es": "^4.17.12",
@@ -52,7 +52,7 @@
     "typescript": "~5.9.2",
     "vite": "^7.1.7",
     "vite-plugin-vue-devtools": "^8.0.2",
-    "vue-tsc": "^3.0.8"
+    "vue-tsc": "^3.1.0"
   },
   "overrides": {
     "dompurify": "^3.2.6"
