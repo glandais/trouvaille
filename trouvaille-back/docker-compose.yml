@@ -31,7 +31,7 @@ services:
 
   # MongoDB
   mongodb:
-    image: mongo:8.0.14
+    image: mongo:8.0.15
     restart: unless-stopped
     networks:
       - trouvaille-back
