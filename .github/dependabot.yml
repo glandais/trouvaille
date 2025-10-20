@@ -21,30 +21,8 @@ updates:
       - "backend"
       - "maven"
     groups:
-      quarkus:
-        patterns:
-          - "io.quarkus*"
-          - "io.quarkus.platform*"
-        update-types:
-          - "minor"
-          - "patch"
-      mapstruct:
-        patterns:
-          - "org.mapstruct*"
-        update-types:
-          - "minor"
-          - "patch"
-      lombok:
-        patterns:
-          - "org.projectlombok*"
-        update-types:
-          - "minor"
-          - "patch"
-      testing:
-        patterns:
-          - "*junit*"
-          - "*rest-assured*"
-          - "*testcontainers*"
+      # Group all minor and patch updates together
+      minor-and-patch:
         update-types:
           - "minor"
           - "patch"
