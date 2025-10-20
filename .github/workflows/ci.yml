@@ -22,10 +22,10 @@ jobs:
         cache: 'maven'
         cache-dependency-path: 'trouvaille-back/pom.xml'
         
-    - name: Set up Node.js 24
+    - name: Set up Node.js
       uses: actions/setup-node@v6
       with:
-        node-version: '24'
+        node-version: '25'
         cache: 'npm'
         cache-dependency-path: trouvaille-front/package-lock.json
 
