@@ -47,12 +47,12 @@
     "eslint-plugin-vue": "~10.6.2",
     "jiti": "^2.6.1",
     "npm-run-all2": "^8.0.4",
-    "prettier": "3.7.3",
+    "prettier": "3.7.4",
     "tailwindcss": "^4.1.11",
     "typescript": "~5.9.3",
-    "vite": "^7.2.6",
+    "vite": "^7.2.7",
     "vite-plugin-vue-devtools": "^8.0.5",
-    "vue-tsc": "^3.1.5"
+    "vue-tsc": "^3.1.7"
   },
   "overrides": {
     "dompurify": "^3.2.6"
