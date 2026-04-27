@@ -17,6 +17,7 @@ import io.vertx.core.http.Cookie;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.ext.web.RoutingContext;
+import java.util.Map;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -260,8 +261,10 @@ class CookieJwtHttpAuthenticationMechanismTest {
     // Then
     ChallengeData challenge = result.await().indefinitely();
     assertEquals(401, challenge.status);
-    assertEquals("WWW-Authenticate", challenge.headerName);
-    assertEquals("Bearer", challenge.headerContent);
+    Map<CharSequence, String> headers = challenge.getHeaders();
+    assertEquals(1, headers.size());
+    assertTrue(headers.containsKey("WWW-Authenticate"));
+    assertEquals("Bearer", headers.get("WWW-Authenticate"));
   }
 
   @Test
