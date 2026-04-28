@@ -59,7 +59,7 @@ services:
 
   # MongoDB
   mongodb:
-    image: mongo:8.2.5
+    image: mongo:8.2.7
     restart: unless-stopped
     networks:
       - trouvaille
