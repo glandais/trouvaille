@@ -37,7 +37,7 @@
     "@tailwindcss/postcss": "^4.3.1",
     "@tsconfig/node22": "^22.0.5",
     "@types/lodash-es": "^4.17.12",
-    "@types/node": "^25.9.3",
+    "@types/node": "^26.0.0",
     "@vitejs/plugin-basic-ssl": "^2.3.0",
     "@vitejs/plugin-vue": "^6.0.7",
     "@vue/eslint-config-prettier": "^10.2.0",
