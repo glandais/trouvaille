@@ -260,8 +260,7 @@ class CookieJwtHttpAuthenticationMechanismTest {
     // Then
     ChallengeData challenge = result.await().indefinitely();
     assertEquals(401, challenge.status);
-    assertEquals("WWW-Authenticate", challenge.headerName);
-    assertEquals("Bearer", challenge.headerContent);
+    assertEquals("Bearer", challenge.getHeaders().get("WWW-Authenticate"));
   }
 
   @Test
