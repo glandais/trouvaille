@@ -30,7 +30,7 @@ services:
 #      - "traefik.http.routers.traefik.service=api@internal"
 
   imgproxy:
-    image: ghcr.io/imgproxy/imgproxy:v3.31.3
+    image: ghcr.io/imgproxy/imgproxy:v4.0.7
     restart: unless-stopped
     networks:
       - trouvaille
@@ -52,7 +52,7 @@ services:
     volumes:
       - "./varnish.vcl:/etc/varnish/default.vcl"
     tmpfs:
-      - /var/lib/varnish:exec
+      - /var/lib/varnish:exec,mode=1777
     environment:
       - VARNISH_SIZE=20G
     command: "-p default_ttl=86400"
