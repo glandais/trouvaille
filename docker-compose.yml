@@ -52,7 +52,7 @@ services:
     volumes:
       - "./varnish.vcl:/etc/varnish/default.vcl"
     tmpfs:
-      - /var/lib/varnish:exec
+      - /var/lib/varnish:exec,mode=1777
     environment:
       - VARNISH_SIZE=20G
     command: "-p default_ttl=86400"
