@@ -30,7 +30,7 @@ services:
 #      - "traefik.http.routers.traefik.service=api@internal"
 
   imgproxy:
-    image: ghcr.io/imgproxy/imgproxy:v4.0.7
+    image: ghcr.io/imgproxy/imgproxy:v4.0.8
     restart: unless-stopped
     networks:
       - trouvaille
