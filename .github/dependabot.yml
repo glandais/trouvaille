@@ -1,6 +1,5 @@
 version: 2
 updates:
-  # Maven dependencies (Backend)
   - package-ecosystem: "maven"
     directory: "/trouvaille-back"
     schedule:
@@ -9,8 +8,6 @@ updates:
       time: "09:00"
       timezone: "Europe/Paris"
     open-pull-requests-limit: 5
-    reviewers:
-      - "glandais"
     assignees:
       - "glandais"
     commit-message:
@@ -18,43 +15,12 @@ updates:
       include: "scope"
     labels:
       - "dependencies"
-      - "backend"
-      - "maven"
     groups:
-      # Group all minor and patch updates together
       minor-and-patch:
         update-types:
           - "minor"
           - "patch"
 
-  # npm dependencies (Frontend)
-  - package-ecosystem: "npm"
-    directory: "/trouvaille-front"
-    schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "09:30"
-      timezone: "Europe/Paris"
-    open-pull-requests-limit: 10
-    reviewers:
-      - "glandais"
-    assignees:
-      - "glandais"
-    commit-message:
-      prefix: "deps(npm)"
-      include: "scope"
-    labels:
-      - "dependencies"
-      - "frontend"
-      - "npm"
-    groups:
-      # Group all minor and patch updates together
-      minor-and-patch:
-        update-types:
-          - "minor"
-          - "patch"
-
-  # npm dependencies (root)
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
@@ -63,8 +29,6 @@ updates:
       time: "09:30"
       timezone: "Europe/Paris"
     open-pull-requests-limit: 10
-    reviewers:
-      - "glandais"
     assignees:
       - "glandais"
     commit-message:
@@ -72,36 +36,54 @@ updates:
       include: "scope"
     labels:
       - "dependencies"
-      - "npm"
     groups:
-      # Group all minor and patch updates together
       minor-and-patch:
         update-types:
           - "minor"
           - "patch"
 
-  # Docker dependencies (Frontend)
+  - package-ecosystem: "npm"
+    directory: "/trouvaille-front"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:30"
+      timezone: "Europe/Paris"
+    open-pull-requests-limit: 10
+    assignees:
+      - "glandais"
+    commit-message:
+      prefix: "deps(npm)"
+      include: "scope"
+    labels:
+      - "dependencies"
+    groups:
+      minor-and-patch:
+        update-types:
+          - "minor"
+          - "patch"
+
   - package-ecosystem: "docker"
     directory: "/trouvaille-front"
     schedule:
       interval: "weekly"
       day: "tuesday"
-      time: "09:30"
+      time: "10:00"
       timezone: "Europe/Paris"
     open-pull-requests-limit: 3
-    reviewers:
-      - "glandais"
     assignees:
       - "glandais"
     commit-message:
-      prefix: "deps(docker-frontend)"
+      prefix: "deps(docker)"
       include: "scope"
     labels:
       - "dependencies"
-      - "docker"
-      - "frontend"
+    groups:
+      minor-and-patch:
+        update-types:
+          - "minor"
+          - "patch"
 
-  # Docker Compose dependencies
   - package-ecosystem: "docker-compose"
     directory: "/"
     schedule:
@@ -110,8 +92,6 @@ updates:
       time: "10:00"
       timezone: "Europe/Paris"
     open-pull-requests-limit: 3
-    reviewers:
-      - "glandais"
     assignees:
       - "glandais"
     commit-message:
@@ -119,10 +99,12 @@ updates:
       include: "scope"
     labels:
       - "dependencies"
-      - "docker-compose"
-      - "infrastructure"
+    groups:
+      minor-and-patch:
+        update-types:
+          - "minor"
+          - "patch"
 
-  # Docker Compose dependencies (dev)
   - package-ecosystem: "docker-compose"
     directory: "/trouvaille-back"
     schedule:
@@ -131,8 +113,6 @@ updates:
       time: "10:00"
       timezone: "Europe/Paris"
     open-pull-requests-limit: 3
-    reviewers:
-      - "glandais"
     assignees:
       - "glandais"
     commit-message:
@@ -140,51 +120,29 @@ updates:
       include: "scope"
     labels:
       - "dependencies"
-      - "docker-compose"
-      - "infrastructure"
+    groups:
+      minor-and-patch:
+        update-types:
+          - "minor"
+          - "patch"
 
-  # GitHub Actions dependencies
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
-      day: "wednesday"
-      time: "09:00"
+      day: "monday"
+      time: "10:00"
       timezone: "Europe/Paris"
     open-pull-requests-limit: 5
-    reviewers:
-      - "glandais"
     assignees:
       - "glandais"
     commit-message:
-      prefix: "deps(actions)"
+      prefix: "deps(github-actions)"
       include: "scope"
     labels:
       - "dependencies"
-      - "github-actions"
-      - "ci-cd"
     groups:
-      setup-actions:
-        patterns:
-          - "actions/checkout*"
-          - "actions/setup-*"
-          - "actions/cache*"
-          - "actions/upload-artifact*"
-        update-types:
-          - "minor"
-          - "patch"
-      docker-actions:
-        patterns:
-          - "docker/*"
-          - "*/docker-*"
-        update-types:
-          - "minor"
-          - "patch"
-      security-actions:
-        patterns:
-          - "github/codeql-action*"
-          - "aquasecurity/*"
-          - "actions/dependency-review-action*"
+      minor-and-patch:
         update-types:
           - "minor"
           - "patch"
